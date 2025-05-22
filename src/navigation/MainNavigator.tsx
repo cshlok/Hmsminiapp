@@ -3,11 +3,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PatientNavigator from './PatientNavigator';
+import AppointmentNavigator from './AppointmentNavigator';
 
 const Tab = createBottomTabNavigator();
 
 // Placeholder components for future modules
-const AppointmentsPlaceholder = () => null;
 const ServicesPlaceholder = () => null;
 const QuotesPlaceholder = () => null;
 const BillingPlaceholder = () => null;
@@ -38,7 +38,7 @@ const MainNavigator = () => {
       />
       <Tab.Screen
         name="Appointments"
-        component={AppointmentsPlaceholder}
+        component={AppointmentNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name="calendar" color={color} size={size} />
