@@ -4,11 +4,11 @@ import { useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PatientNavigator from './PatientNavigator';
 import AppointmentNavigator from './AppointmentNavigator';
+import ServiceNavigator from './ServiceNavigator';
 
 const Tab = createBottomTabNavigator();
 
 // Placeholder components for future modules
-const ServicesPlaceholder = () => null;
 const QuotesPlaceholder = () => null;
 const BillingPlaceholder = () => null;
 
@@ -47,7 +47,7 @@ const MainNavigator = () => {
       />
       <Tab.Screen
         name="Services"
-        component={ServicesPlaceholder}
+        component={ServiceNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name="medical-bag" color={color} size={size} />

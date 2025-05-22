@@ -4,17 +4,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { combineReducers } from 'redux';
 import patientReducer from './slices/patientSlice';
 import appointmentReducer from './slices/appointmentSlice';
+import serviceReducer from './slices/serviceSlice';
 
 // Configure Redux Persist
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['patient', 'appointment'], // Persist both patient and appointment state
+  whitelist: ['patient', 'appointment', 'service'], // Persist all module states
 };
 
 const rootReducer = combineReducers({
   patient: patientReducer,
   appointment: appointmentReducer,
+  service: serviceReducer,
   // Add other reducers here as the app grows
 });
 
