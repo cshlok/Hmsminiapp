@@ -7,22 +7,22 @@
 - [x] Push initial setup to GitHub repository
 
 ## Patient Management Module
-- [ ] Set up React Native project structure
-- [ ] Create project configuration files (package.json, babel.config.js, etc.)
-- [ ] Set up folder structure for components, screens, etc.
-- [ ] Install required dependencies
-- [ ] Implement patient data models
-- [ ] Set up Realm Database for local storage
-- [ ] Create UI components for patient management
-  - [ ] Patient list screen with search and sort
-  - [ ] Patient details screen
-  - [ ] Add/edit patient form
-  - [ ] Medical history component
-- [ ] Implement patient CRUD operations
-- [ ] Add search and filter functionality
-- [ ] Implement data validation
+- [x] Set up React Native project structure
+- [x] Create project configuration files (package.json, babel.config.js, etc.)
+- [x] Set up folder structure for components, screens, etc.
+- [x] Install required dependencies
+- [x] Implement patient data models
+- [x] Set up Realm Database for local storage
+- [x] Create UI components for patient management
+  - [x] Patient list screen with search and sort
+  - [x] Patient details screen
+  - [x] Add/edit patient form
+  - [x] Medical history component
+- [x] Implement patient CRUD operations
+- [x] Add search and filter functionality
+- [x] Implement data validation
 - [ ] Add unit tests for patient management
-- [ ] Document the module
+- [x] Document the module
 
 ## Next Steps (After Patient Management)
 - [ ] Implement Appointment Scheduling Module
