@@ -6,12 +6,14 @@ import patientReducer from './slices/patientSlice';
 import appointmentReducer from './slices/appointmentSlice';
 import serviceReducer from './slices/serviceSlice';
 import quoteReducer from './slices/quoteSlice';
+import billingReducer from './slices/billingSlice';
+import settingsReducer from './slices/settingsSlice';
 
 // Configure Redux Persist
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['patient', 'appointment', 'service', 'quote'], // Persist all module states
+  whitelist: ['patient', 'appointment', 'service', 'quote', 'billing', 'settings'], // Persist all module states
 };
 
 const rootReducer = combineReducers({
@@ -19,6 +21,8 @@ const rootReducer = combineReducers({
   appointment: appointmentReducer,
   service: serviceReducer,
   quote: quoteReducer,
+  billing: billingReducer,
+  settings: settingsReducer,
   // Add other reducers here as the app grows
 });
 

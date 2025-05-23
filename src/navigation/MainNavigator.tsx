@@ -6,24 +6,24 @@ import PatientNavigator from './PatientNavigator';
 import AppointmentNavigator from './AppointmentNavigator';
 import ServiceNavigator from './ServiceNavigator';
 import QuoteNavigator from './QuoteNavigator';
+import BillingNavigator from './BillingNavigator';
+import SettingsNavigator from './SettingsNavigator';
 
 const Tab = createBottomTabNavigator();
-
-// Placeholder components for future modules
-const BillingPlaceholder = () => null;
 
 const MainNavigator = () => {
   const theme = useTheme();
 
   return (
     <Tab.Navigator
+      initialRouteName="Patients"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: '#777',
+        tabBarInactiveTintColor: theme.colors.backdrop,
         tabBarStyle: {
-          height: 60,
-          paddingBottom: 10,
+          backgroundColor: theme.colors.background,
+          borderTopColor: theme.colors.surfaceVariant,
         },
       }}
     >
@@ -32,7 +32,7 @@ const MainNavigator = () => {
         component={PatientNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="account-group" color={color} size={size} />
+            <Icon name="account-multiple" color={color} size={size} />
           ),
         }}
       />
@@ -65,10 +65,19 @@ const MainNavigator = () => {
       />
       <Tab.Screen
         name="Billing"
-        component={BillingPlaceholder}
+        component={BillingNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name="cash-register" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsNavigator}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="cog" color={color} size={size} />
           ),
         }}
       />
