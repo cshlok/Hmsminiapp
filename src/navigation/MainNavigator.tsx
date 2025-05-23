@@ -8,6 +8,7 @@ import ServiceNavigator from './ServiceNavigator';
 import QuoteNavigator from './QuoteNavigator';
 import BillingNavigator from './BillingNavigator';
 import SettingsNavigator from './SettingsNavigator';
+import TestingNavigator from './TestingNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -78,6 +79,15 @@ const MainNavigator = () => {
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name="cog" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Report"
+        component={TestingNavigator}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="chart-bar" color={color} size={size} />
           ),
         }}
       />
