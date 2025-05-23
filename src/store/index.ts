@@ -5,18 +5,20 @@ import { combineReducers } from 'redux';
 import patientReducer from './slices/patientSlice';
 import appointmentReducer from './slices/appointmentSlice';
 import serviceReducer from './slices/serviceSlice';
+import quoteReducer from './slices/quoteSlice';
 
 // Configure Redux Persist
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['patient', 'appointment', 'service'], // Persist all module states
+  whitelist: ['patient', 'appointment', 'service', 'quote'], // Persist all module states
 };
 
 const rootReducer = combineReducers({
   patient: patientReducer,
   appointment: appointmentReducer,
   service: serviceReducer,
+  quote: quoteReducer,
   // Add other reducers here as the app grows
 });
 

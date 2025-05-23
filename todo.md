@@ -56,8 +56,25 @@
 - [ ] Add unit tests for service management
 - [x] Document the module
 
-## Next Steps (After Service Management)
-- [ ] Implement Quote Generator Module
+## Quote Generator Module
+- [x] Implement quote data models
+- [x] Set up quote repository for local storage
+- [x] Create Redux slice for quote state management
+- [x] Create UI components for quote management
+  - [x] Quote list screen with search and filtering
+  - [x] Quote details screen
+  - [x] Add/edit quote form
+  - [x] Quote item management
+- [x] Implement quote CRUD operations
+- [x] Add discount and tax calculation
+- [x] Implement quote status management (draft, final, converted)
+- [x] Integrate with patient and service modules
+- [x] Add PDF generation and sharing functionality (placeholder)
+- [x] Integrate with navigation
+- [ ] Add unit tests for quote management
+- [x] Document the module
+
+## Next Steps (After Quote Generator)
 - [ ] Implement Billing System Module
 - [ ] Implement Data Export and Settings
 - [ ] Final Testing and Optimization

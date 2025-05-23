@@ -5,11 +5,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PatientNavigator from './PatientNavigator';
 import AppointmentNavigator from './AppointmentNavigator';
 import ServiceNavigator from './ServiceNavigator';
+import QuoteNavigator from './QuoteNavigator';
 
 const Tab = createBottomTabNavigator();
 
 // Placeholder components for future modules
-const QuotesPlaceholder = () => null;
 const BillingPlaceholder = () => null;
 
 const MainNavigator = () => {
@@ -56,7 +56,7 @@ const MainNavigator = () => {
       />
       <Tab.Screen
         name="Quotes"
-        component={QuotesPlaceholder}
+        component={QuoteNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name="file-document-outline" color={color} size={size} />
