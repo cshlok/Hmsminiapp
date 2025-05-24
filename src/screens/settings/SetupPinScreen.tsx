@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
-import { Text, TextInput, Button, Surface, useTheme } from 'react-native-paper';
+import { TextField, Button, Paper, Typography, Box } from '@mui/material';
+import styled from '@emotion/styled';
 
 interface SetupPinScreenProps {
   isUpdate?: boolean;
@@ -13,7 +13,6 @@ const SetupPinScreen: React.FC<SetupPinScreenProps> = ({
   onSuccess,
   onCancel,
 }) => {
-  const theme = useTheme();
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [currentPin, setCurrentPin] = useState('');
@@ -52,126 +51,131 @@ const SetupPinScreen: React.FC<SetupPinScreenProps> = ({
   };
 
   return (
-    <View style={styles.container}>
-      <Surface style={styles.surface}>
-        <Text variant="headlineSmall" style={styles.title}>
+    <Container>
+      <StyledPaper elevation={4}>
+        <Title variant="h5">
           {isUpdate ? 'Update PIN' : 'Setup PIN'}
-        </Text>
+        </Title>
         
-        <Text style={styles.description}>
+        <Description>
           {isUpdate 
             ? 'Update your PIN to secure access to the app.' 
             : 'Create a PIN to secure access to the app.'}
-        </Text>
+        </Description>
         
         {showCurrentPin && (
           <>
-            <TextInput
+            <StyledTextField
               label="Current PIN"
               value={currentPin}
-              onChangeText={setCurrentPin}
-              style={styles.input}
-              keyboardType="numeric"
-              secureTextEntry
-              maxLength={6}
-              mode="outlined"
+              onChange={(e) => setCurrentPin(e.target.value)}
+              type="password"
+              inputProps={{ maxLength: 6, inputMode: 'numeric' }}
+              variant="outlined"
+              fullWidth
             />
           </>
         )}
         
         {!showCurrentPin && (
           <>
-            <TextInput
+            <StyledTextField
               label="New PIN"
               value={pin}
-              onChangeText={setPin}
-              style={styles.input}
-              keyboardType="numeric"
-              secureTextEntry
-              maxLength={6}
-              mode="outlined"
+              onChange={(e) => setPin(e.target.value)}
+              type="password"
+              inputProps={{ maxLength: 6, inputMode: 'numeric' }}
+              variant="outlined"
+              fullWidth
             />
             
-            <TextInput
+            <StyledTextField
               label="Confirm PIN"
               value={confirmPin}
-              onChangeText={setConfirmPin}
-              style={styles.input}
-              keyboardType="numeric"
-              secureTextEntry
-              maxLength={6}
-              mode="outlined"
+              onChange={(e) => setConfirmPin(e.target.value)}
+              type="password"
+              inputProps={{ maxLength: 6, inputMode: 'numeric' }}
+              variant="outlined"
+              fullWidth
             />
           </>
         )}
         
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error ? <ErrorText>{error}</ErrorText> : null}
         
-        <View style={styles.buttonContainer}>
-          <Button
-            mode="outlined"
-            onPress={onCancel}
-            style={[styles.button, styles.cancelButton]}
+        <ButtonContainer>
+          <StyledButton
+            variant="outlined"
+            onClick={onCancel}
+            color="secondary"
           >
             Cancel
-          </Button>
+          </StyledButton>
           
-          <Button
-            mode="contained"
-            onPress={handleSubmit}
-            style={styles.button}
+          <StyledButton
+            variant="contained"
+            onClick={handleSubmit}
+            color="primary"
           >
             {showCurrentPin ? 'Next' : 'Save'}
-          </Button>
-        </View>
-      </Surface>
-    </View>
+          </StyledButton>
+        </ButtonContainer>
+      </StyledPaper>
+    </Container>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  surface: {
-    padding: 24,
-    width: '100%',
-    maxWidth: 400,
-    borderRadius: 8,
-    elevation: 4,
-  },
-  title: {
-    marginBottom: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  description: {
-    marginBottom: 24,
-    textAlign: 'center',
-    color: '#666',
-  },
-  input: {
-    marginBottom: 16,
-  },
-  error: {
-    color: 'red',
-    marginBottom: 16,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 4,
-  },
-  cancelButton: {
-    borderColor: '#ccc',
-  },
-});
+// Styled components
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+`;
+
+const StyledPaper = styled(Paper)`
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+`;
+
+const Title = styled(Typography)`
+  margin-bottom: 16px;
+  font-weight: bold;
+  text-align: center;
+`;
+
+const Description = styled(Typography)`
+  margin-bottom: 24px;
+  text-align: center;
+  color: #666;
+`;
+
+const StyledTextField = styled(TextField)`
+  margin-bottom: 16px;
+`;
+
+const ErrorText = styled(Typography)`
+  color: #f44336;
+  margin-bottom: 16px;
+`;
+
+const ButtonContainer = styled(Box)`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StyledButton = styled(Button)`
+  flex: 1;
+  margin: 0 4px;
+`;
 
 export default SetupPinScreen;
