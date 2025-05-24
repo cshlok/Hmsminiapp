@@ -1,20 +1,18 @@
-import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { Text, Card, Divider, Button, useTheme } from 'react-native-paper';
+// Web-compatible export utilities
+import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
-import * as FileSystem from 'react-native-fs';
-import { IPatient } from '../../models/PatientModel';
-import { IAppointment } from '../../models/AppointmentModel';
-import { IService } from '../../models/ServiceModel';
-import { IQuote } from '../../models/QuoteModel';
-import { IBill } from '../../models/BillingModel';
+import { IPatient } from '../models/PatientModel';
+import { IAppointment } from '../models/AppointmentModel';
+import { IService } from '../models/ServiceModel';
+import { IQuote } from '../models/QuoteModel';
+import { IBill } from '../models/BillingModel';
 
-// Utility function to convert data to Excel format
-export const exportToExcel = async (
+// Utility function to convert data to Excel format and download
+export const exportToExcel = (
   data: any[],
   fileName: string,
   sheetName: string = 'Sheet1'
-): Promise<string> => {
+): void => {
   try {
     // Create a new workbook
     const wb = XLSX.utils.book_new();
@@ -26,15 +24,12 @@ export const exportToExcel = async (
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
     
     // Generate Excel file
-    const wbout = XLSX.write(wb, { type: 'binary', bookType: 'xlsx' });
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     
-    // Define file path
-    const filePath = `${FileSystem.DocumentDirectoryPath}/${fileName}.xlsx`;
+    // Create a blob and download
+    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    saveAs(blob, `${fileName}.xlsx`);
     
-    // Write file to device
-    await FileSystem.writeFile(filePath, wbout, 'ascii');
-    
-    return filePath;
   } catch (error) {
     console.error('Error exporting to Excel:', error);
     throw error;
@@ -45,16 +40,16 @@ export const exportToExcel = async (
 export const preparePatientDataForExport = (patients: IPatient[]): any[] => {
   return patients.map(patient => ({
     'Patient ID': patient.id,
-    'Name': `${patient.firstName} ${patient.lastName}`,
+    'Name': patient.name,
     'Gender': patient.gender,
     'Age': patient.age,
-    'Phone': patient.phone,
+    'Contact': patient.contact,
     'Email': patient.email,
     'Address': patient.address,
     'Medical History': patient.medicalHistory,
     'Allergies': patient.allergies,
     'Medications': patient.medications,
-    'Last Visit': patient.lastVisitDate ? new Date(patient.lastVisitDate).toLocaleDateString() : 'N/A',
+    'Last Visit': patient.lastVisit ? new Date(patient.lastVisit).toLocaleDateString() : 'N/A',
     'Created At': new Date(patient.createdAt).toLocaleDateString(),
   }));
 };
@@ -65,9 +60,10 @@ export const prepareAppointmentDataForExport = (appointments: IAppointment[], pa
     const patient = patients.find(p => p.id === appointment.patientId);
     return {
       'Appointment ID': appointment.id,
-      'Patient Name': patient ? `${patient.firstName} ${patient.lastName}` : 'Unknown',
+      'Patient Name': patient ? patient.name : 'Unknown',
       'Date': new Date(appointment.date).toLocaleDateString(),
-      'Time': new Date(appointment.date).toLocaleTimeString(),
+      'Start Time': appointment.startTime,
+      'End Time': appointment.endTime,
       'Duration (minutes)': appointment.duration,
       'Status': appointment.status,
       'Notes': appointment.notes,
@@ -81,7 +77,7 @@ export const prepareServiceDataForExport = (services: IService[]): any[] => {
   return services.map(service => ({
     'Service ID': service.id,
     'Name': service.name,
-    'Category': service.category,
+    'Category ID': service.categoryId,
     'Price': service.price,
     'Duration (minutes)': service.duration,
     'Description': service.description,
@@ -95,11 +91,11 @@ export const prepareQuoteDataForExport = (quotes: IQuote[], patients: IPatient[]
     const patient = patients.find(p => p.id === quote.patientId);
     return {
       'Quote ID': quote.id,
-      'Patient Name': patient ? `${patient.firstName} ${patient.lastName}` : 'Unknown',
+      'Patient Name': patient ? patient.name : 'Unknown',
       'Date': new Date(quote.date).toLocaleDateString(),
       'Subtotal': quote.subtotal,
-      'Discount': quote.discount,
-      'Tax': quote.tax,
+      'Discount Amount': quote.discountAmount,
+      'Tax Amount': quote.taxAmount,
       'Total': quote.total,
       'Status': quote.status,
       'Notes': quote.notes,
@@ -114,15 +110,15 @@ export const prepareBillDataForExport = (bills: IBill[], patients: IPatient[]): 
     const patient = patients.find(p => p.id === bill.patientId);
     return {
       'Bill ID': bill.id,
-      'Patient Name': patient ? `${patient.firstName} ${patient.lastName}` : 'Unknown',
+      'Patient Name': patient ? patient.name : 'Unknown',
       'Date': new Date(bill.date).toLocaleDateString(),
       'Due Date': new Date(bill.dueDate).toLocaleDateString(),
       'Subtotal': bill.subtotal,
-      'Discount': bill.discount,
-      'Tax': bill.tax,
+      'Discount Amount': bill.discountAmount,
+      'Tax Amount': bill.taxAmount,
       'Total': bill.total,
       'Amount Paid': bill.amountPaid,
-      'Balance': bill.total - bill.amountPaid,
+      'Balance': bill.balance,
       'Status': bill.status,
       'Notes': bill.notes,
       'Created At': new Date(bill.createdAt).toLocaleDateString(),
@@ -131,49 +127,41 @@ export const prepareBillDataForExport = (bills: IBill[], patients: IPatient[]): 
 };
 
 // Main export utility function
-export const exportData = async (
+export const exportData = (
   type: 'patients' | 'appointments' | 'services' | 'quotes' | 'bills' | 'all',
   patients: IPatient[],
   appointments: IAppointment[],
   services: IService[],
   quotes: IQuote[],
   bills: IBill[]
-): Promise<string[]> => {
-  const filePaths: string[] = [];
+): void => {
   const timestamp = new Date().toISOString().split('T')[0];
   
   try {
     if (type === 'patients' || type === 'all') {
       const patientData = preparePatientDataForExport(patients);
-      const patientFilePath = await exportToExcel(patientData, `patients_export_${timestamp}`, 'Patients');
-      filePaths.push(patientFilePath);
+      exportToExcel(patientData, `patients_export_${timestamp}`, 'Patients');
     }
     
     if (type === 'appointments' || type === 'all') {
       const appointmentData = prepareAppointmentDataForExport(appointments, patients);
-      const appointmentFilePath = await exportToExcel(appointmentData, `appointments_export_${timestamp}`, 'Appointments');
-      filePaths.push(appointmentFilePath);
+      exportToExcel(appointmentData, `appointments_export_${timestamp}`, 'Appointments');
     }
     
     if (type === 'services' || type === 'all') {
       const serviceData = prepareServiceDataForExport(services);
-      const serviceFilePath = await exportToExcel(serviceData, `services_export_${timestamp}`, 'Services');
-      filePaths.push(serviceFilePath);
+      exportToExcel(serviceData, `services_export_${timestamp}`, 'Services');
     }
     
     if (type === 'quotes' || type === 'all') {
       const quoteData = prepareQuoteDataForExport(quotes, patients);
-      const quoteFilePath = await exportToExcel(quoteData, `quotes_export_${timestamp}`, 'Quotes');
-      filePaths.push(quoteFilePath);
+      exportToExcel(quoteData, `quotes_export_${timestamp}`, 'Quotes');
     }
     
     if (type === 'bills' || type === 'all') {
       const billData = prepareBillDataForExport(bills, patients);
-      const billFilePath = await exportToExcel(billData, `bills_export_${timestamp}`, 'Bills');
-      filePaths.push(billFilePath);
+      exportToExcel(billData, `bills_export_${timestamp}`, 'Bills');
     }
-    
-    return filePaths;
   } catch (error) {
     console.error('Error in exportData:', error);
     throw error;
