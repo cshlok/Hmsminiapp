@@ -1,6 +1,18 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { Text, Card, Switch, TextInput, Button, Divider, useTheme, SegmentedButtons } from 'react-native-paper';
+import { 
+  Typography, 
+  Card, 
+  Switch, 
+  TextField, 
+  Button, 
+  Divider, 
+  useTheme, 
+  ToggleButtonGroup, 
+  ToggleButton,
+  Box,
+  Container
+} from '@mui/material';
+import styled from '@emotion/styled';
 import { ISettings } from '../../models/SettingsModel';
 
 interface SettingsScreenProps {
@@ -33,365 +45,361 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const theme = useTheme();
 
   return (
-    <ScrollView style={styles.container}>
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>Clinic Information</Text>
-          <Divider style={styles.divider} />
+    <ScrollContainer>
+      <StyledCard>
+        <CardContent>
+          <SectionTitle variant="h6">Clinic Information</SectionTitle>
+          <Divider sx={{ my: 2 }} />
           
-          <TextInput
+          <StyledTextField
             label="Clinic Name"
             value={settings.clinicName}
-            onChangeText={(text) => onUpdateSettings({ clinicName: text })}
-            style={styles.input}
-            mode="outlined"
+            onChange={(e) => onUpdateSettings({ clinicName: e.target.value })}
+            variant="outlined"
+            fullWidth
           />
           
-          <TextInput
+          <StyledTextField
             label="Address"
             value={settings.clinicAddress || ''}
-            onChangeText={(text) => onUpdateSettings({ clinicAddress: text })}
-            style={styles.input}
-            mode="outlined"
+            onChange={(e) => onUpdateSettings({ clinicAddress: e.target.value })}
+            variant="outlined"
+            fullWidth
             multiline
+            rows={3}
           />
           
-          <TextInput
+          <StyledTextField
             label="Phone"
             value={settings.clinicPhone || ''}
-            onChangeText={(text) => onUpdateSettings({ clinicPhone: text })}
-            style={styles.input}
-            mode="outlined"
-            keyboardType="phone-pad"
+            onChange={(e) => onUpdateSettings({ clinicPhone: e.target.value })}
+            variant="outlined"
+            fullWidth
+            type="tel"
           />
           
-          <TextInput
+          <StyledTextField
             label="Email"
             value={settings.clinicEmail || ''}
-            onChangeText={(text) => onUpdateSettings({ clinicEmail: text })}
-            style={styles.input}
-            mode="outlined"
-            keyboardType="email-address"
+            onChange={(e) => onUpdateSettings({ clinicEmail: e.target.value })}
+            variant="outlined"
+            fullWidth
+            type="email"
           />
           
-          <TextInput
+          <StyledTextField
             label="Website"
             value={settings.clinicWebsite || ''}
-            onChangeText={(text) => onUpdateSettings({ clinicWebsite: text })}
-            style={styles.input}
-            mode="outlined"
-            keyboardType="url"
+            onChange={(e) => onUpdateSettings({ clinicWebsite: e.target.value })}
+            variant="outlined"
+            fullWidth
+            type="url"
           />
-        </Card.Content>
-      </Card>
+        </CardContent>
+      </StyledCard>
       
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>Default Settings</Text>
-          <Divider style={styles.divider} />
+      <StyledCard>
+        <CardContent>
+          <SectionTitle variant="h6">Default Settings</SectionTitle>
+          <Divider sx={{ my: 2 }} />
           
-          <TextInput
+          <StyledTextField
             label="Default Tax Percentage (%)"
             value={String(settings.taxPercentage)}
-            onChangeText={(text) => {
-              const value = parseFloat(text) || 0;
+            onChange={(e) => {
+              const value = parseFloat(e.target.value) || 0;
               onUpdateSettings({ taxPercentage: value });
             }}
-            style={styles.input}
-            mode="outlined"
-            keyboardType="numeric"
-            right={<TextInput.Affix text="%" />}
+            variant="outlined"
+            fullWidth
+            type="number"
+            InputProps={{
+              endAdornment: <Typography>%</Typography>
+            }}
           />
           
-          <Text style={styles.label}>Default Discount Type</Text>
-          <SegmentedButtons
+          <Label>Default Discount Type</Label>
+          <ToggleButtonGroup
             value={settings.defaultDiscountType}
-            onValueChange={(value) => onUpdateSettings({ defaultDiscountType: value as 'percentage' | 'fixed' | 'none' })}
-            buttons={[
-              { value: 'none', label: 'None' },
-              { value: 'percentage', label: 'Percentage' },
-              { value: 'fixed', label: 'Fixed' },
-            ]}
-            style={styles.segmentedButtons}
-          />
+            exclusive
+            onChange={(_, value) => onUpdateSettings({ defaultDiscountType: value as 'percentage' | 'fixed' | 'none' })}
+            sx={{ mb: 2, width: '100%' }}
+          >
+            <ToggleButton value="none" sx={{ flex: 1 }}>None</ToggleButton>
+            <ToggleButton value="percentage" sx={{ flex: 1 }}>Percentage</ToggleButton>
+            <ToggleButton value="fixed" sx={{ flex: 1 }}>Fixed</ToggleButton>
+          </ToggleButtonGroup>
           
           {settings.defaultDiscountType !== 'none' && (
-            <TextInput
+            <StyledTextField
               label={settings.defaultDiscountType === 'percentage' ? 'Default Discount (%)' : 'Default Discount Amount'}
               value={String(settings.defaultDiscountValue)}
-              onChangeText={(text) => {
-                const value = parseFloat(text) || 0;
+              onChange={(e) => {
+                const value = parseFloat(e.target.value) || 0;
                 onUpdateSettings({ defaultDiscountValue: value });
               }}
-              style={styles.input}
-              mode="outlined"
-              keyboardType="numeric"
-              right={settings.defaultDiscountType === 'percentage' ? <TextInput.Affix text="%" /> : <TextInput.Affix text="$" />}
+              variant="outlined"
+              fullWidth
+              type="number"
+              InputProps={{
+                endAdornment: <Typography>{settings.defaultDiscountType === 'percentage' ? '%' : '$'}</Typography>
+              }}
             />
           )}
           
-          <TextInput
+          <StyledTextField
             label="Default Due Days"
             value={String(settings.defaultDueDays)}
-            onChangeText={(text) => {
-              const value = parseInt(text) || 30;
+            onChange={(e) => {
+              const value = parseInt(e.target.value) || 30;
               onUpdateSettings({ defaultDueDays: value });
             }}
-            style={styles.input}
-            mode="outlined"
-            keyboardType="numeric"
-            right={<TextInput.Affix text="days" />}
+            variant="outlined"
+            fullWidth
+            type="number"
+            InputProps={{
+              endAdornment: <Typography>days</Typography>
+            }}
           />
           
-          <TextInput
+          <StyledTextField
             label="Currency"
             value={settings.currency}
-            onChangeText={(text) => onUpdateSettings({ currency: text })}
-            style={styles.input}
-            mode="outlined"
+            onChange={(e) => onUpdateSettings({ currency: e.target.value })}
+            variant="outlined"
+            fullWidth
           />
-        </Card.Content>
-      </Card>
+        </CardContent>
+      </StyledCard>
       
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>Appearance</Text>
-          <Divider style={styles.divider} />
+      <StyledCard>
+        <CardContent>
+          <SectionTitle variant="h6">Appearance</SectionTitle>
+          <Divider sx={{ my: 2 }} />
           
-          <Text style={styles.label}>Theme</Text>
-          <SegmentedButtons
+          <Label>Theme</Label>
+          <ToggleButtonGroup
             value={settings.theme}
-            onValueChange={(value) => onUpdateSettings({ theme: value as 'light' | 'dark' | 'system' })}
-            buttons={[
-              { value: 'light', label: 'Light' },
-              { value: 'dark', label: 'Dark' },
-              { value: 'system', label: 'System' },
-            ]}
-            style={styles.segmentedButtons}
-          />
+            exclusive
+            onChange={(_, value) => onUpdateSettings({ theme: value as 'light' | 'dark' | 'system' })}
+            sx={{ mb: 2, width: '100%' }}
+          >
+            <ToggleButton value="light" sx={{ flex: 1 }}>Light</ToggleButton>
+            <ToggleButton value="dark" sx={{ flex: 1 }}>Dark</ToggleButton>
+            <ToggleButton value="system" sx={{ flex: 1 }}>System</ToggleButton>
+          </ToggleButtonGroup>
           
-          <Text style={styles.label}>Date Format</Text>
-          <SegmentedButtons
+          <Label>Date Format</Label>
+          <ToggleButtonGroup
             value={settings.dateFormat}
-            onValueChange={(value) => onUpdateSettings({ dateFormat: value })}
-            buttons={[
-              { value: 'MM/DD/YYYY', label: 'MM/DD/YYYY' },
-              { value: 'DD/MM/YYYY', label: 'DD/MM/YYYY' },
-              { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' },
-            ]}
-            style={styles.segmentedButtons}
-          />
+            exclusive
+            onChange={(_, value) => onUpdateSettings({ dateFormat: value })}
+            sx={{ mb: 2, width: '100%' }}
+          >
+            <ToggleButton value="MM/DD/YYYY" sx={{ flex: 1 }}>MM/DD/YYYY</ToggleButton>
+            <ToggleButton value="DD/MM/YYYY" sx={{ flex: 1 }}>DD/MM/YYYY</ToggleButton>
+            <ToggleButton value="YYYY-MM-DD" sx={{ flex: 1 }}>YYYY-MM-DD</ToggleButton>
+          </ToggleButtonGroup>
           
-          <Text style={styles.label}>Time Format</Text>
-          <SegmentedButtons
+          <Label>Time Format</Label>
+          <ToggleButtonGroup
             value={settings.timeFormat}
-            onValueChange={(value) => onUpdateSettings({ timeFormat: value })}
-            buttons={[
-              { value: '12h', label: '12-hour' },
-              { value: '24h', label: '24-hour' },
-            ]}
-            style={styles.segmentedButtons}
-          />
+            exclusive
+            onChange={(_, value) => onUpdateSettings({ timeFormat: value })}
+            sx={{ mb: 2, width: '100%' }}
+          >
+            <ToggleButton value="12h" sx={{ flex: 1 }}>12-hour</ToggleButton>
+            <ToggleButton value="24h" sx={{ flex: 1 }}>24-hour</ToggleButton>
+          </ToggleButtonGroup>
           
-          <Text style={styles.label}>Language</Text>
-          <SegmentedButtons
+          <Label>Language</Label>
+          <ToggleButtonGroup
             value={settings.language}
-            onValueChange={(value) => onUpdateSettings({ language: value })}
-            buttons={[
-              { value: 'en', label: 'English' },
-              { value: 'es', label: 'Spanish' },
-              { value: 'fr', label: 'French' },
-            ]}
-            style={styles.segmentedButtons}
-          />
-        </Card.Content>
-      </Card>
+            exclusive
+            onChange={(_, value) => onUpdateSettings({ language: value })}
+            sx={{ mb: 2, width: '100%' }}
+          >
+            <ToggleButton value="en" sx={{ flex: 1 }}>English</ToggleButton>
+            <ToggleButton value="es" sx={{ flex: 1 }}>Spanish</ToggleButton>
+            <ToggleButton value="fr" sx={{ flex: 1 }}>French</ToggleButton>
+          </ToggleButtonGroup>
+        </CardContent>
+      </StyledCard>
       
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>Security</Text>
-          <Divider style={styles.divider} />
+      <StyledCard>
+        <CardContent>
+          <SectionTitle variant="h6">Security</SectionTitle>
+          <Divider sx={{ my: 2 }} />
           
-          <View style={styles.settingRow}>
-            <Text>PIN Authentication</Text>
+          <SettingRow>
+            <Typography>PIN Authentication</Typography>
             <Switch
-              value={settings.pinEnabled}
-              onValueChange={onTogglePin}
+              checked={settings.pinEnabled}
+              onChange={(_, checked) => onTogglePin(checked)}
             />
-          </View>
+          </SettingRow>
           
           {settings.pinEnabled && (
-            <Button
-              mode="outlined"
-              onPress={onUpdatePin}
-              style={styles.button}
+            <StyledButton
+              variant="outlined"
+              onClick={onUpdatePin}
             >
               Change PIN
-            </Button>
+            </StyledButton>
           )}
           
-          <View style={styles.settingRow}>
-            <Text>Biometric Authentication</Text>
+          <SettingRow>
+            <Typography>Biometric Authentication</Typography>
             <Switch
-              value={settings.biometricEnabled}
-              onValueChange={onToggleBiometric}
+              checked={settings.biometricEnabled}
+              onChange={(_, checked) => onToggleBiometric(checked)}
             />
-          </View>
+          </SettingRow>
           
-          <Button
-            mode="outlined"
-            onPress={onViewAuthLogs}
-            style={styles.button}
+          <StyledButton
+            variant="outlined"
+            onClick={onViewAuthLogs}
           >
             View Authentication Logs
-          </Button>
+          </StyledButton>
           
-          <Button
-            mode="outlined"
-            onPress={onClearAuthLogs}
-            style={styles.button}
+          <StyledButton
+            variant="outlined"
+            onClick={onClearAuthLogs}
           >
             Clear Authentication Logs
-          </Button>
-        </Card.Content>
-      </Card>
+          </StyledButton>
+        </CardContent>
+      </StyledCard>
       
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>Data Export</Text>
-          <Divider style={styles.divider} />
+      <StyledCard>
+        <CardContent>
+          <SectionTitle variant="h6">Data Export</SectionTitle>
+          <Divider sx={{ my: 2 }} />
           
-          <Text style={styles.description}>
+          <Description>
             Export your data to Excel format for backup or analysis. Choose what data to export:
-          </Text>
+          </Description>
           
-          <Button
-            mode="outlined"
-            onPress={() => onExportData('patients')}
-            style={styles.button}
-            loading={loading}
+          <StyledButton
+            variant="outlined"
+            onClick={() => onExportData('patients')}
             disabled={loading}
           >
             Export Patients
-          </Button>
+          </StyledButton>
           
-          <Button
-            mode="outlined"
-            onPress={() => onExportData('appointments')}
-            style={styles.button}
-            loading={loading}
+          <StyledButton
+            variant="outlined"
+            onClick={() => onExportData('appointments')}
             disabled={loading}
           >
             Export Appointments
-          </Button>
+          </StyledButton>
           
-          <Button
-            mode="outlined"
-            onPress={() => onExportData('services')}
-            style={styles.button}
-            loading={loading}
+          <StyledButton
+            variant="outlined"
+            onClick={() => onExportData('services')}
             disabled={loading}
           >
             Export Services
-          </Button>
+          </StyledButton>
           
-          <Button
-            mode="outlined"
-            onPress={() => onExportData('quotes')}
-            style={styles.button}
-            loading={loading}
+          <StyledButton
+            variant="outlined"
+            onClick={() => onExportData('quotes')}
             disabled={loading}
           >
             Export Quotes
-          </Button>
+          </StyledButton>
           
-          <Button
-            mode="outlined"
-            onPress={() => onExportData('bills')}
-            style={styles.button}
-            loading={loading}
+          <StyledButton
+            variant="outlined"
+            onClick={() => onExportData('bills')}
             disabled={loading}
           >
             Export Bills
-          </Button>
+          </StyledButton>
           
-          <Button
-            mode="contained"
-            onPress={() => onExportData('all')}
-            style={styles.button}
-            loading={loading}
+          <StyledButton
+            variant="contained"
+            onClick={() => onExportData('all')}
             disabled={loading}
           >
             Export All Data
-          </Button>
+          </StyledButton>
           
-          <Button
-            mode="text"
-            onPress={onViewExportJobs}
-            style={styles.button}
+          <StyledButton
+            variant="text"
+            onClick={onViewExportJobs}
           >
             View Export History
-          </Button>
-        </Card.Content>
-      </Card>
+          </StyledButton>
+        </CardContent>
+      </StyledCard>
       
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>About</Text>
-          <Divider style={styles.divider} />
+      <StyledCard>
+        <CardContent>
+          <SectionTitle variant="h6">About</SectionTitle>
+          <Divider sx={{ my: 2 }} />
           
-          <Button
-            mode="outlined"
-            onPress={onAbout}
-            style={styles.button}
+          <StyledButton
+            variant="outlined"
+            onClick={onAbout}
           >
             About This App
-          </Button>
-        </Card.Content>
-      </Card>
-    </ScrollView>
+          </StyledButton>
+        </CardContent>
+      </StyledCard>
+    </ScrollContainer>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  card: {
-    margin: 16,
-    marginBottom: 8,
-  },
-  sectionTitle: {
-    fontWeight: 'bold',
-  },
-  divider: {
-    marginVertical: 16,
-  },
-  input: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: '#666',
-  },
-  segmentedButtons: {
-    marginBottom: 16,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  button: {
-    marginBottom: 12,
-  },
-  description: {
-    marginBottom: 16,
-    color: '#666',
-  },
-});
+// Styled components
+const ScrollContainer = styled(Container)`
+  flex: 1;
+  background-color: #f5f5f5;
+  padding: 16px;
+  max-width: 800px;
+`;
+
+const StyledCard = styled(Card)`
+  margin-bottom: 16px;
+`;
+
+const CardContent = styled.div`
+  padding: 16px;
+`;
+
+const SectionTitle = styled(Typography)`
+  font-weight: bold;
+`;
+
+const StyledTextField = styled(TextField)`
+  margin-bottom: 16px;
+`;
+
+const Label = styled(Typography)`
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #666;
+`;
+
+const SettingRow = styled(Box)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+const StyledButton = styled(Button)`
+  margin-bottom: 12px;
+  width: 100%;
+`;
+
+const Description = styled(Typography)`
+  margin-bottom: 16px;
+  color: #666;
+`;
 
 export default SettingsScreen;
