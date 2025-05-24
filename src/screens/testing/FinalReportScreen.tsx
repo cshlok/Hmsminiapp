@@ -1,7 +1,7 @@
 import React from 'react';
 // Replace React Native imports with web-compatible alternatives
-import { Card, Button, List, Divider, useTheme } from '@mui/material';
-import { styled } from '@emotion/styled';
+import { Card, Button, Divider, useTheme } from '@mui/material';
+import styled from '@emotion/styled';
 
 const FinalReportScreen = () => {
   const theme = useTheme();
