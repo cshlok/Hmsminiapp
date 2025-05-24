@@ -1,4 +1,4 @@
-# Quote Generator Module - Data Model and Schema
+// Quote Generator Module - Data Model and Schema
 
 import { ObjectSchema } from 'realm';
 

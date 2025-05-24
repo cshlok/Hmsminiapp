@@ -1,4 +1,4 @@
-# Billing System Module - Data Model and Schema
+// Billing System Module - Data Model and Schema
 
 import { ObjectSchema } from 'realm';
 

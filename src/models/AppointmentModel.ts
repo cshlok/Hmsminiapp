@@ -1,4 +1,4 @@
-# Appointment Scheduling Module - Data Model and Schema
+// Appointment Scheduling Module - Data Model and Schema
 
 import { ObjectSchema } from 'realm';
 
