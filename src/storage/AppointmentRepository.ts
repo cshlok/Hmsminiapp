@@ -20,7 +20,7 @@ export class AppointmentRepository {
   // Create a new appointment
   createAppointment(appointment: IAppointment): IAppointment {
     try {
-      let newAppointment: IAppointment;
+      let newAppointment!: IAppointment; // Using definite assignment assertion
       
       this.realm.write(() => {
         newAppointment = this.realm.create('Appointment', {
