@@ -61,7 +61,7 @@ export class SettingsRepository {
         });
       }
       
-      return settings;
+      return settings as ISettings;
     } catch (error) {
       console.error('Failed to initialize settings:', error);
       throw error;
@@ -78,7 +78,11 @@ export class SettingsRepository {
           // Update settings properties
           Object.keys(updatedSettings).forEach(key => {
             if (key !== 'id' && key !== 'createdAt') {
-              settings[key] = updatedSettings[key];
+              // Type-safe property access
+              const typedKey = key as keyof ISettings;
+              if (updatedSettings[typedKey] !== undefined) {
+                (settings as any)[key] = updatedSettings[typedKey];
+              }
             }
           });
           
@@ -98,7 +102,7 @@ export class SettingsRepository {
   // Create export job
   createExportJob(type: 'patients' | 'appointments' | 'services' | 'quotes' | 'bills' | 'all', startDate?: Date, endDate?: Date): IExportJob {
     try {
-      let exportJob;
+      let exportJob: IExportJob;
       
       this.realm.write(() => {
         exportJob = this.realm.create('ExportJob', {
@@ -111,7 +115,7 @@ export class SettingsRepository {
           error: null,
           createdAt: new Date(),
           completedAt: null,
-        });
+        }) as unknown as IExportJob;
       });
       
       return exportJob;
@@ -132,9 +136,9 @@ export class SettingsRepository {
   }
 
   // Get export job by ID
-  getExportJobById(id: string) {
+  getExportJobById(id: string): IExportJob | null {
     try {
-      return this.realm.objectForPrimaryKey<IExportJob>('ExportJob', id);
+      return this.realm.objectForPrimaryKey<IExportJob>('ExportJob', id) || null;
     } catch (error) {
       console.error('Failed to get export job by ID:', error);
       throw error;
@@ -196,7 +200,7 @@ export class SettingsRepository {
   // Log authentication attempt
   logAuthAttempt(action: 'login' | 'logout' | 'failed_login', method: 'pin' | 'biometric', success: boolean, errorMessage?: string): IAuthLog {
     try {
-      let authLog;
+      let authLog: IAuthLog;
       
       this.realm.write(() => {
         authLog = this.realm.create('AuthLog', {
@@ -206,7 +210,7 @@ export class SettingsRepository {
           timestamp: new Date(),
           success,
           errorMessage: errorMessage || null,
-        });
+        }) as unknown as IAuthLog;
       });
       
       return authLog;
