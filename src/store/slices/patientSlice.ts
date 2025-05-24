@@ -1,38 +1,55 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IPatient } from '../models/PatientModel';
+import { savePatients, loadPatients } from '../../utils/storage';
+
+export interface IPatient {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  dateOfBirth: string;
+  gender: 'male' | 'female' | 'other';
+  medicalHistory?: string;
+  allergies?: string;
+  medications?: string;
+  emergencyContact?: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface PatientState {
   patients: IPatient[];
   selectedPatient: IPatient | null;
   loading: boolean;
   error: string | null;
-  searchQuery: string;
-  sortBy: 'name' | 'lastVisit';
-  sortOrder: 'asc' | 'desc';
+  filters: {
+    searchQuery: string;
+    gender: string | null;
+  };
 }
 
+// Initialize state with data from local storage
 const initialState: PatientState = {
-  patients: [],
+  patients: loadPatients(),
   selectedPatient: null,
   loading: false,
   error: null,
-  searchQuery: '',
-  sortBy: 'name',
-  sortOrder: 'asc',
+  filters: {
+    searchQuery: '',
+    gender: null,
+  },
 };
 
 const patientSlice = createSlice({
   name: 'patient',
   initialState,
   reducers: {
-    setPatients: (state, action: PayloadAction<IPatient[]>) => {
-      state.patients = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    setSelectedPatient: (state, action: PayloadAction<IPatient | null>) => {
-      state.selectedPatient = action.payload;
-    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
@@ -40,47 +57,55 @@ const patientSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    setPatients: (state, action: PayloadAction<IPatient[]>) => {
+      state.patients = action.payload;
+      savePatients(action.payload); // Persist to storage
+    },
     addPatient: (state, action: PayloadAction<IPatient>) => {
       state.patients.push(action.payload);
+      savePatients(state.patients); // Persist to storage
     },
     updatePatient: (state, action: PayloadAction<IPatient>) => {
       const index = state.patients.findIndex(p => p.id === action.payload.id);
       if (index !== -1) {
         state.patients[index] = action.payload;
-      }
-      if (state.selectedPatient?.id === action.payload.id) {
-        state.selectedPatient = action.payload;
+        savePatients(state.patients); // Persist to storage
       }
     },
     deletePatient: (state, action: PayloadAction<string>) => {
       state.patients = state.patients.filter(p => p.id !== action.payload);
-      if (state.selectedPatient?.id === action.payload) {
-        state.selectedPatient = null;
-      }
+      savePatients(state.patients); // Persist to storage
     },
+    setSelectedPatient: (state, action: PayloadAction<IPatient | null>) => {
+      state.selectedPatient = action.payload;
+    },
+    // Filter actions
     setSearchQuery: (state, action: PayloadAction<string>) => {
-      state.searchQuery = action.payload;
+      state.filters.searchQuery = action.payload;
     },
-    setSortBy: (state, action: PayloadAction<'name' | 'lastVisit'>) => {
-      state.sortBy = action.payload;
+    setFilterGender: (state, action: PayloadAction<string | null>) => {
+      state.filters.gender = action.payload;
     },
-    setSortOrder: (state, action: PayloadAction<'asc' | 'desc'>) => {
-      state.sortOrder = action.payload;
+    clearFilters: (state) => {
+      state.filters = {
+        searchQuery: '',
+        gender: null,
+      };
     },
   },
 });
 
 export const {
-  setPatients,
-  setSelectedPatient,
   setLoading,
   setError,
+  setPatients,
   addPatient,
   updatePatient,
   deletePatient,
+  setSelectedPatient,
   setSearchQuery,
-  setSortBy,
-  setSortOrder,
+  setFilterGender,
+  clearFilters,
 } = patientSlice.actions;
 
 export default patientSlice.reducer;

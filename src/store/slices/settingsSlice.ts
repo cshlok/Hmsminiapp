@@ -1,43 +1,110 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ISettings, IExportJob, IAuthLog } from '../models/SettingsModel';
+import { 
+  saveClinicInfo, 
+  saveUserPreferences, 
+  saveTaxSettings, 
+  saveBackupSettings,
+  loadClinicInfo,
+  loadUserPreferences,
+  loadTaxSettings,
+  loadBackupSettings
+} from '../../utils/storage';
 
-interface SettingsState {
-  settings: ISettings | null;
-  exportJobs: IExportJob[];
-  authLogs: IAuthLog[];
-  loading: boolean;
-  error: string | null;
-  isAuthenticated: boolean;
+export interface IClinicInfo {
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  website?: string;
+  logo?: string;
+  taxId?: string;
 }
 
-const initialState: SettingsState = {
-  settings: null,
-  exportJobs: [],
-  authLogs: [],
+export interface IUserPreferences {
+  theme: 'light' | 'dark' | 'system';
+  language: 'en' | 'es' | 'fr';
+  dateFormat: 'MM/DD/YYYY' | 'DD/MM/YYYY' | 'YYYY-MM-DD';
+  timeFormat: '12h' | '24h';
+  notifications: {
+    email: boolean;
+    browser: boolean;
+    appointmentReminders: boolean;
+    billReminders: boolean;
+  };
+}
+
+export interface ITaxSettings {
+  enabled: boolean;
+  rate: number;
+  label: string;
+  applyToAllServices: boolean;
+}
+
+export interface IBackupSettings {
+  autoBackup: boolean;
+  frequency: 'daily' | 'weekly' | 'monthly';
+  lastBackup: string | null;
+}
+
+export interface ISettingsState {
+  clinicInfo: IClinicInfo;
+  userPreferences: IUserPreferences;
+  taxSettings: ITaxSettings;
+  backupSettings: IBackupSettings;
+  loading: boolean;
+  error: string | null;
+}
+
+const defaultClinicInfo: IClinicInfo = {
+  name: 'My Clinic',
+  address: '123 Main St, City, State, 12345',
+  phone: '(123) 456-7890',
+  email: 'contact@myclinic.com',
+  website: '',
+  logo: '',
+  taxId: '',
+};
+
+const defaultUserPreferences: IUserPreferences = {
+  theme: 'light',
+  language: 'en',
+  dateFormat: 'MM/DD/YYYY',
+  timeFormat: '12h',
+  notifications: {
+    email: true,
+    browser: true,
+    appointmentReminders: true,
+    billReminders: true,
+  },
+};
+
+const defaultTaxSettings: ITaxSettings = {
+  enabled: false,
+  rate: 0,
+  label: 'Tax',
+  applyToAllServices: false,
+};
+
+const defaultBackupSettings: IBackupSettings = {
+  autoBackup: false,
+  frequency: 'weekly',
+  lastBackup: null,
+};
+
+// Initialize state with data from local storage
+const initialState: ISettingsState = {
+  clinicInfo: loadClinicInfo(defaultClinicInfo),
+  userPreferences: loadUserPreferences(defaultUserPreferences),
+  taxSettings: loadTaxSettings(defaultTaxSettings),
+  backupSettings: loadBackupSettings(defaultBackupSettings),
   loading: false,
   error: null,
-  isAuthenticated: false,
 };
 
 const settingsSlice = createSlice({
   name: 'settings',
   initialState,
   reducers: {
-    setSettings: (state, action: PayloadAction<ISettings>) => {
-      state.settings = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    setExportJobs: (state, action: PayloadAction<IExportJob[]>) => {
-      state.exportJobs = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    setAuthLogs: (state, action: PayloadAction<IAuthLog[]>) => {
-      state.authLogs = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
@@ -45,55 +112,73 @@ const settingsSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
-    updateSettings: (state, action: PayloadAction<Partial<ISettings>>) => {
-      if (state.settings) {
-        state.settings = {
-          ...state.settings,
-          ...action.payload,
-          updatedAt: new Date(),
+    updateClinicInfo: (state, action: PayloadAction<Partial<IClinicInfo>>) => {
+      state.clinicInfo = {
+        ...state.clinicInfo,
+        ...action.payload,
+      };
+      saveClinicInfo(state.clinicInfo); // Persist to storage
+    },
+    updateUserPreferences: (state, action: PayloadAction<Partial<IUserPreferences>>) => {
+      state.userPreferences = {
+        ...state.userPreferences,
+        ...action.payload,
+      };
+      
+      // Handle nested notifications object
+      if (action.payload.notifications) {
+        state.userPreferences.notifications = {
+          ...state.userPreferences.notifications,
+          ...action.payload.notifications,
         };
       }
+      
+      saveUserPreferences(state.userPreferences); // Persist to storage
     },
-    addExportJob: (state, action: PayloadAction<IExportJob>) => {
-      state.exportJobs.unshift(action.payload);
+    updateTaxSettings: (state, action: PayloadAction<Partial<ITaxSettings>>) => {
+      state.taxSettings = {
+        ...state.taxSettings,
+        ...action.payload,
+      };
+      saveTaxSettings(state.taxSettings); // Persist to storage
     },
-    updateExportJob: (state, action: PayloadAction<Partial<IExportJob> & { id: string }>) => {
-      const index = state.exportJobs.findIndex(job => job.id === action.payload.id);
-      if (index !== -1) {
-        state.exportJobs[index] = {
-          ...state.exportJobs[index],
-          ...action.payload,
-        };
-      }
+    updateBackupSettings: (state, action: PayloadAction<Partial<IBackupSettings>>) => {
+      state.backupSettings = {
+        ...state.backupSettings,
+        ...action.payload,
+      };
+      saveBackupSettings(state.backupSettings); // Persist to storage
     },
-    deleteExportJob: (state, action: PayloadAction<string>) => {
-      state.exportJobs = state.exportJobs.filter(job => job.id !== action.payload);
+    resetSettings: (state) => {
+      state.clinicInfo = defaultClinicInfo;
+      state.userPreferences = defaultUserPreferences;
+      state.taxSettings = defaultTaxSettings;
+      state.backupSettings = defaultBackupSettings;
+      
+      // Persist reset settings to storage
+      saveClinicInfo(defaultClinicInfo);
+      saveUserPreferences(defaultUserPreferences);
+      saveTaxSettings(defaultTaxSettings);
+      saveBackupSettings(defaultBackupSettings);
     },
-    addAuthLog: (state, action: PayloadAction<IAuthLog>) => {
-      state.authLogs.unshift(action.payload);
-    },
-    clearAuthLogs: (state) => {
-      state.authLogs = [];
-    },
-    setAuthenticated: (state, action: PayloadAction<boolean>) => {
-      state.isAuthenticated = action.payload;
+    performBackup: (state) => {
+      // In a real app, this would trigger an API call
+      const now = new Date().toISOString();
+      state.backupSettings.lastBackup = now;
+      saveBackupSettings(state.backupSettings); // Persist to storage
     },
   },
 });
 
 export const {
-  setSettings,
-  setExportJobs,
-  setAuthLogs,
   setLoading,
   setError,
-  updateSettings,
-  addExportJob,
-  updateExportJob,
-  deleteExportJob,
-  addAuthLog,
-  clearAuthLogs,
-  setAuthenticated,
+  updateClinicInfo,
+  updateUserPreferences,
+  updateTaxSettings,
+  updateBackupSettings,
+  resetSettings,
+  performBackup,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

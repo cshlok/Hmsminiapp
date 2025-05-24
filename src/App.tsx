@@ -1,39 +1,47 @@
 import React from 'react';
-import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { Provider as StoreProvider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { store, persistor } from './store';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import AppNavigator from './navigation/AppNavigator';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import MainLayout from './layouts/MainLayout';
+import Dashboard from './pages/Dashboard';
+import PatientRoutes from './pages/patients/PatientRoutes';
+import AppointmentRoutes from './pages/appointments/AppointmentRoutes';
+import ServiceRoutes from './pages/services/ServiceRoutes';
+import QuoteRoutes from './pages/quotes/QuoteRoutes';
+import BillingRoutes from './pages/billing/BillingRoutes';
+import SettingsRoutes from './pages/settings/SettingsRoutes';
+import NotFound from './pages/NotFound';
+import Login, { ProtectedRoute } from './auth/Login';
 
-// Define the app theme with the color scheme specified in the architecture document
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: '#4A6FE3', // Cool Blue
-    accent: '#2CCCE4', // Teal
-    secondary: '#8C42AB', // Purple
-    background: '#F8F9FA', // Light Gray
-    text: '#212529', // Dark Gray
-    success: '#28A745', // Green
-    warning: '#FFC107', // Amber
-    error: '#DC3545', // Red
-  },
-};
-
-// Main App component
-const App = () => {
+const App: React.FC = () => {
   return (
-    <StoreProvider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <PaperProvider theme={theme}>
-          <SafeAreaProvider>
-            <AppNavigator />
-          </SafeAreaProvider>
-        </PaperProvider>
-      </PersistGate>
-    </StoreProvider>
+    <Provider store={store}>
+      <Router>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          
+          {/* Protected routes */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<Dashboard />} />
+            <Route path="patients/*" element={<PatientRoutes />} />
+            <Route path="appointments/*" element={<AppointmentRoutes />} />
+            <Route path="services/*" element={<ServiceRoutes />} />
+            <Route path="quotes/*" element={<QuoteRoutes />} />
+            <Route path="billing/*" element={<BillingRoutes />} />
+            <Route path="settings/*" element={<SettingsRoutes />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+          
+          {/* Redirect to login if not authenticated */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Router>
+    </Provider>
   );
 };
 

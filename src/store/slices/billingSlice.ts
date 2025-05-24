@@ -1,31 +1,76 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IBill, IPayment } from '../models/BillingModel';
+import { saveBills, loadBills } from '../../utils/storage';
+
+export interface IBillItem {
+  id: string;
+  serviceId: string;
+  quoteItemId?: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  discount: number;
+  total: number;
+}
+
+export interface IBillPayment {
+  id: string;
+  amount: number;
+  method: 'cash' | 'credit_card' | 'debit_card' | 'bank_transfer' | 'check' | 'other';
+  reference?: string;
+  notes?: string;
+  date: string;
+}
+
+export interface IBill {
+  id: string;
+  patientId: string;
+  quoteId?: string;
+  billNumber: string;
+  status: 'draft' | 'pending' | 'paid' | 'partially_paid' | 'overdue' | 'cancelled';
+  items: IBillItem[];
+  payments: IBillPayment[];
+  subtotal: number;
+  discount: number;
+  tax: number;
+  total: number;
+  amountPaid: number;
+  amountDue: number;
+  dueDate: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface BillingState {
   bills: IBill[];
   selectedBill: IBill | null;
   loading: boolean;
   error: string | null;
-  filterStatus: string | null;
-  filterPatientId: string | null;
-  searchQuery: string;
-  dateRange: {
-    startDate: Date | null;
-    endDate: Date | null;
+  filters: {
+    searchQuery: string;
+    patientId: string | null;
+    status: string | null;
+    dateRange: {
+      startDate: string | null;
+      endDate: string | null;
+    };
   };
 }
 
+// Initialize state with data from local storage
 const initialState: BillingState = {
-  bills: [],
+  bills: loadBills(),
   selectedBill: null,
   loading: false,
   error: null,
-  filterStatus: null,
-  filterPatientId: null,
-  searchQuery: '',
-  dateRange: {
-    startDate: null,
-    endDate: null,
+  filters: {
+    searchQuery: '',
+    patientId: null,
+    status: null,
+    dateRange: {
+      startDate: null,
+      endDate: null,
+    },
   },
 };
 
@@ -33,14 +78,6 @@ const billingSlice = createSlice({
   name: 'billing',
   initialState,
   reducers: {
-    setBills: (state, action: PayloadAction<IBill[]>) => {
-      state.bills = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    setSelectedBill: (state, action: PayloadAction<IBill | null>) => {
-      state.selectedBill = action.payload;
-    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
@@ -48,116 +85,104 @@ const billingSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    setBills: (state, action: PayloadAction<IBill[]>) => {
+      state.bills = action.payload;
+      saveBills(action.payload); // Persist to storage
+    },
     addBill: (state, action: PayloadAction<IBill>) => {
       state.bills.push(action.payload);
+      saveBills(state.bills); // Persist to storage
     },
     updateBill: (state, action: PayloadAction<IBill>) => {
       const index = state.bills.findIndex(b => b.id === action.payload.id);
       if (index !== -1) {
         state.bills[index] = action.payload;
-      }
-      if (state.selectedBill?.id === action.payload.id) {
-        state.selectedBill = action.payload;
+        saveBills(state.bills); // Persist to storage
       }
     },
     deleteBill: (state, action: PayloadAction<string>) => {
       state.bills = state.bills.filter(b => b.id !== action.payload);
-      if (state.selectedBill?.id === action.payload) {
-        state.selectedBill = null;
-      }
+      saveBills(state.bills); // Persist to storage
     },
-    addPayment: (state, action: PayloadAction<{ billId: string, payment: IPayment }>) => {
+    addPayment: (state, action: PayloadAction<{ billId: string; payment: IBillPayment }>) => {
       const { billId, payment } = action.payload;
-      const bill = state.bills.find(b => b.id === billId);
+      const billIndex = state.bills.findIndex(b => b.id === billId);
       
-      if (bill) {
+      if (billIndex !== -1) {
+        const bill = state.bills[billIndex];
+        
         // Add payment to bill
         bill.payments.push(payment);
         
-        // Update bill amount paid and balance
-        bill.amountPaid += payment.amount;
-        bill.balance = bill.total - bill.amountPaid;
+        // Update amount paid and due
+        bill.amountPaid = bill.payments.reduce((sum, p) => sum + p.amount, 0);
+        bill.amountDue = bill.total - bill.amountPaid;
         
-        // Update bill status
-        if (bill.balance <= 0) {
+        // Update status based on payment
+        if (bill.amountDue <= 0) {
           bill.status = 'paid';
         } else if (bill.amountPaid > 0) {
           bill.status = 'partially_paid';
         }
         
-        bill.updatedAt = new Date();
+        // Update timestamp
+        bill.updatedAt = new Date().toISOString();
         
-        // Update selected bill if it's the same
-        if (state.selectedBill?.id === billId) {
-          state.selectedBill = { ...bill };
+        // Update bill in state
+        state.bills[billIndex] = bill;
+        
+        // Update selected bill if it's the same one
+        if (state.selectedBill && state.selectedBill.id === billId) {
+          state.selectedBill = bill;
         }
+        
+        // Persist to storage
+        saveBills(state.bills);
       }
     },
-    deletePayment: (state, action: PayloadAction<{ billId: string, paymentId: string, amount: number }>) => {
-      const { billId, paymentId, amount } = action.payload;
-      const bill = state.bills.find(b => b.id === billId);
-      
-      if (bill) {
-        // Remove payment from bill
-        bill.payments = bill.payments.filter(p => p.id !== paymentId);
-        
-        // Update bill amount paid and balance
-        bill.amountPaid -= amount;
-        bill.balance = bill.total - bill.amountPaid;
-        
-        // Update bill status
-        if (bill.amountPaid <= 0) {
-          bill.status = 'unpaid';
-        } else if (bill.amountPaid < bill.total) {
-          bill.status = 'partially_paid';
-        }
-        
-        bill.updatedAt = new Date();
-        
-        // Update selected bill if it's the same
-        if (state.selectedBill?.id === billId) {
-          state.selectedBill = { ...bill };
-        }
-      }
+    setSelectedBill: (state, action: PayloadAction<IBill | null>) => {
+      state.selectedBill = action.payload;
     },
-    setFilterStatus: (state, action: PayloadAction<string | null>) => {
-      state.filterStatus = action.payload;
+    // Filter actions
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.filters.searchQuery = action.payload;
     },
     setFilterPatientId: (state, action: PayloadAction<string | null>) => {
-      state.filterPatientId = action.payload;
+      state.filters.patientId = action.payload;
     },
-    setSearchQuery: (state, action: PayloadAction<string>) => {
-      state.searchQuery = action.payload;
+    setFilterStatus: (state, action: PayloadAction<string | null>) => {
+      state.filters.status = action.payload;
     },
-    setDateRange: (state, action: PayloadAction<{ startDate: Date | null, endDate: Date | null }>) => {
-      state.dateRange = action.payload;
+    setFilterDateRange: (state, action: PayloadAction<{startDate: string | null, endDate: string | null}>) => {
+      state.filters.dateRange = action.payload;
     },
     clearFilters: (state) => {
-      state.filterStatus = null;
-      state.filterPatientId = null;
-      state.searchQuery = '';
-      state.dateRange = {
-        startDate: null,
-        endDate: null,
+      state.filters = {
+        searchQuery: '',
+        patientId: null,
+        status: null,
+        dateRange: {
+          startDate: null,
+          endDate: null,
+        },
       };
     },
   },
 });
 
 export const {
-  setBills,
-  setSelectedBill,
   setLoading,
   setError,
+  setBills,
   addBill,
   updateBill,
   deleteBill,
   addPayment,
-  deletePayment,
-  setFilterStatus,
-  setFilterPatientId,
+  setSelectedBill,
   setSearchQuery,
-  setDateRange,
+  setFilterPatientId,
+  setFilterStatus,
+  setFilterDateRange,
   clearFilters,
 } = billingSlice.actions;
 

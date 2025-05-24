@@ -1,38 +1,69 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IQuote, IQuoteItem } from '../models/QuoteModel';
+import { saveQuotes, loadQuotes } from '../../utils/storage';
+
+export interface IQuoteItem {
+  id: string;
+  serviceId: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  discount: number;
+  total: number;
+}
+
+export interface IQuote {
+  id: string;
+  patientId: string;
+  title: string;
+  status: 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired' | 'cancelled';
+  items: IQuoteItem[];
+  subtotal: number;
+  discount: number;
+  tax: number;
+  total: number;
+  validUntil: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface QuoteState {
   quotes: IQuote[];
   selectedQuote: IQuote | null;
   loading: boolean;
   error: string | null;
-  filterStatus: string | null;
-  filterPatientId: string | null;
-  searchQuery: string;
+  filters: {
+    searchQuery: string;
+    patientId: string | null;
+    status: string | null;
+    dateRange: {
+      startDate: string | null;
+      endDate: string | null;
+    };
+  };
 }
 
+// Initialize state with data from local storage
 const initialState: QuoteState = {
-  quotes: [],
+  quotes: loadQuotes(),
   selectedQuote: null,
   loading: false,
   error: null,
-  filterStatus: null,
-  filterPatientId: null,
-  searchQuery: '',
+  filters: {
+    searchQuery: '',
+    patientId: null,
+    status: null,
+    dateRange: {
+      startDate: null,
+      endDate: null,
+    },
+  },
 };
 
 const quoteSlice = createSlice({
   name: 'quote',
   initialState,
   reducers: {
-    setQuotes: (state, action: PayloadAction<IQuote[]>) => {
-      state.quotes = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    setSelectedQuote: (state, action: PayloadAction<IQuote | null>) => {
-      state.selectedQuote = action.payload;
-    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
@@ -40,52 +71,67 @@ const quoteSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    setQuotes: (state, action: PayloadAction<IQuote[]>) => {
+      state.quotes = action.payload;
+      saveQuotes(action.payload); // Persist to storage
+    },
     addQuote: (state, action: PayloadAction<IQuote>) => {
       state.quotes.push(action.payload);
+      saveQuotes(state.quotes); // Persist to storage
     },
     updateQuote: (state, action: PayloadAction<IQuote>) => {
       const index = state.quotes.findIndex(q => q.id === action.payload.id);
       if (index !== -1) {
         state.quotes[index] = action.payload;
-      }
-      if (state.selectedQuote?.id === action.payload.id) {
-        state.selectedQuote = action.payload;
+        saveQuotes(state.quotes); // Persist to storage
       }
     },
     deleteQuote: (state, action: PayloadAction<string>) => {
       state.quotes = state.quotes.filter(q => q.id !== action.payload);
-      if (state.selectedQuote?.id === action.payload) {
-        state.selectedQuote = null;
-      }
+      saveQuotes(state.quotes); // Persist to storage
     },
-    setFilterStatus: (state, action: PayloadAction<string | null>) => {
-      state.filterStatus = action.payload;
+    setSelectedQuote: (state, action: PayloadAction<IQuote | null>) => {
+      state.selectedQuote = action.payload;
+    },
+    // Filter actions
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.filters.searchQuery = action.payload;
     },
     setFilterPatientId: (state, action: PayloadAction<string | null>) => {
-      state.filterPatientId = action.payload;
+      state.filters.patientId = action.payload;
     },
-    setSearchQuery: (state, action: PayloadAction<string>) => {
-      state.searchQuery = action.payload;
+    setFilterStatus: (state, action: PayloadAction<string | null>) => {
+      state.filters.status = action.payload;
+    },
+    setFilterDateRange: (state, action: PayloadAction<{startDate: string | null, endDate: string | null}>) => {
+      state.filters.dateRange = action.payload;
     },
     clearFilters: (state) => {
-      state.filterStatus = null;
-      state.filterPatientId = null;
-      state.searchQuery = '';
+      state.filters = {
+        searchQuery: '',
+        patientId: null,
+        status: null,
+        dateRange: {
+          startDate: null,
+          endDate: null,
+        },
+      };
     },
   },
 });
 
 export const {
-  setQuotes,
-  setSelectedQuote,
   setLoading,
   setError,
+  setQuotes,
   addQuote,
   updateQuote,
   deleteQuote,
-  setFilterStatus,
-  setFilterPatientId,
+  setSelectedQuote,
   setSearchQuery,
+  setFilterPatientId,
+  setFilterStatus,
+  setFilterDateRange,
   clearFilters,
 } = quoteSlice.actions;
 

@@ -1,38 +1,57 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IAppointment } from '../models/AppointmentModel';
+import { saveAppointments, loadAppointments } from '../../utils/storage';
+
+export interface IAppointment {
+  id: string;
+  patientId: string;
+  serviceId: string;
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no-show';
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface AppointmentState {
   appointments: IAppointment[];
   selectedAppointment: IAppointment | null;
   loading: boolean;
   error: string | null;
-  filterDate: Date | null;
-  filterStatus: string | null;
-  filterPatientId: string | null;
+  filters: {
+    searchQuery: string;
+    patientId: string | null;
+    status: string | null;
+    dateRange: {
+      startDate: string | null;
+      endDate: string | null;
+    };
+  };
 }
 
+// Initialize state with data from local storage
 const initialState: AppointmentState = {
-  appointments: [],
+  appointments: loadAppointments(),
   selectedAppointment: null,
   loading: false,
   error: null,
-  filterDate: null,
-  filterStatus: null,
-  filterPatientId: null,
+  filters: {
+    searchQuery: '',
+    patientId: null,
+    status: null,
+    dateRange: {
+      startDate: null,
+      endDate: null,
+    },
+  },
 };
 
 const appointmentSlice = createSlice({
   name: 'appointment',
   initialState,
   reducers: {
-    setAppointments: (state, action: PayloadAction<IAppointment[]>) => {
-      state.appointments = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    setSelectedAppointment: (state, action: PayloadAction<IAppointment | null>) => {
-      state.selectedAppointment = action.payload;
-    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
@@ -40,52 +59,67 @@ const appointmentSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    setAppointments: (state, action: PayloadAction<IAppointment[]>) => {
+      state.appointments = action.payload;
+      saveAppointments(action.payload); // Persist to storage
+    },
     addAppointment: (state, action: PayloadAction<IAppointment>) => {
       state.appointments.push(action.payload);
+      saveAppointments(state.appointments); // Persist to storage
     },
     updateAppointment: (state, action: PayloadAction<IAppointment>) => {
       const index = state.appointments.findIndex(a => a.id === action.payload.id);
       if (index !== -1) {
         state.appointments[index] = action.payload;
-      }
-      if (state.selectedAppointment?.id === action.payload.id) {
-        state.selectedAppointment = action.payload;
+        saveAppointments(state.appointments); // Persist to storage
       }
     },
     deleteAppointment: (state, action: PayloadAction<string>) => {
       state.appointments = state.appointments.filter(a => a.id !== action.payload);
-      if (state.selectedAppointment?.id === action.payload) {
-        state.selectedAppointment = null;
-      }
+      saveAppointments(state.appointments); // Persist to storage
     },
-    setFilterDate: (state, action: PayloadAction<Date | null>) => {
-      state.filterDate = action.payload;
+    setSelectedAppointment: (state, action: PayloadAction<IAppointment | null>) => {
+      state.selectedAppointment = action.payload;
     },
-    setFilterStatus: (state, action: PayloadAction<string | null>) => {
-      state.filterStatus = action.payload;
+    // Filter actions
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.filters.searchQuery = action.payload;
     },
     setFilterPatientId: (state, action: PayloadAction<string | null>) => {
-      state.filterPatientId = action.payload;
+      state.filters.patientId = action.payload;
+    },
+    setFilterStatus: (state, action: PayloadAction<string | null>) => {
+      state.filters.status = action.payload;
+    },
+    setFilterDateRange: (state, action: PayloadAction<{startDate: string | null, endDate: string | null}>) => {
+      state.filters.dateRange = action.payload;
     },
     clearFilters: (state) => {
-      state.filterDate = null;
-      state.filterStatus = null;
-      state.filterPatientId = null;
+      state.filters = {
+        searchQuery: '',
+        patientId: null,
+        status: null,
+        dateRange: {
+          startDate: null,
+          endDate: null,
+        },
+      };
     },
   },
 });
 
 export const {
-  setAppointments,
-  setSelectedAppointment,
   setLoading,
   setError,
+  setAppointments,
   addAppointment,
   updateAppointment,
   deleteAppointment,
-  setFilterDate,
-  setFilterStatus,
+  setSelectedAppointment,
+  setSearchQuery,
   setFilterPatientId,
+  setFilterStatus,
+  setFilterDateRange,
   clearFilters,
 } = appointmentSlice.actions;
 

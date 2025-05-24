@@ -1,80 +1,50 @@
-# Clinic Management App
+# React + TypeScript + Vite
 
-A cross-platform mobile application (Android and iOS) for small clinics and solo practitioners to manage patients, generate service quotes, and create bills.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Features
+Currently, two official plugins are available:
 
-1. **Patient Management**
-   - Add/edit/delete patient profiles
-   - Store basic info (name, age, gender, contact, medical history, allergies, medications)
-   - Search and sort by name, date of last visit, or diagnosis
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-2. **Appointment Scheduling**
-   - Book, edit, cancel appointments
-   - Calendar view with reminders and time slot management
+## Expanding the ESLint configuration
 
-3. **Dynamic Service Management**
-   - View list of available services
-   - Add new services with custom price and category
-   - Edit or delete existing services
-   - Organize services into categories
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-4. **Quote Generator**
-   - Select patient and services
-   - Auto-calculate subtotal, apply optional discount or tax
-   - Generate a shareable PDF quotation with clinic name/logo
+- Configure the top-level `parserOptions` property like this:
 
-5. **Billing System**
-   - Convert quote into final bill
-   - Generate and share invoices
-
-6. **Security & Data**
-   - Login via PIN or biometric authentication
-   - Local storage with data export to XLS format
-
-## Technology Stack
-
-- **Framework**: React Native
-- **State Management**: Redux Toolkit with Redux Persist
-- **Local Storage**: Realm Database
-- **UI Components**: React Native Paper
-- **Authentication**: React Native Biometrics
-- **PDF Generation**: React Native HTML to PDF
-- **Data Export**: XLSX library
-
-## Development Approach
-
-This project follows a modular development approach, with each module being completed sequentially to allow for collaborative development using multiple accounts.
-
-## Project Structure
-
-```
-/src
-  /assets            # Images, fonts, and other static assets
-  /components        # Reusable UI components
-  /screens           # Application screens
-  /navigation        # Navigation configuration
-  /store             # Redux store setup
-  /hooks             # Custom React hooks
-  /services          # Business logic services
-  /utils             # Utility functions
-  /models            # Data models and types
-  /storage           # Database and storage logic
-  /theme             # UI theme configuration
-  App.js             # Root component
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-## Getting Started
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-Instructions for setting up the development environment and running the app will be added as the project progresses.
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
 
-## Module Status
-
-- [ ] Project Foundation
-- [ ] Patient Management
-- [ ] Appointment Scheduling
-- [ ] Service Management
-- [ ] Quote Generator
-- [ ] Billing System
-- [ ] Data Export and Settings
-- [ ] Testing and Optimization
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
+```

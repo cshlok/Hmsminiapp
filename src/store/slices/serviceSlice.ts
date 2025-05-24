@@ -1,52 +1,60 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IService, IServiceCategory } from '../models/ServiceModel';
+import { saveServices, saveCategories, loadServices, loadCategories } from '../../utils/storage';
+
+export interface ICategory {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IService {
+  id: string;
+  categoryId: string;
+  name: string;
+  description: string;
+  price: number;
+  duration: number; // in minutes
+  taxable: boolean;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface ServiceState {
   services: IService[];
-  categories: IServiceCategory[];
+  categories: ICategory[];
   selectedService: IService | null;
-  selectedCategory: IServiceCategory | null;
+  selectedCategory: ICategory | null;
   loading: boolean;
   error: string | null;
-  searchQuery: string;
-  sortBy: 'name' | 'price' | 'duration';
-  sortOrder: 'asc' | 'desc';
-  filterCategoryId: string | null;
+  filters: {
+    searchQuery: string;
+    categoryId: string | null;
+    active: boolean | null;
+  };
 }
 
+// Initialize state with data from local storage
 const initialState: ServiceState = {
-  services: [],
-  categories: [],
+  services: loadServices(),
+  categories: loadCategories(),
   selectedService: null,
   selectedCategory: null,
   loading: false,
   error: null,
-  searchQuery: '',
-  sortBy: 'name',
-  sortOrder: 'asc',
-  filterCategoryId: null,
+  filters: {
+    searchQuery: '',
+    categoryId: null,
+    active: null,
+  },
 };
 
 const serviceSlice = createSlice({
   name: 'service',
   initialState,
   reducers: {
-    setServices: (state, action: PayloadAction<IService[]>) => {
-      state.services = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    setCategories: (state, action: PayloadAction<IServiceCategory[]>) => {
-      state.categories = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    setSelectedService: (state, action: PayloadAction<IService | null>) => {
-      state.selectedService = action.payload;
-    },
-    setSelectedCategory: (state, action: PayloadAction<IServiceCategory | null>) => {
-      state.selectedCategory = action.payload;
-    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
@@ -54,84 +62,91 @@ const serviceSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    
+    // Service actions
+    setServices: (state, action: PayloadAction<IService[]>) => {
+      state.services = action.payload;
+      saveServices(action.payload); // Persist to storage
+    },
     addService: (state, action: PayloadAction<IService>) => {
       state.services.push(action.payload);
+      saveServices(state.services); // Persist to storage
     },
     updateService: (state, action: PayloadAction<IService>) => {
       const index = state.services.findIndex(s => s.id === action.payload.id);
       if (index !== -1) {
         state.services[index] = action.payload;
-      }
-      if (state.selectedService?.id === action.payload.id) {
-        state.selectedService = action.payload;
+        saveServices(state.services); // Persist to storage
       }
     },
     deleteService: (state, action: PayloadAction<string>) => {
       state.services = state.services.filter(s => s.id !== action.payload);
-      if (state.selectedService?.id === action.payload) {
-        state.selectedService = null;
-      }
+      saveServices(state.services); // Persist to storage
     },
-    addCategory: (state, action: PayloadAction<IServiceCategory>) => {
+    setSelectedService: (state, action: PayloadAction<IService | null>) => {
+      state.selectedService = action.payload;
+    },
+    
+    // Category actions
+    setCategories: (state, action: PayloadAction<ICategory[]>) => {
+      state.categories = action.payload;
+      saveCategories(action.payload); // Persist to storage
+    },
+    addCategory: (state, action: PayloadAction<ICategory>) => {
       state.categories.push(action.payload);
+      saveCategories(state.categories); // Persist to storage
     },
-    updateCategory: (state, action: PayloadAction<IServiceCategory>) => {
+    updateCategory: (state, action: PayloadAction<ICategory>) => {
       const index = state.categories.findIndex(c => c.id === action.payload.id);
       if (index !== -1) {
         state.categories[index] = action.payload;
-      }
-      if (state.selectedCategory?.id === action.payload.id) {
-        state.selectedCategory = action.payload;
+        saveCategories(state.categories); // Persist to storage
       }
     },
     deleteCategory: (state, action: PayloadAction<string>) => {
       state.categories = state.categories.filter(c => c.id !== action.payload);
-      if (state.selectedCategory?.id === action.payload) {
-        state.selectedCategory = null;
-      }
-      // Also remove this category from filter if it's currently selected
-      if (state.filterCategoryId === action.payload) {
-        state.filterCategoryId = null;
-      }
+      saveCategories(state.categories); // Persist to storage
     },
+    setSelectedCategory: (state, action: PayloadAction<ICategory | null>) => {
+      state.selectedCategory = action.payload;
+    },
+    
+    // Filter actions
     setSearchQuery: (state, action: PayloadAction<string>) => {
-      state.searchQuery = action.payload;
-    },
-    setSortBy: (state, action: PayloadAction<'name' | 'price' | 'duration'>) => {
-      state.sortBy = action.payload;
-    },
-    setSortOrder: (state, action: PayloadAction<'asc' | 'desc'>) => {
-      state.sortOrder = action.payload;
+      state.filters.searchQuery = action.payload;
     },
     setFilterCategoryId: (state, action: PayloadAction<string | null>) => {
-      state.filterCategoryId = action.payload;
+      state.filters.categoryId = action.payload;
+    },
+    setFilterActive: (state, action: PayloadAction<boolean | null>) => {
+      state.filters.active = action.payload;
     },
     clearFilters: (state) => {
-      state.searchQuery = '';
-      state.filterCategoryId = null;
-      state.sortBy = 'name';
-      state.sortOrder = 'asc';
+      state.filters = {
+        searchQuery: '',
+        categoryId: null,
+        active: null,
+      };
     },
   },
 });
 
 export const {
-  setServices,
-  setCategories,
-  setSelectedService,
-  setSelectedCategory,
   setLoading,
   setError,
+  setServices,
   addService,
   updateService,
   deleteService,
+  setSelectedService,
+  setCategories,
   addCategory,
   updateCategory,
   deleteCategory,
+  setSelectedCategory,
   setSearchQuery,
-  setSortBy,
-  setSortOrder,
   setFilterCategoryId,
+  setFilterActive,
   clearFilters,
 } = serviceSlice.actions;
 
