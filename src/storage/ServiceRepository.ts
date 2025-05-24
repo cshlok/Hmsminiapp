@@ -20,7 +20,7 @@ export class ServiceRepository {
   // Category CRUD operations
   createCategory(category: IServiceCategory): IServiceCategory {
     try {
-      let newCategory: IServiceCategory;
+      let newCategory!: IServiceCategory; // Using definite assignment assertion
       
       this.realm.write(() => {
         newCategory = this.realm.create('ServiceCategory', {
@@ -104,7 +104,7 @@ export class ServiceRepository {
   // Service CRUD operations
   createService(service: IService): IService {
     try {
-      let newService: IService;
+      let newService!: IService; // Using definite assignment assertion
       
       this.realm.write(() => {
         newService = this.realm.create('Service', {
