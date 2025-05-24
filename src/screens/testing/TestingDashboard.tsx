@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
-import { Card, Button, Divider, useTheme } from 'react-native-paper';
+// Replace React Native imports with web-compatible alternatives
+import { Card, Button, Divider, useTheme } from '@mui/material';
 
 const TestingDashboard = () => {
   const theme = useTheme();
@@ -34,10 +34,10 @@ const TestingDashboard = () => {
   };
 
   // Calculate overall stats
-  const totalTests = Object.values(testResults).reduce((acc, curr) => acc + curr.total, 0);
-  const totalPassed = Object.values(testResults).reduce((acc, curr) => acc + curr.passed, 0);
-  const totalFailed = Object.values(testResults).reduce((acc, curr) => acc + curr.failed, 0);
-  const totalSkipped = Object.values(testResults).reduce((acc, curr) => acc + curr.skipped, 0);
+  const totalTests = Object.values(testResults).reduce((acc: number, curr: any) => acc + curr.total, 0);
+  const totalPassed = Object.values(testResults).reduce((acc: number, curr: any) => acc + curr.passed, 0);
+  const totalFailed = Object.values(testResults).reduce((acc: number, curr: any) => acc + curr.failed, 0);
+  const totalSkipped = Object.values(testResults).reduce((acc: number, curr: any) => acc + curr.skipped, 0);
   const passRate = Math.round((totalPassed / totalTests) * 100);
 
   // Mock performance metrics
@@ -49,266 +49,272 @@ const TestingDashboard = () => {
     storageSize: '5.2MB',
   };
 
-  const renderTestCategory = (category, data) => (
-    <Card style={styles.categoryCard}>
-      <Card.Content>
-        <Text style={styles.categoryTitle}>{category}</Text>
-        <View style={styles.statsRow}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{data.total}</Text>
-            <Text style={styles.statLabel}>Total</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={[styles.statValue, { color: theme.colors.primary }]}>{data.passed}</Text>
-            <Text style={styles.statLabel}>Passed</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={[styles.statValue, { color: theme.colors.error }]}>{data.failed}</Text>
-            <Text style={styles.statLabel}>Failed</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={[styles.statValue, { color: theme.colors.secondary }]}>{data.skipped}</Text>
-            <Text style={styles.statLabel}>Skipped</Text>
-          </View>
-        </View>
-        <View style={styles.progressBar}>
-          <View 
-            style={[
-              styles.progressFill, 
-              { width: `${(data.passed / data.total) * 100}%`, backgroundColor: theme.colors.primary }
-            ]} 
+  const renderTestCategory = (category: string, data: any) => (
+    <Card className="categoryCard">
+      <div className="card-content">
+        <h3 className="categoryTitle">{category}</h3>
+        <div className="statsRow">
+          <div className="statItem">
+            <div className="statValue">{data.total}</div>
+            <div className="statLabel">Total</div>
+          </div>
+          <div className="statItem">
+            <div className="statValue" style={{ color: theme.palette.primary.main }}>{data.passed}</div>
+            <div className="statLabel">Passed</div>
+          </div>
+          <div className="statItem">
+            <div className="statValue" style={{ color: theme.palette.error.main }}>{data.failed}</div>
+            <div className="statLabel">Failed</div>
+          </div>
+          <div className="statItem">
+            <div className="statValue" style={{ color: theme.palette.secondary.main }}>{data.skipped}</div>
+            <div className="statLabel">Skipped</div>
+          </div>
+        </div>
+        <div className="progressBar">
+          <div 
+            className="progressFill"
+            style={{
+              width: `${(data.passed / data.total) * 100}%`, 
+              backgroundColor: theme.palette.primary.main 
+            }}
           />
-        </View>
-      </Card.Content>
+        </div>
+      </div>
     </Card>
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <Card style={styles.summaryCard}>
-        <Card.Content>
-          <Text style={styles.title}>Testing Dashboard</Text>
-          <Text style={styles.subtitle}>Overall Test Results</Text>
+    <div className="container">
+      <Card className="summaryCard">
+        <div className="card-content">
+          <h1 className="title">Testing Dashboard</h1>
+          <h2 className="subtitle">Overall Test Results</h2>
           
-          <View style={styles.overallStats}>
-            <View style={styles.statCircle}>
-              <Text style={styles.passRateText}>{passRate}%</Text>
-              <Text style={styles.passRateLabel}>Pass Rate</Text>
-            </View>
+          <div className="overallStats">
+            <div className="statCircle">
+              <div className="passRateText">{passRate}%</div>
+              <div className="passRateLabel">Pass Rate</div>
+            </div>
             
-            <View style={styles.statsColumn}>
-              <View style={styles.statsRow}>
-                <View style={styles.statItem}>
-                  <Text style={styles.statValue}>{totalTests}</Text>
-                  <Text style={styles.statLabel}>Total Tests</Text>
-                </View>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statValue, { color: theme.colors.primary }]}>{totalPassed}</Text>
-                  <Text style={styles.statLabel}>Passed</Text>
-                </View>
-              </View>
-              <View style={styles.statsRow}>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statValue, { color: theme.colors.error }]}>{totalFailed}</Text>
-                  <Text style={styles.statLabel}>Failed</Text>
-                </View>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statValue, { color: theme.colors.secondary }]}>{totalSkipped}</Text>
-                  <Text style={styles.statLabel}>Skipped</Text>
-                </View>
-              </View>
-            </View>
-          </View>
+            <div className="statsColumn">
+              <div className="statsRow">
+                <div className="statItem">
+                  <div className="statValue">{totalTests}</div>
+                  <div className="statLabel">Total Tests</div>
+                </div>
+                <div className="statItem">
+                  <div className="statValue" style={{ color: theme.palette.primary.main }}>{totalPassed}</div>
+                  <div className="statLabel">Passed</div>
+                </div>
+              </div>
+              <div className="statsRow">
+                <div className="statItem">
+                  <div className="statValue" style={{ color: theme.palette.error.main }}>{totalFailed}</div>
+                  <div className="statLabel">Failed</div>
+                </div>
+                <div className="statItem">
+                  <div className="statValue" style={{ color: theme.palette.secondary.main }}>{totalSkipped}</div>
+                  <div className="statLabel">Skipped</div>
+                </div>
+              </div>
+            </div>
+          </div>
           
           <Button 
-            mode="contained" 
-            style={styles.button}
-            onPress={() => console.log('Run all tests')}
+            variant="contained" 
+            className="button"
+            onClick={() => console.log('Run all tests')}
           >
             Run All Tests
           </Button>
-        </Card.Content>
+        </div>
       </Card>
       
-      <Text style={styles.sectionTitle}>Test Categories</Text>
+      <h2 className="sectionTitle">Test Categories</h2>
       {renderTestCategory('Integration Tests', testResults.integration)}
       {renderTestCategory('Performance Tests', testResults.performance)}
       {renderTestCategory('UI Tests', testResults.ui)}
       {renderTestCategory('Accessibility Tests', testResults.accessibility)}
       
-      <Card style={styles.metricsCard}>
-        <Card.Content>
-          <Text style={styles.categoryTitle}>Performance Metrics</Text>
-          <Divider style={styles.divider} />
+      <Card className="metricsCard">
+        <div className="card-content">
+          <h3 className="categoryTitle">Performance Metrics</h3>
+          <Divider className="divider" />
           
-          <View style={styles.metricRow}>
-            <Text style={styles.metricLabel}>App Startup Time:</Text>
-            <Text style={styles.metricValue}>{performanceMetrics.startupTime}</Text>
-          </View>
-          <View style={styles.metricRow}>
-            <Text style={styles.metricLabel}>Memory Usage:</Text>
-            <Text style={styles.metricValue}>{performanceMetrics.memoryUsage}</Text>
-          </View>
-          <View style={styles.metricRow}>
-            <Text style={styles.metricLabel}>CPU Usage:</Text>
-            <Text style={styles.metricValue}>{performanceMetrics.cpuUsage}</Text>
-          </View>
-          <View style={styles.metricRow}>
-            <Text style={styles.metricLabel}>Average Render Time:</Text>
-            <Text style={styles.metricValue}>{performanceMetrics.renderTime}</Text>
-          </View>
-          <View style={styles.metricRow}>
-            <Text style={styles.metricLabel}>Storage Size:</Text>
-            <Text style={styles.metricValue}>{performanceMetrics.storageSize}</Text>
-          </View>
+          <div className="metricRow">
+            <div className="metricLabel">App Startup Time:</div>
+            <div className="metricValue">{performanceMetrics.startupTime}</div>
+          </div>
+          <div className="metricRow">
+            <div className="metricLabel">Memory Usage:</div>
+            <div className="metricValue">{performanceMetrics.memoryUsage}</div>
+          </div>
+          <div className="metricRow">
+            <div className="metricLabel">CPU Usage:</div>
+            <div className="metricValue">{performanceMetrics.cpuUsage}</div>
+          </div>
+          <div className="metricRow">
+            <div className="metricLabel">Average Render Time:</div>
+            <div className="metricValue">{performanceMetrics.renderTime}</div>
+          </div>
+          <div className="metricRow">
+            <div className="metricLabel">Storage Size:</div>
+            <div className="metricValue">{performanceMetrics.storageSize}</div>
+          </div>
           
           <Button 
-            mode="outlined" 
-            style={styles.button}
-            onPress={() => console.log('Run performance analysis')}
+            variant="outlined" 
+            className="button"
+            onClick={() => console.log('Run performance analysis')}
           >
             Run Performance Analysis
           </Button>
-        </Card.Content>
+        </div>
       </Card>
       
-      <View style={styles.buttonContainer}>
+      <div className="buttonContainer">
         <Button 
-          mode="contained" 
-          style={[styles.button, styles.exportButton]}
-          onPress={() => console.log('Export test results')}
+          variant="contained" 
+          className="button exportButton"
+          onClick={() => console.log('Export test results')}
         >
           Export Test Results
         </Button>
         
         <Button 
-          mode="outlined" 
-          style={styles.button}
-          onPress={() => console.log('Generate test report')}
+          variant="outlined" 
+          className="button"
+          onClick={() => console.log('Generate test report')}
         >
           Generate Test Report
         </Button>
-      </View>
-    </ScrollView>
+      </div>
+
+      <style jsx>{`
+        .container {
+          flex: 1;
+          background-color: #f5f5f5;
+          padding: 16px;
+        }
+        .summaryCard {
+          margin-bottom: 16px;
+        }
+        .card-content {
+          padding: 16px;
+        }
+        .title {
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 8px;
+        }
+        .subtitle {
+          font-size: 16px;
+          color: #666;
+          margin-bottom: 16px;
+        }
+        .overallStats {
+          display: flex;
+          align-items: center;
+          margin-bottom: 16px;
+        }
+        .statCircle {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          background-color: #f0f0f0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          margin-right: 16px;
+        }
+        .passRateText {
+          font-size: 24px;
+          font-weight: bold;
+          color: #4CAF50;
+        }
+        .passRateLabel {
+          font-size: 12px;
+          color: #666;
+        }
+        .statsColumn {
+          flex: 1;
+        }
+        .statsRow {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
+        }
+        .statItem {
+          align-items: center;
+          text-align: center;
+          flex: 1;
+        }
+        .statValue {
+          font-size: 18px;
+          font-weight: bold;
+        }
+        .statLabel {
+          font-size: 12px;
+          color: #666;
+        }
+        .button {
+          margin-top: 8px;
+        }
+        .sectionTitle {
+          font-size: 18px;
+          font-weight: bold;
+          margin: 16px 0;
+        }
+        .categoryCard {
+          margin-bottom: 16px;
+        }
+        .categoryTitle {
+          font-size: 16px;
+          font-weight: bold;
+          margin-bottom: 16px;
+        }
+        .progressBar {
+          height: 8px;
+          background-color: #e0e0e0;
+          border-radius: 4px;
+          margin-top: 8px;
+          overflow: hidden;
+        }
+        .progressFill {
+          height: 100%;
+          border-radius: 4px;
+        }
+        .metricsCard {
+          margin-top: 8px;
+          margin-bottom: 16px;
+        }
+        .divider {
+          margin-bottom: 16px;
+        }
+        .metricRow {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 12px;
+        }
+        .metricLabel {
+          font-size: 14px;
+          color: #666;
+        }
+        .metricValue {
+          font-size: 14px;
+          font-weight: bold;
+        }
+        .buttonContainer {
+          margin-bottom: 32px;
+        }
+        .exportButton {
+          margin-bottom: 8px;
+        }
+      `}</style>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
-  },
-  summaryCard: {
-    marginBottom: 16,
-    elevation: 4,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 16,
-  },
-  overallStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  statCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  passRateText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-  },
-  passRateLabel: {
-    fontSize: 12,
-    color: '#666',
-  },
-  statsColumn: {
-    flex: 1,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  statItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#666',
-  },
-  button: {
-    marginTop: 8,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 16,
-  },
-  categoryCard: {
-    marginBottom: 16,
-  },
-  categoryTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 4,
-    marginTop: 8,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 4,
-  },
-  metricsCard: {
-    marginTop: 8,
-    marginBottom: 16,
-  },
-  divider: {
-    marginBottom: 16,
-  },
-  metricRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  metricLabel: {
-    fontSize: 14,
-    color: '#666',
-  },
-  metricValue: {
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  buttonContainer: {
-    marginBottom: 32,
-  },
-  exportButton: {
-    marginBottom: 8,
-  },
-});
 
 export default TestingDashboard;
