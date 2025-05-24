@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
-import { Card, Button, List, useTheme, Divider } from 'react-native-paper';
+// Replace React Native imports with web-compatible alternatives
+import { Card, Button, List, Divider, useTheme } from '@mui/material';
 
 const FinalReportScreen = () => {
   const theme = useTheme();
@@ -44,351 +44,408 @@ const FinalReportScreen = () => {
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      <Card style={styles.headerCard}>
-        <Card.Content>
-          <Text style={styles.title}>Clinic Management App</Text>
-          <Text style={styles.subtitle}>Final Project Report</Text>
+    <div className="container">
+      <Card className="headerCard">
+        <div className="card-content">
+          <h1 className="title">Clinic Management App</h1>
+          <h2 className="subtitle">Final Project Report</h2>
           
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{projectSummary.modulesCompleted}</Text>
-              <Text style={styles.statLabel}>Modules</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{projectSummary.totalFeatures}</Text>
-              <Text style={styles.statLabel}>Features</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{projectSummary.totalScreens}</Text>
-              <Text style={styles.statLabel}>Screens</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{projectSummary.codeQuality}</Text>
-              <Text style={styles.statLabel}>Code Quality</Text>
-            </View>
-          </View>
+          <div className="statsContainer">
+            <div className="statItem">
+              <div className="statValue">{projectSummary.modulesCompleted}</div>
+              <div className="statLabel">Modules</div>
+            </div>
+            <div className="statItem">
+              <div className="statValue">{projectSummary.totalFeatures}</div>
+              <div className="statLabel">Features</div>
+            </div>
+            <div className="statItem">
+              <div className="statValue">{projectSummary.totalScreens}</div>
+              <div className="statLabel">Screens</div>
+            </div>
+            <div className="statItem">
+              <div className="statValue">{projectSummary.codeQuality}</div>
+              <div className="statLabel">Code Quality</div>
+            </div>
+          </div>
           
-          <View style={styles.progressContainer}>
-            <Text style={styles.progressLabel}>Project Completion</Text>
-            <View style={styles.progressBar}>
-              <View style={[styles.progressFill, { width: '100%' }]} />
-            </View>
-            <Text style={styles.progressValue}>100%</Text>
-          </View>
-        </Card.Content>
+          <div className="progressContainer">
+            <div className="progressLabel">Project Completion</div>
+            <div className="progressBar">
+              <div className="progressFill" style={{ width: '100%' }} />
+            </div>
+            <div className="progressValue">100%</div>
+          </div>
+        </div>
       </Card>
       
-      <Card style={styles.sectionCard}>
-        <Card.Content>
-          <Text style={styles.sectionTitle}>Module Completion Status</Text>
-          <Divider style={styles.divider} />
+      <Card className="sectionCard">
+        <div className="card-content">
+          <h2 className="sectionTitle">Module Completion Status</h2>
+          <Divider className="divider" />
           
           {moduleCompletionData.map((module, index) => (
-            <View key={index} style={styles.moduleItem}>
-              <View style={styles.moduleInfo}>
-                <Text style={styles.moduleName}>{module.name}</Text>
-                <Text style={styles.moduleFeatures}>{module.features} features</Text>
-              </View>
-              <View style={styles.moduleStatus}>
-                <Text style={[styles.statusText, { color: theme.colors.primary }]}>
+            <div key={index} className="moduleItem">
+              <div className="moduleInfo">
+                <div className="moduleName">{module.name}</div>
+                <div className="moduleFeatures">{module.features} features</div>
+              </div>
+              <div className="moduleStatus">
+                <span className="statusText" style={{ color: theme.palette.primary.main }}>
                   {module.status}
-                </Text>
-                <List.Icon icon="check-circle" color={theme.colors.primary} />
-              </View>
-            </View>
+                </span>
+                <span className="statusIcon" style={{ color: theme.palette.primary.main }}>✓</span>
+              </div>
+            </div>
           ))}
-        </Card.Content>
+        </div>
       </Card>
       
-      <Card style={styles.sectionCard}>
-        <Card.Content>
-          <Text style={styles.sectionTitle}>Testing Summary</Text>
-          <Divider style={styles.divider} />
+      <Card className="sectionCard">
+        <div className="card-content">
+          <h2 className="sectionTitle">Testing Summary</h2>
+          <Divider className="divider" />
           
-          <View style={styles.testSummary}>
-            <View style={styles.testCircle}>
-              <Text style={styles.testPassRate}>{testResults.passRate}</Text>
-              <Text style={styles.testPassLabel}>Pass Rate</Text>
-            </View>
+          <div className="testSummary">
+            <div className="testCircle">
+              <div className="testPassRate">{testResults.passRate}</div>
+              <div className="testPassLabel">Pass Rate</div>
+            </div>
             
-            <View style={styles.testDetails}>
-              <View style={styles.testRow}>
-                <Text style={styles.testLabel}>Total Tests:</Text>
-                <Text style={styles.testValue}>{testResults.total}</Text>
-              </View>
-              <View style={styles.testRow}>
-                <Text style={styles.testLabel}>Passed:</Text>
-                <Text style={[styles.testValue, { color: theme.colors.primary }]}>
+            <div className="testDetails">
+              <div className="testRow">
+                <div className="testLabel">Total Tests:</div>
+                <div className="testValue">{testResults.total}</div>
+              </div>
+              <div className="testRow">
+                <div className="testLabel">Passed:</div>
+                <div className="testValue" style={{ color: theme.palette.primary.main }}>
                   {testResults.passed}
-                </Text>
-              </View>
-              <View style={styles.testRow}>
-                <Text style={styles.testLabel}>Failed:</Text>
-                <Text style={[styles.testValue, { color: theme.colors.error }]}>
+                </div>
+              </div>
+              <div className="testRow">
+                <div className="testLabel">Failed:</div>
+                <div className="testValue" style={{ color: theme.palette.error.main }}>
                   {testResults.failed}
-                </Text>
-              </View>
-              <View style={styles.testRow}>
-                <Text style={styles.testLabel}>Skipped:</Text>
-                <Text style={[styles.testValue, { color: theme.colors.secondary }]}>
+                </div>
+              </div>
+              <div className="testRow">
+                <div className="testLabel">Skipped:</div>
+                <div className="testValue" style={{ color: theme.palette.secondary.main }}>
                   {testResults.skipped}
-                </Text>
-              </View>
-            </View>
-          </View>
+                </div>
+              </div>
+            </div>
+          </div>
           
           <Button 
-            mode="outlined" 
-            style={styles.button}
-            onPress={() => console.log('View detailed test results')}
+            variant="outlined" 
+            className="button"
+            onClick={() => console.log('View detailed test results')}
           >
             View Detailed Test Results
           </Button>
-        </Card.Content>
+        </div>
       </Card>
       
-      <Card style={styles.sectionCard}>
-        <Card.Content>
-          <Text style={styles.sectionTitle}>Performance Metrics</Text>
-          <Divider style={styles.divider} />
+      <Card className="sectionCard">
+        <div className="card-content">
+          <h2 className="sectionTitle">Performance Metrics</h2>
+          <Divider className="divider" />
           
           {performanceMetrics.map((metric, index) => (
-            <View key={index} style={styles.metricRow}>
-              <Text style={styles.metricName}>{metric.name}</Text>
-              <View style={styles.metricValues}>
-                <Text style={styles.metricValue}>{metric.value}</Text>
-                <Text style={styles.metricImprovement}>{metric.improvement}</Text>
-              </View>
-            </View>
+            <div key={index} className="metricRow">
+              <div className="metricName">{metric.name}</div>
+              <div className="metricValues">
+                <div className="metricValue">{metric.value}</div>
+                <div className="metricImprovement">{metric.improvement}</div>
+              </div>
+            </div>
           ))}
           
           <Button 
-            mode="outlined" 
-            style={styles.button}
-            onPress={() => console.log('View performance details')}
+            variant="outlined" 
+            className="button"
+            onClick={() => console.log('View performance details')}
           >
             View Performance Details
           </Button>
-        </Card.Content>
+        </div>
       </Card>
       
-      <Card style={styles.sectionCard}>
-        <Card.Content>
-          <Text style={styles.sectionTitle}>Next Steps</Text>
-          <Divider style={styles.divider} />
+      <Card className="sectionCard">
+        <div className="card-content">
+          <h2 className="sectionTitle">Next Steps</h2>
+          <Divider className="divider" />
           
-          <List.Item
-            title="1. Review Final Code"
-            description="Review the complete codebase in the GitHub repository"
-            left={props => <List.Icon {...props} icon="github" />}
-          />
-          <List.Item
-            title="2. Build and Deploy"
-            description="Follow the deployment guide to build and publish the app"
-            left={props => <List.Icon {...props} icon="rocket-launch" />}
-          />
-          <List.Item
-            title="3. User Testing"
-            description="Conduct user acceptance testing with real users"
-            left={props => <List.Icon {...props} icon="account-group" />}
-          />
-          <List.Item
-            title="4. App Store Submission"
-            description="Prepare and submit the app to Apple App Store and Google Play Store"
-            left={props => <List.Icon {...props} icon="store" />}
-          />
-        </Card.Content>
+          <List>
+            <List.Item className="listItem">
+              <div className="listItemContent">
+                <div className="listItemIcon" style={{ color: theme.palette.primary.main }}>
+                  <span className="icon">📦</span>
+                </div>
+                <div className="listItemText">
+                  <div className="listItemTitle">1. Review Final Code</div>
+                  <div className="listItemDescription">Review the complete codebase in the GitHub repository</div>
+                </div>
+              </div>
+            </List.Item>
+            <List.Item className="listItem">
+              <div className="listItemContent">
+                <div className="listItemIcon" style={{ color: theme.palette.primary.main }}>
+                  <span className="icon">🚀</span>
+                </div>
+                <div className="listItemText">
+                  <div className="listItemTitle">2. Build and Deploy</div>
+                  <div className="listItemDescription">Follow the deployment guide to build and publish the app</div>
+                </div>
+              </div>
+            </List.Item>
+            <List.Item className="listItem">
+              <div className="listItemContent">
+                <div className="listItemIcon" style={{ color: theme.palette.primary.main }}>
+                  <span className="icon">👥</span>
+                </div>
+                <div className="listItemText">
+                  <div className="listItemTitle">3. User Testing</div>
+                  <div className="listItemDescription">Conduct user acceptance testing with real users</div>
+                </div>
+              </div>
+            </List.Item>
+            <List.Item className="listItem">
+              <div className="listItemContent">
+                <div className="listItemIcon" style={{ color: theme.palette.primary.main }}>
+                  <span className="icon">🏪</span>
+                </div>
+                <div className="listItemText">
+                  <div className="listItemTitle">4. App Store Submission</div>
+                  <div className="listItemDescription">Prepare and submit the app to Apple App Store and Google Play Store</div>
+                </div>
+              </div>
+            </List.Item>
+          </List>
+        </div>
       </Card>
       
-      <View style={styles.buttonContainer}>
+      <div className="buttonContainer">
         <Button 
-          mode="contained" 
-          style={[styles.button, styles.mainButton]}
-          onPress={() => console.log('Download complete report')}
+          variant="contained" 
+          className="button mainButton"
+          onClick={() => console.log('Download complete report')}
         >
           Download Complete Report
         </Button>
         
         <Button 
-          mode="outlined" 
-          style={styles.button}
-          onPress={() => console.log('View GitHub repository')}
+          variant="outlined" 
+          className="button"
+          onClick={() => console.log('View GitHub repository')}
         >
           View GitHub Repository
         </Button>
-      </View>
-    </ScrollView>
+      </div>
+
+      <style jsx>{`
+        .container {
+          flex: 1;
+          background-color: #f5f5f5;
+          padding: 16px;
+        }
+        .card-content {
+          padding: 16px;
+        }
+        .headerCard {
+          margin-bottom: 16px;
+        }
+        .title {
+          font-size: 24px;
+          font-weight: bold;
+          text-align: center;
+          margin-bottom: 8px;
+        }
+        .subtitle {
+          font-size: 16px;
+          color: #666;
+          text-align: center;
+          margin-bottom: 24px;
+        }
+        .statsContainer {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 24px;
+        }
+        .statItem {
+          align-items: center;
+          text-align: center;
+        }
+        .statValue {
+          font-size: 20px;
+          font-weight: bold;
+        }
+        .statLabel {
+          font-size: 12px;
+          color: #666;
+        }
+        .progressContainer {
+          margin-bottom: 8px;
+        }
+        .progressLabel {
+          font-size: 14px;
+          margin-bottom: 8px;
+        }
+        .progressBar {
+          height: 8px;
+          background-color: #e0e0e0;
+          border-radius: 4px;
+          margin-bottom: 4px;
+        }
+        .progressFill {
+          height: 100%;
+          background-color: #4CAF50;
+          border-radius: 4px;
+        }
+        .progressValue {
+          font-size: 12px;
+          color: #666;
+          text-align: right;
+        }
+        .sectionCard {
+          margin-bottom: 16px;
+        }
+        .sectionTitle {
+          font-size: 18px;
+          font-weight: bold;
+        }
+        .divider {
+          margin: 16px 0;
+        }
+        .moduleItem {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+        }
+        .moduleInfo {
+          flex: 1;
+        }
+        .moduleName {
+          font-size: 16px;
+          font-weight: bold;
+        }
+        .moduleFeatures {
+          font-size: 12px;
+          color: #666;
+        }
+        .moduleStatus {
+          display: flex;
+          align-items: center;
+        }
+        .statusText {
+          margin-right: 4px;
+          font-weight: bold;
+        }
+        .statusIcon {
+          font-size: 18px;
+        }
+        .testSummary {
+          display: flex;
+          margin-bottom: 16px;
+        }
+        .testCircle {
+          width: 80px;
+          height: 80px;
+          border-radius: 40px;
+          background-color: #f0f0f0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          margin-right: 16px;
+        }
+        .testPassRate {
+          font-size: 20px;
+          font-weight: bold;
+          color: #4CAF50;
+        }
+        .testPassLabel {
+          font-size: 10px;
+          color: #666;
+        }
+        .testDetails {
+          flex: 1;
+          justify-content: center;
+        }
+        .testRow {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 4px;
+        }
+        .testLabel {
+          font-size: 14px;
+          color: #666;
+        }
+        .testValue {
+          font-size: 14px;
+          font-weight: bold;
+        }
+        .metricRow {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+        }
+        .metricName {
+          font-size: 14px;
+          color: #666;
+        }
+        .metricValues {
+          display: flex;
+          align-items: center;
+        }
+        .metricValue {
+          font-size: 14px;
+          font-weight: bold;
+          margin-right: 8px;
+        }
+        .metricImprovement {
+          font-size: 12px;
+          color: #4CAF50;
+        }
+        .button {
+          margin-top: 8px;
+        }
+        .buttonContainer {
+          margin-bottom: 32px;
+        }
+        .mainButton {
+          margin-bottom: 8px;
+        }
+        .listItem {
+          padding: 8px 0;
+        }
+        .listItemContent {
+          display: flex;
+          align-items: center;
+        }
+        .listItemIcon {
+          margin-right: 16px;
+        }
+        .icon {
+          font-size: 24px;
+        }
+        .listItemText {
+          flex: 1;
+        }
+        .listItemTitle {
+          font-weight: bold;
+        }
+        .listItemDescription {
+          font-size: 14px;
+          color: #666;
+        }
+      `}</style>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
-  },
-  headerCard: {
-    marginBottom: 16,
-    elevation: 4,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#666',
-  },
-  progressContainer: {
-    marginBottom: 8,
-  },
-  progressLabel: {
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 4,
-    marginBottom: 4,
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#4CAF50',
-    borderRadius: 4,
-  },
-  progressValue: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'right',
-  },
-  sectionCard: {
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  divider: {
-    marginVertical: 16,
-  },
-  moduleItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  moduleInfo: {
-    flex: 1,
-  },
-  moduleName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  moduleFeatures: {
-    fontSize: 12,
-    color: '#666',
-  },
-  moduleStatus: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statusText: {
-    marginRight: 4,
-    fontWeight: 'bold',
-  },
-  testSummary: {
-    flexDirection: 'row',
-    marginBottom: 16,
-  },
-  testCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  testPassRate: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-  },
-  testPassLabel: {
-    fontSize: 10,
-    color: '#666',
-  },
-  testDetails: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  testRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  testLabel: {
-    fontSize: 14,
-    color: '#666',
-  },
-  testValue: {
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  metricRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  metricName: {
-    fontSize: 14,
-    color: '#666',
-  },
-  metricValues: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  metricValue: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginRight: 8,
-  },
-  metricImprovement: {
-    fontSize: 12,
-    color: '#4CAF50',
-  },
-  button: {
-    marginTop: 8,
-  },
-  buttonContainer: {
-    marginBottom: 32,
-  },
-  mainButton: {
-    marginBottom: 8,
-  },
-});
 
 export default FinalReportScreen;
