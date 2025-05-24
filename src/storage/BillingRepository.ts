@@ -1,6 +1,7 @@
 import Realm from 'realm';
 import { BillSchema, BillItemSchema, PaymentSchema } from '../models/BillingModel';
 import { IBill, IBillItem, IPayment } from '../models/BillingModel';
+import { v4 as uuidv4 } from 'uuid';
 
 // Database configuration
 export const billingDatabaseOptions = {
@@ -19,11 +20,12 @@ export class BillingRepository {
   // Create a new bill
   createBill(bill: IBill): IBill {
     try {
-      let newBill;
+      let newBill: IBill;
+      
       this.realm.write(() => {
         // Create the bill
         newBill = this.realm.create('Bill', {
-          id: bill.id,
+          id: bill.id || uuidv4(),
           patientId: bill.patientId,
           quoteId: bill.quoteId,
           date: bill.date,
@@ -43,12 +45,12 @@ export class BillingRepository {
           payments: [],
           createdAt: new Date(),
           updatedAt: new Date(),
-        });
+        }) as unknown as IBill;
 
         // Create bill items
         bill.items.forEach(item => {
           const newItem = this.realm.create('BillItem', {
-            id: item.id,
+            id: item.id || uuidv4(),
             billId: bill.id,
             serviceId: item.serviceId,
             serviceName: item.serviceName,
@@ -57,13 +59,13 @@ export class BillingRepository {
             amount: item.amount,
             notes: item.notes || '',
           });
-          newBill.items.push(newItem);
+          newBill.items.push(newItem as any);
         });
 
         // Create payments if any
         bill.payments.forEach(payment => {
           const newPayment = this.realm.create('Payment', {
-            id: payment.id,
+            id: payment.id || uuidv4(),
             billId: bill.id,
             date: payment.date,
             amount: payment.amount,
@@ -72,9 +74,10 @@ export class BillingRepository {
             notes: payment.notes || '',
             createdAt: new Date(),
           });
-          newBill.payments.push(newPayment);
+          newBill.payments.push(newPayment as any);
         });
       });
+      
       return newBill;
     } catch (error) {
       console.error('Failed to create bill:', error);
@@ -93,9 +96,9 @@ export class BillingRepository {
   }
 
   // Get bill by ID
-  getBillById(id: string) {
+  getBillById(id: string): IBill | null {
     try {
-      return this.realm.objectForPrimaryKey<IBill>('Bill', id);
+      return this.realm.objectForPrimaryKey<IBill>('Bill', id) || null;
     } catch (error) {
       console.error('Failed to get bill by ID:', error);
       throw error;
@@ -152,7 +155,7 @@ export class BillingRepository {
   }
 
   // Update bill
-  updateBill(id: string, updatedData: Partial<IBill>) {
+  updateBill(id: string, updatedData: Partial<IBill>): IBill | null {
     try {
       const bill = this.getBillById(id);
       if (bill) {
@@ -160,7 +163,11 @@ export class BillingRepository {
           // Update bill properties
           Object.keys(updatedData).forEach(key => {
             if (key !== 'id' && key !== 'createdAt' && key !== 'items' && key !== 'payments') {
-              bill[key] = updatedData[key];
+              // Type-safe property access
+              const typedKey = key as keyof IBill;
+              if (updatedData[typedKey] !== undefined) {
+                (bill as any)[key] = updatedData[typedKey];
+              }
             }
           });
           bill.updatedAt = new Date();
@@ -175,7 +182,7 @@ export class BillingRepository {
             // Create new items
             updatedData.items.forEach(item => {
               const newItem = this.realm.create('BillItem', {
-                id: item.id,
+                id: item.id || uuidv4(),
                 billId: id,
                 serviceId: item.serviceId,
                 serviceName: item.serviceName,
@@ -184,7 +191,7 @@ export class BillingRepository {
                 amount: item.amount,
                 notes: item.notes || '',
               });
-              bill.items.push(newItem);
+              bill.items.push(newItem as any);
             });
           }
 
@@ -198,7 +205,7 @@ export class BillingRepository {
             // Create new payments
             updatedData.payments.forEach(payment => {
               const newPayment = this.realm.create('Payment', {
-                id: payment.id,
+                id: payment.id || uuidv4(),
                 billId: id,
                 date: payment.date,
                 amount: payment.amount,
@@ -207,7 +214,7 @@ export class BillingRepository {
                 notes: payment.notes || '',
                 createdAt: payment.createdAt || new Date(),
               });
-              bill.payments.push(newPayment);
+              bill.payments.push(newPayment as any);
             });
           }
         });
@@ -221,7 +228,7 @@ export class BillingRepository {
   }
 
   // Delete bill
-  deleteBill(id: string) {
+  deleteBill(id: string): boolean {
     try {
       const bill = this.getBillById(id);
       if (bill) {
@@ -247,14 +254,14 @@ export class BillingRepository {
   }
 
   // Add payment to bill
-  addPayment(billId: string, payment: IPayment) {
+  addPayment(billId: string, payment: IPayment): IBill | null {
     try {
       const bill = this.getBillById(billId);
       if (bill) {
         this.realm.write(() => {
           // Create new payment
           const newPayment = this.realm.create('Payment', {
-            id: payment.id,
+            id: payment.id || uuidv4(),
             billId: billId,
             date: payment.date,
             amount: payment.amount,
@@ -263,7 +270,7 @@ export class BillingRepository {
             notes: payment.notes || '',
             createdAt: new Date(),
           });
-          bill.payments.push(newPayment);
+          bill.payments.push(newPayment as any);
           
           // Update bill amount paid and balance
           bill.amountPaid += payment.amount;
@@ -288,7 +295,7 @@ export class BillingRepository {
   }
 
   // Delete payment
-  deletePayment(paymentId: string) {
+  deletePayment(paymentId: string): boolean {
     try {
       const payment = this.realm.objectForPrimaryKey<IPayment>('Payment', paymentId);
       if (payment) {
@@ -352,7 +359,7 @@ export class BillingRepository {
   }
 
   // Update bill status based on due date
-  updateBillStatusBasedOnDueDate(billId: string) {
+  updateBillStatusBasedOnDueDate(billId: string): IBill | null {
     try {
       const bill = this.getBillById(billId);
       if (bill && bill.status !== 'paid' && bill.status !== 'cancelled') {
