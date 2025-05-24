@@ -20,7 +20,7 @@ export class QuoteRepository {
   // Create a new quote
   createQuote(quote: IQuote): IQuote {
     try {
-      let newQuote: IQuote;
+      let newQuote!: IQuote; // Using definite assignment assertion
       
       this.realm.write(() => {
         // Create the quote
