@@ -20,7 +20,7 @@ export class BillingRepository {
   // Create a new bill
   createBill(bill: IBill): IBill {
     try {
-      let newBill: IBill;
+      let newBill!: IBill; // Using definite assignment assertion
       
       this.realm.write(() => {
         // Create the bill
