@@ -1,6 +1,7 @@
 import Realm from 'realm';
 import { QuoteSchema, QuoteItemSchema } from '../models/QuoteModel';
 import { IQuote, IQuoteItem } from '../models/QuoteModel';
+import { v4 as uuidv4 } from 'uuid';
 
 // Database configuration
 export const quoteDatabaseOptions = {
@@ -19,11 +20,12 @@ export class QuoteRepository {
   // Create a new quote
   createQuote(quote: IQuote): IQuote {
     try {
-      let newQuote;
+      let newQuote: IQuote;
+      
       this.realm.write(() => {
         // Create the quote
         newQuote = this.realm.create('Quote', {
-          id: quote.id,
+          id: quote.id || uuidv4(),
           patientId: quote.patientId,
           date: quote.date,
           items: [],
@@ -38,13 +40,13 @@ export class QuoteRepository {
           status: quote.status,
           createdAt: new Date(),
           updatedAt: new Date(),
-        });
+        }) as unknown as IQuote;
 
         // Create quote items
         quote.items.forEach(item => {
           const newItem = this.realm.create('QuoteItem', {
-            id: item.id,
-            quoteId: quote.id,
+            id: item.id || uuidv4(),
+            quoteId: newQuote.id,
             serviceId: item.serviceId,
             serviceName: item.serviceName,
             quantity: item.quantity,
@@ -52,9 +54,10 @@ export class QuoteRepository {
             amount: item.amount,
             notes: item.notes || '',
           });
-          newQuote.items.push(newItem);
+          newQuote.items.push(newItem as any);
         });
       });
+      
       return newQuote;
     } catch (error) {
       console.error('Failed to create quote:', error);
@@ -73,9 +76,9 @@ export class QuoteRepository {
   }
 
   // Get quote by ID
-  getQuoteById(id: string) {
+  getQuoteById(id: string): IQuote | null {
     try {
-      return this.realm.objectForPrimaryKey<IQuote>('Quote', id);
+      return this.realm.objectForPrimaryKey<IQuote>('Quote', id) || null;
     } catch (error) {
       console.error('Failed to get quote by ID:', error);
       throw error;
@@ -119,7 +122,7 @@ export class QuoteRepository {
   }
 
   // Update quote
-  updateQuote(id: string, updatedData: Partial<IQuote>) {
+  updateQuote(id: string, updatedData: Partial<IQuote>): IQuote | null {
     try {
       const quote = this.getQuoteById(id);
       if (quote) {
@@ -127,7 +130,11 @@ export class QuoteRepository {
           // Update quote properties
           Object.keys(updatedData).forEach(key => {
             if (key !== 'id' && key !== 'createdAt' && key !== 'items') {
-              quote[key] = updatedData[key];
+              // Type-safe property access
+              const typedKey = key as keyof IQuote;
+              if (updatedData[typedKey] !== undefined) {
+                (quote as any)[key] = updatedData[typedKey];
+              }
             }
           });
           quote.updatedAt = new Date();
@@ -141,7 +148,7 @@ export class QuoteRepository {
             // Create new items
             updatedData.items.forEach(item => {
               const newItem = this.realm.create('QuoteItem', {
-                id: item.id,
+                id: item.id || uuidv4(),
                 quoteId: id,
                 serviceId: item.serviceId,
                 serviceName: item.serviceName,
@@ -150,7 +157,7 @@ export class QuoteRepository {
                 amount: item.amount,
                 notes: item.notes || '',
               });
-              quote.items.push(newItem);
+              quote.items.push(newItem as any);
             });
           }
         });
@@ -164,7 +171,7 @@ export class QuoteRepository {
   }
 
   // Delete quote
-  deleteQuote(id: string) {
+  deleteQuote(id: string): boolean {
     try {
       const quote = this.getQuoteById(id);
       if (quote) {
