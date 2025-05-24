@@ -1,6 +1,7 @@
 import Realm from 'realm';
 import { ServiceSchema, ServiceCategorySchema } from '../models/ServiceModel';
 import { IService, IServiceCategory } from '../models/ServiceModel';
+import { v4 as uuidv4 } from 'uuid';
 
 // Database configuration
 export const serviceDatabaseOptions = {
@@ -19,16 +20,18 @@ export class ServiceRepository {
   // Category CRUD operations
   createCategory(category: IServiceCategory): IServiceCategory {
     try {
-      let newCategory;
+      let newCategory: IServiceCategory;
+      
       this.realm.write(() => {
         newCategory = this.realm.create('ServiceCategory', {
-          id: category.id,
+          id: category.id || uuidv4(),
           name: category.name,
           description: category.description || '',
           createdAt: new Date(),
           updatedAt: new Date(),
-        });
+        }) as unknown as IServiceCategory;
       });
+      
       return newCategory;
     } catch (error) {
       console.error('Failed to create service category:', error);
@@ -45,23 +48,27 @@ export class ServiceRepository {
     }
   }
 
-  getCategoryById(id: string) {
+  getCategoryById(id: string): IServiceCategory | null {
     try {
-      return this.realm.objectForPrimaryKey<IServiceCategory>('ServiceCategory', id);
+      return this.realm.objectForPrimaryKey<IServiceCategory>('ServiceCategory', id) || null;
     } catch (error) {
       console.error('Failed to get service category by ID:', error);
       throw error;
     }
   }
 
-  updateCategory(id: string, updatedData: Partial<IServiceCategory>) {
+  updateCategory(id: string, updatedData: Partial<IServiceCategory>): IServiceCategory | null {
     try {
       const category = this.getCategoryById(id);
       if (category) {
         this.realm.write(() => {
           Object.keys(updatedData).forEach(key => {
             if (key !== 'id' && key !== 'createdAt') {
-              category[key] = updatedData[key];
+              // Type-safe property access
+              const typedKey = key as keyof IServiceCategory;
+              if (updatedData[typedKey] !== undefined) {
+                (category as any)[key] = updatedData[typedKey];
+              }
             }
           });
           category.updatedAt = new Date();
@@ -75,7 +82,7 @@ export class ServiceRepository {
     }
   }
 
-  deleteCategory(id: string) {
+  deleteCategory(id: string): boolean {
     try {
       const category = this.getCategoryById(id);
       if (category) {
@@ -97,10 +104,11 @@ export class ServiceRepository {
   // Service CRUD operations
   createService(service: IService): IService {
     try {
-      let newService;
+      let newService: IService;
+      
       this.realm.write(() => {
         newService = this.realm.create('Service', {
-          id: service.id,
+          id: service.id || uuidv4(),
           categoryId: service.categoryId,
           name: service.name,
           description: service.description || '',
@@ -108,8 +116,9 @@ export class ServiceRepository {
           duration: service.duration,
           createdAt: new Date(),
           updatedAt: new Date(),
-        });
+        }) as unknown as IService;
       });
+      
       return newService;
     } catch (error) {
       console.error('Failed to create service:', error);
@@ -126,9 +135,9 @@ export class ServiceRepository {
     }
   }
 
-  getServiceById(id: string) {
+  getServiceById(id: string): IService | null {
     try {
-      return this.realm.objectForPrimaryKey<IService>('Service', id);
+      return this.realm.objectForPrimaryKey<IService>('Service', id) || null;
     } catch (error) {
       console.error('Failed to get service by ID:', error);
       throw error;
@@ -146,14 +155,18 @@ export class ServiceRepository {
     }
   }
 
-  updateService(id: string, updatedData: Partial<IService>) {
+  updateService(id: string, updatedData: Partial<IService>): IService | null {
     try {
       const service = this.getServiceById(id);
       if (service) {
         this.realm.write(() => {
           Object.keys(updatedData).forEach(key => {
             if (key !== 'id' && key !== 'createdAt') {
-              service[key] = updatedData[key];
+              // Type-safe property access
+              const typedKey = key as keyof IService;
+              if (updatedData[typedKey] !== undefined) {
+                (service as any)[key] = updatedData[typedKey];
+              }
             }
           });
           service.updatedAt = new Date();
@@ -167,7 +180,7 @@ export class ServiceRepository {
     }
   }
 
-  deleteService(id: string) {
+  deleteService(id: string): boolean {
     try {
       const service = this.getServiceById(id);
       if (service) {
