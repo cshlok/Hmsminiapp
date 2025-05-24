@@ -1,26 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { saveServices, saveCategories, loadServices, loadCategories } from '../../utils/storage';
-
-export interface ICategory {
-  id: string;
-  name: string;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface IService {
-  id: string;
-  categoryId: string;
-  name: string;
-  description: string;
-  price: number;
-  duration: number; // in minutes
-  taxable: boolean;
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+import { IServiceSlice as IService, ICategory } from '../../utils/modelConverters';
 
 interface ServiceState {
   services: IService[];
