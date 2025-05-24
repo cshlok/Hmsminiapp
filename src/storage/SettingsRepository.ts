@@ -57,7 +57,7 @@ export class SettingsRepository {
             biometricEnabled: false,
             createdAt: new Date(),
             updatedAt: new Date(),
-          });
+          }) as unknown as ISettings;
         });
       }
       
@@ -102,7 +102,7 @@ export class SettingsRepository {
   // Create export job
   createExportJob(type: 'patients' | 'appointments' | 'services' | 'quotes' | 'bills' | 'all', startDate?: Date, endDate?: Date): IExportJob {
     try {
-      let exportJob: IExportJob;
+      let exportJob!: IExportJob; // Using definite assignment assertion
       
       this.realm.write(() => {
         exportJob = this.realm.create('ExportJob', {
@@ -200,7 +200,7 @@ export class SettingsRepository {
   // Log authentication attempt
   logAuthAttempt(action: 'login' | 'logout' | 'failed_login', method: 'pin' | 'biometric', success: boolean, errorMessage?: string): IAuthLog {
     try {
-      let authLog: IAuthLog;
+      let authLog!: IAuthLog; // Using definite assignment assertion
       
       this.realm.write(() => {
         authLog = this.realm.create('AuthLog', {
