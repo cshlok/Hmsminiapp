@@ -1,6 +1,7 @@
 import Realm from 'realm';
 import { AppointmentSchema } from '../models/AppointmentModel';
 import { IAppointment } from '../models/AppointmentModel';
+import { v4 as uuidv4 } from 'uuid';
 
 // Add AppointmentSchema to database configuration
 export const appointmentDatabaseOptions = {
@@ -19,10 +20,11 @@ export class AppointmentRepository {
   // Create a new appointment
   createAppointment(appointment: IAppointment): IAppointment {
     try {
-      let newAppointment;
+      let newAppointment: IAppointment;
+      
       this.realm.write(() => {
         newAppointment = this.realm.create('Appointment', {
-          id: appointment.id,
+          id: appointment.id || uuidv4(),
           patientId: appointment.patientId,
           date: appointment.date,
           startTime: appointment.startTime,
@@ -33,8 +35,9 @@ export class AppointmentRepository {
           reminderSent: appointment.reminderSent || false,
           createdAt: new Date(),
           updatedAt: new Date(),
-        });
+        }) as unknown as IAppointment;
       });
+      
       return newAppointment;
     } catch (error) {
       console.error('Failed to create appointment:', error);
@@ -53,9 +56,9 @@ export class AppointmentRepository {
   }
 
   // Get appointment by ID
-  getAppointmentById(id: string) {
+  getAppointmentById(id: string): IAppointment | null {
     try {
-      return this.realm.objectForPrimaryKey<IAppointment>('Appointment', id);
+      return this.realm.objectForPrimaryKey<IAppointment>('Appointment', id) || null;
     } catch (error) {
       console.error('Failed to get appointment by ID:', error);
       throw error;
@@ -99,14 +102,18 @@ export class AppointmentRepository {
   }
 
   // Update appointment
-  updateAppointment(id: string, updatedData: Partial<IAppointment>) {
+  updateAppointment(id: string, updatedData: Partial<IAppointment>): IAppointment | null {
     try {
       const appointment = this.getAppointmentById(id);
       if (appointment) {
         this.realm.write(() => {
           Object.keys(updatedData).forEach(key => {
             if (key !== 'id' && key !== 'createdAt') {
-              appointment[key] = updatedData[key];
+              // Type-safe property access
+              const typedKey = key as keyof IAppointment;
+              if (updatedData[typedKey] !== undefined) {
+                (appointment as any)[key] = updatedData[typedKey];
+              }
             }
           });
           appointment.updatedAt = new Date();
@@ -121,7 +128,7 @@ export class AppointmentRepository {
   }
 
   // Delete appointment
-  deleteAppointment(id: string) {
+  deleteAppointment(id: string): boolean {
     try {
       const appointment = this.getAppointmentById(id);
       if (appointment) {
@@ -138,7 +145,7 @@ export class AppointmentRepository {
   }
 
   // Check for time slot availability
-  isTimeSlotAvailable(date: Date, startTime: string, endTime: string, excludeAppointmentId?: string) {
+  isTimeSlotAvailable(date: Date, startTime: string, endTime: string, excludeAppointmentId?: string): boolean {
     try {
       // Convert date to start of day for comparison
       const startOfDay = new Date(date);
