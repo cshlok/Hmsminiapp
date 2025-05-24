@@ -1,12 +1,12 @@
-# Settings and Data Export Module - Data Models
+// Settings and Data Export Module - Data Models
 
-import Realm from 'realm';
+import Realm, { ObjectSchema } from 'realm';
 
 // Settings schema
 export interface ISettings {
   id: string;
   clinicName: string;
-  clinicLogo?: string;
+  clinicLogo?: string | null;
   clinicAddress?: string;
   clinicPhone?: string;
   clinicEmail?: string;
@@ -21,14 +21,14 @@ export interface ISettings {
   theme: 'light' | 'dark' | 'system';
   language: string;
   pinEnabled: boolean;
-  pinCode?: string;
+  pinCode?: string | null;
   biometricEnabled: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
 // Settings schema for Realm
-export const SettingsSchema = {
+export const SettingsSchema: ObjectSchema = {
   name: 'Settings',
   primaryKey: 'id',
   properties: {
@@ -61,16 +61,16 @@ export interface IExportJob {
   id: string;
   type: 'patients' | 'appointments' | 'services' | 'quotes' | 'bills' | 'all';
   status: 'pending' | 'processing' | 'completed' | 'failed';
-  startDate?: Date;
-  endDate?: Date;
-  filePath?: string;
-  error?: string;
+  startDate?: Date | null;
+  endDate?: Date | null;
+  filePath?: string | null;
+  error?: string | null;
   createdAt: Date;
-  completedAt?: Date;
+  completedAt?: Date | null;
 }
 
 // Export job schema for Realm
-export const ExportJobSchema = {
+export const ExportJobSchema: ObjectSchema = {
   name: 'ExportJob',
   primaryKey: 'id',
   properties: {
@@ -93,11 +93,11 @@ export interface IAuthLog {
   method: 'pin' | 'biometric';
   timestamp: Date;
   success: boolean;
-  errorMessage?: string;
+  errorMessage?: string | null;
 }
 
 // Authentication log schema for Realm
-export const AuthLogSchema = {
+export const AuthLogSchema: ObjectSchema = {
   name: 'AuthLog',
   primaryKey: 'id',
   properties: {
