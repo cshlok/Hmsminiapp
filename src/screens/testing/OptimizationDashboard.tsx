@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
-import { Card, Button, List, useTheme } from 'react-native-paper';
+// Replace React Native imports with web-compatible alternatives
+import { Card, Button, List, useTheme } from '@mui/material';
 
 const OptimizationDashboard = () => {
   const theme = useTheme();
@@ -81,20 +81,20 @@ const OptimizationDashboard = () => {
     batteryUsage: '-15%',
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return theme.colors.primary;
+        return theme.palette.primary.main;
       case 'in_progress':
-        return theme.colors.secondary;
+        return theme.palette.secondary.main;
       case 'not_started':
-        return theme.colors.error;
+        return theme.palette.error.main;
       default:
-        return theme.colors.backdrop;
+        return theme.palette.text.disabled;
     }
   };
 
-  const getStatusText = (status) => {
+  const getStatusText = (status: string) => {
     switch (status) {
       case 'completed':
         return 'Completed';
@@ -107,275 +107,296 @@ const OptimizationDashboard = () => {
     }
   };
 
-  const renderTaskItem = (task) => (
+  const renderTaskItem = (task: any) => (
     <List.Item
       key={task.id}
-      title={task.title}
-      description={task.description}
-      left={props => (
-        <List.Icon
-          {...props}
-          color={getStatusColor(task.status)}
-          icon={
-            task.status === 'completed'
-              ? 'check-circle'
-              : task.status === 'in_progress'
-              ? 'progress-clock'
-              : 'alert-circle-outline'
-          }
-        />
-      )}
-      right={props => (
-        <View style={styles.taskRight}>
-          <Text style={[styles.taskStatus, { color: getStatusColor(task.status) }]}>
+      className="taskItem"
+    >
+      <div className="taskContent">
+        <div className="taskIcon" style={{ color: getStatusColor(task.status) }}>
+          {task.status === 'completed' ? '✓' : 
+           task.status === 'in_progress' ? '⟳' : '⚠'}
+        </div>
+        <div className="taskInfo">
+          <div className="taskTitle">{task.title}</div>
+          <div className="taskDescription">{task.description}</div>
+        </div>
+        <div className="taskRight">
+          <div className="taskStatus" style={{ color: getStatusColor(task.status) }}>
             {getStatusText(task.status)}
-          </Text>
-          <Text style={styles.taskImprovement}>{task.improvement}</Text>
-        </View>
-      )}
-      style={styles.taskItem}
-    />
+          </div>
+          <div className="taskImprovement">{task.improvement}</div>
+        </div>
+      </div>
+    </List.Item>
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <Card style={styles.summaryCard}>
-        <Card.Content>
-          <Text style={styles.title}>Optimization Dashboard</Text>
-          <Text style={styles.subtitle}>Performance Optimization Progress</Text>
+    <div className="container">
+      <Card className="summaryCard">
+        <div className="card-content">
+          <h1 className="title">Optimization Dashboard</h1>
+          <h2 className="subtitle">Performance Optimization Progress</h2>
           
-          <View style={styles.overallStats}>
-            <View style={styles.statCircle}>
-              <Text style={styles.completionRateText}>{completionRate}%</Text>
-              <Text style={styles.completionRateLabel}>Complete</Text>
-            </View>
+          <div className="overallStats">
+            <div className="statCircle">
+              <div className="completionRateText">{completionRate}%</div>
+              <div className="completionRateLabel">Complete</div>
+            </div>
             
-            <View style={styles.statsColumn}>
-              <View style={styles.statsRow}>
-                <View style={styles.statItem}>
-                  <Text style={styles.statValue}>{totalTasks}</Text>
-                  <Text style={styles.statLabel}>Total Tasks</Text>
-                </View>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statValue, { color: theme.colors.primary }]}>{completedTasks}</Text>
-                  <Text style={styles.statLabel}>Completed</Text>
-                </View>
-              </View>
-              <View style={styles.statsRow}>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statValue, { color: theme.colors.secondary }]}>{inProgressTasks}</Text>
-                  <Text style={styles.statLabel}>In Progress</Text>
-                </View>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statValue, { color: theme.colors.error }]}>{notStartedTasks}</Text>
-                  <Text style={styles.statLabel}>Not Started</Text>
-                </View>
-              </View>
-            </View>
-          </View>
+            <div className="statsColumn">
+              <div className="statsRow">
+                <div className="statItem">
+                  <div className="statValue">{totalTasks}</div>
+                  <div className="statLabel">Total Tasks</div>
+                </div>
+                <div className="statItem">
+                  <div className="statValue" style={{ color: theme.palette.primary.main }}>{completedTasks}</div>
+                  <div className="statLabel">Completed</div>
+                </div>
+              </div>
+              <div className="statsRow">
+                <div className="statItem">
+                  <div className="statValue" style={{ color: theme.palette.secondary.main }}>{inProgressTasks}</div>
+                  <div className="statLabel">In Progress</div>
+                </div>
+                <div className="statItem">
+                  <div className="statValue" style={{ color: theme.palette.error.main }}>{notStartedTasks}</div>
+                  <div className="statLabel">Not Started</div>
+                </div>
+              </div>
+            </div>
+          </div>
           
           <Button 
-            mode="contained" 
-            style={styles.button}
-            onPress={() => console.log('Run performance analysis')}
+            variant="contained" 
+            className="button"
+            onClick={() => console.log('Run performance analysis')}
           >
             Run Performance Analysis
           </Button>
-        </Card.Content>
+        </div>
       </Card>
       
-      <Card style={styles.improvementsCard}>
-        <Card.Content>
-          <Text style={styles.sectionTitle}>Performance Improvements</Text>
+      <Card className="improvementsCard">
+        <div className="card-content">
+          <h2 className="sectionTitle">Performance Improvements</h2>
           
-          <View style={styles.improvementRow}>
-            <View style={styles.improvementItem}>
-              <Text style={styles.improvementValue}>{performanceImprovements.startupTime}</Text>
-              <Text style={styles.improvementLabel}>Startup Time</Text>
-            </View>
-            <View style={styles.improvementItem}>
-              <Text style={styles.improvementValue}>{performanceImprovements.memoryUsage}</Text>
-              <Text style={styles.improvementLabel}>Memory Usage</Text>
-            </View>
-            <View style={styles.improvementItem}>
-              <Text style={styles.improvementValue}>{performanceImprovements.renderSpeed}</Text>
-              <Text style={styles.improvementLabel}>Render Speed</Text>
-            </View>
-          </View>
+          <div className="improvementRow">
+            <div className="improvementItem">
+              <div className="improvementValue">{performanceImprovements.startupTime}</div>
+              <div className="improvementLabel">Startup Time</div>
+            </div>
+            <div className="improvementItem">
+              <div className="improvementValue">{performanceImprovements.memoryUsage}</div>
+              <div className="improvementLabel">Memory Usage</div>
+            </div>
+            <div className="improvementItem">
+              <div className="improvementValue">{performanceImprovements.renderSpeed}</div>
+              <div className="improvementLabel">Render Speed</div>
+            </div>
+          </div>
           
-          <View style={styles.improvementRow}>
-            <View style={styles.improvementItem}>
-              <Text style={styles.improvementValue}>{performanceImprovements.storageSize}</Text>
-              <Text style={styles.improvementLabel}>Storage Size</Text>
-            </View>
-            <View style={styles.improvementItem}>
-              <Text style={styles.improvementValue}>{performanceImprovements.batteryUsage}</Text>
-              <Text style={styles.improvementLabel}>Battery Usage</Text>
-            </View>
-            <View style={styles.improvementItem}>
-              <Text style={styles.improvementValue}>6/7</Text>
-              <Text style={styles.improvementLabel}>Modules Optimized</Text>
-            </View>
-          </View>
-        </Card.Content>
+          <div className="improvementRow">
+            <div className="improvementItem">
+              <div className="improvementValue">{performanceImprovements.storageSize}</div>
+              <div className="improvementLabel">Storage Size</div>
+            </div>
+            <div className="improvementItem">
+              <div className="improvementValue">{performanceImprovements.batteryUsage}</div>
+              <div className="improvementLabel">Battery Usage</div>
+            </div>
+            <div className="improvementItem">
+              <div className="improvementValue">6/7</div>
+              <div className="improvementLabel">Modules Optimized</div>
+            </div>
+          </div>
+        </div>
       </Card>
       
-      <Card style={styles.tasksCard}>
-        <Card.Content>
-          <Text style={styles.sectionTitle}>Optimization Tasks</Text>
+      <Card className="tasksCard">
+        <div className="card-content">
+          <h2 className="sectionTitle">Optimization Tasks</h2>
           
-          <List.Section>
+          <List className="taskList">
             {optimizationTasks.map(renderTaskItem)}
-          </List.Section>
+          </List>
           
           <Button 
-            mode="outlined" 
-            style={styles.button}
-            onPress={() => console.log('Add new optimization task')}
+            variant="outlined" 
+            className="button"
+            onClick={() => console.log('Add new optimization task')}
           >
             Add New Optimization Task
           </Button>
-        </Card.Content>
+        </div>
       </Card>
       
-      <View style={styles.buttonContainer}>
+      <div className="buttonContainer">
         <Button 
-          mode="contained" 
-          style={[styles.button, styles.generateButton]}
-          onPress={() => console.log('Generate optimization report')}
+          variant="contained" 
+          className="button generateButton"
+          onClick={() => console.log('Generate optimization report')}
         >
           Generate Optimization Report
         </Button>
         
         <Button 
-          mode="outlined" 
-          style={styles.button}
-          onPress={() => console.log('Export metrics')}
+          variant="outlined" 
+          className="button"
+          onClick={() => console.log('Export metrics')}
         >
           Export Metrics
         </Button>
-      </View>
-    </ScrollView>
+      </div>
+
+      <style jsx>{`
+        .container {
+          flex: 1;
+          background-color: #f5f5f5;
+          padding: 16px;
+        }
+        .card-content {
+          padding: 16px;
+        }
+        .summaryCard {
+          margin-bottom: 16px;
+        }
+        .title {
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 8px;
+        }
+        .subtitle {
+          font-size: 16px;
+          color: #666;
+          margin-bottom: 16px;
+        }
+        .overallStats {
+          display: flex;
+          align-items: center;
+          margin-bottom: 16px;
+        }
+        .statCircle {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          background-color: #f0f0f0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          margin-right: 16px;
+        }
+        .completionRateText {
+          font-size: 24px;
+          font-weight: bold;
+          color: #4CAF50;
+        }
+        .completionRateLabel {
+          font-size: 12px;
+          color: #666;
+        }
+        .statsColumn {
+          flex: 1;
+        }
+        .statsRow {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
+        }
+        .statItem {
+          align-items: center;
+          text-align: center;
+          flex: 1;
+        }
+        .statValue {
+          font-size: 18px;
+          font-weight: bold;
+        }
+        .statLabel {
+          font-size: 12px;
+          color: #666;
+        }
+        .button {
+          margin-top: 8px;
+        }
+        .improvementsCard {
+          margin-bottom: 16px;
+        }
+        .sectionTitle {
+          font-size: 18px;
+          font-weight: bold;
+          margin-bottom: 16px;
+        }
+        .improvementRow {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 16px;
+        }
+        .improvementItem {
+          align-items: center;
+          text-align: center;
+          flex: 1;
+        }
+        .improvementValue {
+          font-size: 18px;
+          font-weight: bold;
+          color: #4CAF50;
+        }
+        .improvementLabel {
+          font-size: 12px;
+          color: #666;
+          text-align: center;
+        }
+        .tasksCard {
+          margin-bottom: 16px;
+        }
+        .taskList {
+          padding: 0;
+        }
+        .taskItem {
+          padding: 8px 0;
+          border-bottom: 1px solid #eee;
+        }
+        .taskContent {
+          display: flex;
+          align-items: center;
+        }
+        .taskIcon {
+          margin-right: 16px;
+          font-size: 24px;
+        }
+        .taskInfo {
+          flex: 1;
+        }
+        .taskTitle {
+          font-weight: bold;
+        }
+        .taskDescription {
+          font-size: 14px;
+          color: #666;
+        }
+        .taskRight {
+          text-align: right;
+        }
+        .taskStatus {
+          font-size: 12px;
+          font-weight: bold;
+        }
+        .taskImprovement {
+          font-size: 12px;
+          color: #4CAF50;
+        }
+        .buttonContainer {
+          margin-bottom: 32px;
+        }
+        .generateButton {
+          margin-bottom: 8px;
+        }
+      `}</style>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
-  },
-  summaryCard: {
-    marginBottom: 16,
-    elevation: 4,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 16,
-  },
-  overallStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  statCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  completionRateText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-  },
-  completionRateLabel: {
-    fontSize: 12,
-    color: '#666',
-  },
-  statsColumn: {
-    flex: 1,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  statItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#666',
-  },
-  button: {
-    marginTop: 8,
-  },
-  improvementsCard: {
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  improvementRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  improvementItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  improvementValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-  },
-  improvementLabel: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
-  },
-  tasksCard: {
-    marginBottom: 16,
-  },
-  taskItem: {
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
-  taskRight: {
-    alignItems: 'flex-end',
-  },
-  taskStatus: {
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  taskImprovement: {
-    fontSize: 12,
-    color: '#4CAF50',
-  },
-  buttonContainer: {
-    marginBottom: 32,
-  },
-  generateButton: {
-    marginBottom: 8,
-  },
-});
 
 export default OptimizationDashboard;
