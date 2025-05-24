@@ -1,6 +1,6 @@
 import { IPatient } from '../store/slices/patientSlice';
 import { IAppointment } from '../store/slices/appointmentSlice';
-import { IService, ICategory } from '../store/slices/serviceSlice';
+import { IServiceSlice as IService, ICategory } from '../utils/modelConverters';
 import { IQuote } from '../store/slices/quoteSlice';
 import { IBill } from '../store/slices/billingSlice';
 import { 
