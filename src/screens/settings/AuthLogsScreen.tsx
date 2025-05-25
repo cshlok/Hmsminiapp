@@ -1,6 +1,27 @@
 import React from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
-import { Text, Card, Divider, Button, List, Chip, useTheme } from 'react-native-paper';
+import { 
+  Box, 
+  Card, 
+  CardContent, 
+  Typography, 
+  Divider, 
+  Button, 
+  Chip, 
+  List, 
+  ListItem, 
+  ListItemIcon, 
+  ListItemText, 
+  Container
+} from '@mui/material';
+import { 
+  Login as LoginIcon, 
+  Logout as LogoutIcon, 
+  Error as ErrorIcon, 
+  AccountCircle as AccountIcon, 
+  AccessTime as ClockIcon, 
+  Dialpad as DialpadIcon, 
+  Fingerprint as FingerprintIcon
+} from '@mui/icons-material';
 import { IAuthLog } from '../../models/SettingsModel';
 import { format } from 'date-fns';
 
@@ -15,163 +36,126 @@ const AuthLogsScreen: React.FC<AuthLogsScreenProps> = ({
   loading,
   onClearLogs,
 }) => {
-  const theme = useTheme();
-
   const getStatusColor = (success: boolean) => {
-    return success ? theme.colors.primary : theme.colors.error;
+    return success ? 'primary' : 'error';
   };
 
   const getActionIcon = (action: string) => {
     switch (action) {
       case 'login':
-        return 'login';
+        return <LoginIcon />;
       case 'logout':
-        return 'logout';
+        return <LogoutIcon />;
       case 'failed_login':
-        return 'alert-circle';
+        return <ErrorIcon color="error" />;
       default:
-        return 'shield-account';
+        return <AccountIcon />;
     }
   };
 
-  const renderAuthLog = ({ item }: { item: IAuthLog }) => {
+  const renderAuthLog = (item: IAuthLog) => {
     const formattedDate = item.timestamp ? format(new Date(item.timestamp), 'MMM dd, yyyy HH:mm:ss') : 'Unknown';
     
     return (
-      <Card style={styles.card}>
-        <Card.Content>
-          <View style={styles.headerRow}>
-            <Text variant="titleMedium" style={styles.title}>
+      <Card sx={{ mb: 2 }} key={item.id}>
+        <CardContent>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               {item.action === 'login' ? 'Login' : 
                item.action === 'logout' ? 'Logout' : 
                'Failed Login Attempt'}
-            </Text>
+            </Typography>
             <Chip 
-              mode="flat" 
-              style={[styles.statusChip, { backgroundColor: getStatusColor(item.success) + '20' }]}
-              textStyle={{ color: getStatusColor(item.success) }}
-            >
-              {item.success ? 'Success' : 'Failed'}
-            </Chip>
-          </View>
-          
-          <Divider style={styles.divider} />
-          
-          <List.Item
-            title="Time"
-            description={formattedDate}
-            left={props => <List.Icon {...props} icon="clock-outline" />}
-            style={styles.listItem}
-          />
-          
-          <List.Item
-            title="Method"
-            description={item.method === 'pin' ? 'PIN Authentication' : 'Biometric Authentication'}
-            left={props => <List.Icon {...props} icon={item.method === 'pin' ? 'dialpad' : 'fingerprint'} />}
-            style={styles.listItem}
-          />
-          
-          {!item.success && item.errorMessage && (
-            <List.Item
-              title="Error"
-              description={item.errorMessage}
-              left={props => <List.Icon {...props} icon="alert-circle" color={theme.colors.error} />}
-              style={styles.listItem}
+              label={item.success ? 'Success' : 'Failed'}
+              color={getStatusColor(item.success)}
+              variant="outlined"
+              size="small"
             />
-          )}
-        </Card.Content>
+          </Box>
+          
+          <Divider sx={{ my: 2 }} />
+          
+          <List disablePadding>
+            <ListItem disablePadding sx={{ pb: 1 }}>
+              <ListItemIcon>
+                <ClockIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Time" 
+                secondary={formattedDate} 
+              />
+            </ListItem>
+            
+            <ListItem disablePadding sx={{ pb: 1 }}>
+              <ListItemIcon>
+                {item.method === 'pin' ? <DialpadIcon /> : <FingerprintIcon />}
+              </ListItemIcon>
+              <ListItemText 
+                primary="Method" 
+                secondary={item.method === 'pin' ? 'PIN Authentication' : 'Biometric Authentication'} 
+              />
+            </ListItem>
+            
+            {!item.success && item.errorMessage && (
+              <ListItem disablePadding>
+                <ListItemIcon>
+                  <ErrorIcon color="error" />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Error" 
+                  secondary={item.errorMessage} 
+                />
+              </ListItem>
+            )}
+          </List>
+        </CardContent>
       </Card>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <Box sx={{ 
+      flex: 1, 
+      bgcolor: '#f5f5f5', 
+      minHeight: '100vh', 
+      p: 2 
+    }}>
       {authLogs.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No authentication logs found.</Text>
-          <Text style={styles.emptySubtext}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '70vh', 
+          p: 3 
+        }}>
+          <Typography variant="h5" sx={{ mb: 1, fontWeight: 'bold' }}>
+            No authentication logs found.
+          </Typography>
+          <Typography variant="body1" sx={{ textAlign: 'center', color: '#666' }}>
             Authentication activity will be recorded here when you use PIN or biometric authentication.
-          </Text>
-        </View>
+          </Typography>
+        </Box>
       ) : (
         <>
-          <View style={styles.headerContainer}>
+          <Box sx={{ mb: 2 }}>
             <Button
-              mode="contained"
-              onPress={onClearLogs}
-              style={styles.clearButton}
-              icon="delete"
-              loading={loading}
+              variant="contained"
+              onClick={onClearLogs}
+              startIcon={<ErrorIcon />}
               disabled={loading}
             >
               Clear All Logs
             </Button>
-          </View>
+          </Box>
           
-          <FlatList
-            data={authLogs}
-            renderItem={renderAuthLog}
-            keyExtractor={item => item.id}
-            contentContainerStyle={styles.listContainer}
-          />
+          <Box>
+            {authLogs.map(item => renderAuthLog(item))}
+          </Box>
         </>
       )}
-    </View>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  headerContainer: {
-    padding: 16,
-    paddingBottom: 0,
-  },
-  clearButton: {
-    marginBottom: 16,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  emptySubtext: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#666',
-  },
-  listContainer: {
-    padding: 16,
-  },
-  card: {
-    marginBottom: 16,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontWeight: 'bold',
-  },
-  statusChip: {
-    height: 28,
-  },
-  divider: {
-    marginVertical: 16,
-  },
-  listItem: {
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
-});
 
 export default AuthLogsScreen;
