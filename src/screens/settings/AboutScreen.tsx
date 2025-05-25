@@ -1,194 +1,240 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Linking } from 'react-native';
-import { Text, Card, Divider, Button, List, Avatar, useTheme } from 'react-native-paper';
+import { 
+  Box, 
+  Card, 
+  CardContent, 
+  Typography, 
+  Divider, 
+  Button, 
+  List, 
+  ListItem, 
+  ListItemIcon, 
+  ListItemText, 
+  Avatar, 
+  Container
+} from '@mui/material';
+import {
+  People as PeopleIcon,
+  CalendarMonth as CalendarIcon,
+  MedicalServices as MedicalBagIcon,
+  Description as DocumentIcon,
+  PointOfSale as CashRegisterIcon,
+  FileUpload as ExportIcon,
+  Shield as ShieldLockIcon
+} from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 
 const AboutScreen = () => {
   const theme = useTheme();
 
   const handleOpenWebsite = (url: string) => {
-    Linking.openURL(url);
+    window.open(url, '_blank');
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Card style={styles.card}>
-        <Card.Content style={styles.headerContent}>
-          <Avatar.Icon size={80} icon="medical-bag" style={{ backgroundColor: theme.colors.primary }} />
-          <Text variant="headlineMedium" style={styles.title}>Clinic Management App</Text>
-          <Text variant="bodyLarge" style={styles.version}>Version 1.0.0</Text>
-        </Card.Content>
+    <Container sx={{ 
+      flex: 1, 
+      bgcolor: '#f5f5f5', 
+      py: 2,
+      maxWidth: 'md'
+    }}>
+      <Card sx={{ mb: 2 }}>
+        <CardContent sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          py: 3 
+        }}>
+          <Avatar 
+            sx={{ 
+              width: 80, 
+              height: 80, 
+              bgcolor: theme.palette.primary.main 
+            }}
+          >
+            <MedicalBagIcon fontSize="large" />
+          </Avatar>
+          <Typography variant="h4" sx={{ mt: 2, fontWeight: 'bold', textAlign: 'center' }}>
+            Clinic Management App
+          </Typography>
+          <Typography variant="body1" sx={{ mt: 1, color: '#666' }}>
+            Version 1.0.0
+          </Typography>
+        </CardContent>
       </Card>
 
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>About This App</Text>
-          <Divider style={styles.divider} />
+      <Card sx={{ mb: 2 }}>
+        <CardContent>
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            About This App
+          </Typography>
+          <Divider sx={{ my: 2 }} />
           
-          <Text style={styles.paragraph}>
+          <Typography paragraph>
             The Clinic Management App is designed for small clinics and solo practitioners to efficiently manage patients, 
             appointments, services, quotes, and billing in one integrated solution.
-          </Text>
+          </Typography>
           
-          <Text style={styles.paragraph}>
+          <Typography paragraph>
             This app works completely offline, storing all your data securely on your device. 
             No internet connection is required, ensuring your practice can run smoothly anywhere, anytime.
-          </Text>
-        </Card.Content>
+          </Typography>
+        </CardContent>
       </Card>
 
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>Features</Text>
-          <Divider style={styles.divider} />
+      <Card sx={{ mb: 2 }}>
+        <CardContent>
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            Features
+          </Typography>
+          <Divider sx={{ my: 2 }} />
           
-          <List.Item
-            title="Patient Management"
-            description="Add, edit, and manage patient profiles with medical history"
-            left={props => <List.Icon {...props} icon="account-multiple" />}
-          />
-          
-          <List.Item
-            title="Appointment Scheduling"
-            description="Book and manage appointments with calendar view"
-            left={props => <List.Icon {...props} icon="calendar" />}
-          />
-          
-          <List.Item
-            title="Service Management"
-            description="Create and organize services with custom pricing"
-            left={props => <List.Icon {...props} icon="medical-bag" />}
-          />
-          
-          <List.Item
-            title="Quote Generator"
-            description="Create professional quotes with automatic calculations"
-            left={props => <List.Icon {...props} icon="file-document-outline" />}
-          />
-          
-          <List.Item
-            title="Billing System"
-            description="Generate invoices and track payments"
-            left={props => <List.Icon {...props} icon="cash-register" />}
-          />
-          
-          <List.Item
-            title="Data Export"
-            description="Export your data to Excel format for backup or analysis"
-            left={props => <List.Icon {...props} icon="export" />}
-          />
-          
-          <List.Item
-            title="Security"
-            description="Protect your data with PIN or biometric authentication"
-            left={props => <List.Icon {...props} icon="shield-lock" />}
-          />
-        </Card.Content>
+          <List disablePadding>
+            <ListItem disablePadding sx={{ pb: 1 }}>
+              <ListItemIcon>
+                <PeopleIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Patient Management" 
+                secondary="Add, edit, and manage patient profiles with medical history" 
+              />
+            </ListItem>
+            
+            <ListItem disablePadding sx={{ pb: 1 }}>
+              <ListItemIcon>
+                <CalendarIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Appointment Scheduling" 
+                secondary="Book and manage appointments with calendar view" 
+              />
+            </ListItem>
+            
+            <ListItem disablePadding sx={{ pb: 1 }}>
+              <ListItemIcon>
+                <MedicalBagIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Service Management" 
+                secondary="Create and organize services with custom pricing" 
+              />
+            </ListItem>
+            
+            <ListItem disablePadding sx={{ pb: 1 }}>
+              <ListItemIcon>
+                <DocumentIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Quote Generator" 
+                secondary="Create professional quotes with automatic calculations" 
+              />
+            </ListItem>
+            
+            <ListItem disablePadding sx={{ pb: 1 }}>
+              <ListItemIcon>
+                <CashRegisterIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Billing System" 
+                secondary="Generate invoices and track payments" 
+              />
+            </ListItem>
+            
+            <ListItem disablePadding sx={{ pb: 1 }}>
+              <ListItemIcon>
+                <ExportIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Data Export" 
+                secondary="Export your data to Excel format for backup or analysis" 
+              />
+            </ListItem>
+            
+            <ListItem disablePadding>
+              <ListItemIcon>
+                <ShieldLockIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Security" 
+                secondary="Protect your data with PIN or biometric authentication" 
+              />
+            </ListItem>
+          </List>
+        </CardContent>
       </Card>
 
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>Privacy & Security</Text>
-          <Divider style={styles.divider} />
+      <Card sx={{ mb: 2 }}>
+        <CardContent>
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            Privacy & Security
+          </Typography>
+          <Divider sx={{ my: 2 }} />
           
-          <Text style={styles.paragraph}>
+          <Typography paragraph>
             Your data never leaves your device unless you explicitly export it. 
             We do not collect, store, or transmit any of your clinic or patient data.
-          </Text>
+          </Typography>
           
-          <Text style={styles.paragraph}>
+          <Typography paragraph>
             For additional security, you can enable PIN or biometric authentication 
             to prevent unauthorized access to the app.
-          </Text>
+          </Typography>
           
           <Button
-            mode="outlined"
-            onPress={() => handleOpenWebsite('https://example.com/privacy-policy')}
-            style={styles.button}
+            variant="outlined"
+            onClick={() => handleOpenWebsite('https://example.com/privacy-policy')}
+            sx={{ mb: 1.5, width: '100%' }}
           >
             Privacy Policy
           </Button>
-        </Card.Content>
+        </CardContent>
       </Card>
 
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>Support</Text>
-          <Divider style={styles.divider} />
+      <Card sx={{ mb: 2 }}>
+        <CardContent>
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            Support
+          </Typography>
+          <Divider sx={{ my: 2 }} />
           
-          <Text style={styles.paragraph}>
+          <Typography paragraph>
             If you need assistance or have any questions about the app, 
             please contact our support team.
-          </Text>
+          </Typography>
           
           <Button
-            mode="outlined"
-            onPress={() => handleOpenWebsite('mailto:support@example.com')}
-            style={styles.button}
+            variant="outlined"
+            onClick={() => handleOpenWebsite('mailto:support@example.com')}
+            sx={{ mb: 1.5, width: '100%' }}
           >
             Contact Support
           </Button>
           
           <Button
-            mode="outlined"
-            onPress={() => handleOpenWebsite('https://example.com/help')}
-            style={styles.button}
+            variant="outlined"
+            onClick={() => handleOpenWebsite('https://example.com/help')}
+            sx={{ mb: 1.5, width: '100%' }}
           >
             Help Center
           </Button>
-        </Card.Content>
+        </CardContent>
       </Card>
 
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>© 2025 Clinic Management App</Text>
-        <Text style={styles.footerText}>All Rights Reserved</Text>
-      </View>
-    </ScrollView>
+      <Box sx={{ 
+        py: 3, 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center' 
+      }}>
+        <Typography sx={{ color: '#666', mb: 0.5 }}>
+          © 2025 Clinic Management App
+        </Typography>
+        <Typography sx={{ color: '#666' }}>
+          All Rights Reserved
+        </Typography>
+      </Box>
+    </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  card: {
-    margin: 16,
-    marginBottom: 8,
-  },
-  headerContent: {
-    alignItems: 'center',
-    paddingVertical: 24,
-  },
-  title: {
-    marginTop: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  version: {
-    marginTop: 8,
-    color: '#666',
-  },
-  sectionTitle: {
-    fontWeight: 'bold',
-  },
-  divider: {
-    marginVertical: 16,
-  },
-  paragraph: {
-    marginBottom: 16,
-    lineHeight: 22,
-  },
-  button: {
-    marginBottom: 12,
-  },
-  footer: {
-    padding: 24,
-    alignItems: 'center',
-  },
-  footerText: {
-    color: '#666',
-    marginBottom: 4,
-  },
-});
 
 export default AboutScreen;
