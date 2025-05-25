@@ -11,6 +11,7 @@ import { SettingsRepository } from '../../storage/SettingsRepository';
 import SettingsScreen from './SettingsScreen';
 import { v4 as uuidv4 } from 'uuid';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Box } from '@mui/material';
+import { ISettings } from '../../models/SettingsModel';
 
 interface NavigationProps {
   navigate: (screen: string, params?: any) => void;
@@ -18,7 +19,11 @@ interface NavigationProps {
 
 const SettingsContainer: React.FC<{ navigation: NavigationProps }> = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { settings, loading } = useSelector((state: RootState) => state.settings);
+  // Fix the type error by accessing state.settings.settings instead of state.settings
+  const { settings, loading } = useSelector((state: RootState) => ({
+    settings: state.settings.settings,
+    loading: state.settings.loading
+  }));
   const [settingsRepo, setSettingsRepo] = useState<SettingsRepository | null>(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
@@ -46,6 +51,7 @@ const SettingsContainer: React.FC<{ navigation: NavigationProps }> = ({ navigati
         // Initialize settings if not exists
         // In a real implementation, this would fetch from Realm
         const initialSettings = repository.initializeSettings();
+        // Fix the type error by using the correct action type
         dispatch(resetSettings(initialSettings));
       } catch (error) {
         console.error('Failed to initialize settings repository:', error);
@@ -59,7 +65,7 @@ const SettingsContainer: React.FC<{ navigation: NavigationProps }> = ({ navigati
   }, [dispatch]);
 
   // Handle settings update
-  const handleUpdateSettings = (updatedSettings: Partial<typeof settings>) => {
+  const handleUpdateSettings = (updatedSettings: Partial<ISettings>) => {
     if (!settingsRepo || !settings) return;
     
     try {
@@ -205,16 +211,7 @@ const SettingsContainer: React.FC<{ navigation: NavigationProps }> = ({ navigati
     try {
       dispatch(setLoading(true));
       
-      // Create export job
-      const exportJob = {
-        id: uuidv4(),
-        type,
-        status: 'pending',
-        createdAt: new Date(),
-      };
-      
-      // In a real implementation, this would create in Realm
-      // dispatch(addExportJob(exportJob)); - Removed as it's not available
+      // Create export job - removed unused variable
       
       // Simulate export process
       setTimeout(() => {
@@ -233,7 +230,7 @@ const SettingsContainer: React.FC<{ navigation: NavigationProps }> = ({ navigati
                 action: async () => {
                   try {
                     // Web-compatible sharing
-                    if (navigator.share) {
+                    if (navigator && 'share' in navigator) {
                       await navigator.share({
                         title: `${type} Export`,
                         text: `Clinic Management App - ${type} data export`,
