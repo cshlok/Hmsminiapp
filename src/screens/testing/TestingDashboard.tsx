@@ -1,5 +1,4 @@
 import React from 'react';
-// Replace React Native imports with web-compatible alternatives
 import { Card, Button, Divider, useTheme } from '@mui/material';
 import styled from '@emotion/styled';
 
