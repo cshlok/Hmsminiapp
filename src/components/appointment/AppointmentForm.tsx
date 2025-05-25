@@ -58,7 +58,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
     setDatePickerVisible(false);
   };
 
-  const handleStartTimeConfirm = (time: Date, setFieldValue: any, values: any) => {
+  const handleStartTimeConfirm = (time: Date, setFieldValue: (field: string, value: any) => void, values: Partial<IAppointment>) => {
     const formattedTime = format(time, 'HH:mm');
     setFieldValue('startTime', formattedTime);
     
