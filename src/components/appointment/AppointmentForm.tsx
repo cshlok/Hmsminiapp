@@ -53,7 +53,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   const [isEndTimePickerVisible, setEndTimePickerVisible] = useState(false);
   const [timeSlotError, setTimeSlotError] = useState('');
 
-  const handleDateConfirm = (date: Date, setFieldValue: any) => {
+  const handleDateConfirm = (date: Date, setFieldValue: (field: string, value: any) => void) => {
     setFieldValue('date', date);
     setDatePickerVisible(false);
   };
