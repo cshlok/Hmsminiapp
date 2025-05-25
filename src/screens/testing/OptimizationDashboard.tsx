@@ -1,4 +1,4 @@
-import React from 'react';
+// No React import needed with modern JSX transform
 // Replace React Native imports with web-compatible alternatives
 import { Card, Button, useTheme } from '@mui/material';
 import styled from '@emotion/styled';
