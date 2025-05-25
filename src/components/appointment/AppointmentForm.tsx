@@ -9,8 +9,8 @@ import { format } from 'date-fns';
 
 interface AppointmentFormProps {
   initialValues?: Partial<IAppointment>;
-  patients: any[];
-  onSubmit: (values: any) => void;
+  patients: Array<{id: string, name: string}>;
+  onSubmit: (values: Partial<IAppointment>) => void;
   onCancel: () => void;
   checkTimeSlotAvailability: (date: Date, startTime: string, endTime: string, appointmentId?: string) => boolean;
   isLoading?: boolean;
