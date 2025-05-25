@@ -8,10 +8,9 @@ import {
   setSearchQuery, 
   setFilterCategoryId, 
   setFilterActive,
-  clearFilters,
-  IService,
-  IServiceCategory
+  clearFilters
 } from '../../store/slices/serviceSlice';
+import { IServiceSlice as IService, ICategory as IServiceCategory } from '../../utils/modelConverters';
 import ServiceList from './ServiceList';
 
 // Mock data for initial development
