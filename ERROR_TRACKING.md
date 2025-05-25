@@ -20,6 +20,7 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 
 ### Service Screens
 - ✅ Converted ServiceListScreen.tsx from React Native to Material-UI
+- ✅ Converted ServiceCard component from React Native to Material-UI
 
 ### Dependencies
 - ✅ Added @mui/icons-material dependency
@@ -28,7 +29,6 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 
 ### Service Screens
 - ❌ Fix type mismatches in ServiceListContainer.tsx (ICategory[] vs IServiceCategory[])
-- ❌ Convert ServiceCard component from React Native to Material-UI
 - ❌ Convert ServiceDetailScreen.tsx from React Native to Material-UI
 - ❌ Convert ServiceFormScreen.tsx from React Native to Material-UI
 
@@ -65,5 +65,6 @@ We've made significant progress by:
 2. Removing unused imports across multiple files
 3. Adding necessary dependencies
 4. Fixing type mismatches in Redux store and settings slice
+5. Converting service components to use Material-UI
 
 The remaining work focuses on service-related screens and general type issues throughout the codebase.
