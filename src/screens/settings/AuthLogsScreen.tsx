@@ -10,8 +10,7 @@ import {
   List, 
   ListItem, 
   ListItemIcon, 
-  ListItemText, 
-  Container
+  ListItemText
 } from '@mui/material';
 import { 
   Login as LoginIcon, 
@@ -40,18 +39,7 @@ const AuthLogsScreen: React.FC<AuthLogsScreenProps> = ({
     return success ? 'primary' : 'error';
   };
 
-  const getActionIcon = (action: string) => {
-    switch (action) {
-      case 'login':
-        return <LoginIcon />;
-      case 'logout':
-        return <LogoutIcon />;
-      case 'failed_login':
-        return <ErrorIcon color="error" />;
-      default:
-        return <AccountIcon />;
-    }
-  };
+  // Removed unused getActionIcon function
 
   const renderAuthLog = (item: IAuthLog) => {
     const formattedDate = item.timestamp ? format(new Date(item.timestamp), 'MMM dd, yyyy HH:mm:ss') : 'Unknown';
