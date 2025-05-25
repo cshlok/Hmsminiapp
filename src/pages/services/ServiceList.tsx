@@ -12,7 +12,8 @@ import {
   DollarSign,
   Clock
 } from 'lucide-react';
-import { IService, IServiceCategory } from '../../store/slices/serviceSlice';
+import { IServiceSlice as IService } from '../../utils/modelConverters';
+import { ICategory as IServiceCategory } from '../../utils/modelConverters';
 
 interface ServiceListProps {
   services: IService[];
