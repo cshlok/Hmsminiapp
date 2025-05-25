@@ -1,6 +1,15 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { Text, Card, Chip, useTheme, IconButton } from 'react-native-paper';
+import { 
+  Card, 
+  CardContent, 
+  Typography, 
+  Chip, 
+  IconButton, 
+  Box, 
+  CardActionArea 
+} from '@mui/material';
+import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 import { IService } from '../../models/ServiceModel';
 
 interface ServiceCardProps {
@@ -22,97 +31,103 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
   return (
     <Card 
-      style={styles.card}
-      onPress={() => onPress(service)}
+      sx={{ 
+        my: 0.75, 
+        mx: 2, 
+        boxShadow: 2 
+      }}
     >
-      <Card.Content style={styles.cardContent}>
-        <View style={styles.mainContent}>
-          <View style={styles.headerRow}>
-            <Text variant="titleMedium" style={styles.title}>{service.name}</Text>
-            <Chip style={[styles.categoryChip, { backgroundColor: theme.colors.primary + '20' }]}>
-              {categoryName}
-            </Chip>
-          </View>
+      <CardActionArea onClick={() => onPress(service)}>
+        <CardContent sx={{ 
+          display: 'flex', 
+          flexDirection: 'row',
+          p: 1.5
+        }}>
+          <Box sx={{ flex: 1 }}>
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              mb: 1
+            }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', flex: 1 }}>
+                {service.name}
+              </Typography>
+              <Chip 
+                label={categoryName} 
+                size="small"
+                sx={{ 
+                  ml: 1, 
+                  bgcolor: `${theme.palette.primary.main}20` 
+                }}
+              />
+            </Box>
+            
+            {service.description && (
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  mb: 1, 
+                  color: '#666',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}
+              >
+                {service.description}
+              </Typography>
+            )}
+            
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography 
+                variant="subtitle1" 
+                sx={{ 
+                  fontWeight: 'bold', 
+                  color: theme.palette.primary.main 
+                }}
+              >
+                ${service.price.toFixed(2)}
+              </Typography>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  ml: 2, 
+                  color: '#666' 
+                }}
+              >
+                {service.duration} min
+              </Typography>
+            </Box>
+          </Box>
           
-          {service.description && (
-            <Text variant="bodyMedium" numberOfLines={2} style={styles.description}>
-              {service.description}
-            </Text>
-          )}
-          
-          <View style={styles.detailsRow}>
-            <Text variant="titleMedium" style={[styles.price, { color: theme.colors.primary }]}>
-              ${service.price.toFixed(2)}
-            </Text>
-            <Text variant="bodyMedium" style={styles.duration}>
-              {service.duration} min
-            </Text>
-          </View>
-        </View>
-        
-        <View style={styles.actions}>
-          <IconButton
-            icon="pencil"
-            size={20}
-            onPress={() => onEdit(service)}
-            iconColor={theme.colors.primary}
-          />
-          <IconButton
-            icon="delete"
-            size={20}
-            onPress={() => onDelete(service.id)}
-            iconColor={theme.colors.error}
-          />
-        </View>
-      </Card.Content>
+          <Box sx={{ display: 'flex' }}>
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(service);
+              }}
+              color="primary"
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(service.id);
+              }}
+              color="error"
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Box>
+        </CardContent>
+      </CardActionArea>
     </Card>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    marginVertical: 6,
-    marginHorizontal: 16,
-    elevation: 2,
-  },
-  cardContent: {
-    flexDirection: 'row',
-    padding: 12,
-  },
-  mainContent: {
-    flex: 1,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  title: {
-    fontWeight: 'bold',
-    flex: 1,
-  },
-  categoryChip: {
-    marginLeft: 8,
-  },
-  description: {
-    marginBottom: 8,
-    color: '#666',
-  },
-  detailsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  price: {
-    fontWeight: 'bold',
-  },
-  duration: {
-    marginLeft: 16,
-    color: '#666',
-  },
-  actions: {
-    flexDirection: 'row',
-  },
-});
 
 export default ServiceCard;
