@@ -9,6 +9,7 @@ import {
   loadTaxSettings,
   loadBackupSettings
 } from '../../utils/storage';
+import { ISettings } from '../../models/SettingsModel';
 
 export interface IClinicInfo {
   name: string;
@@ -51,6 +52,7 @@ export interface ISettingsState {
   userPreferences: IUserPreferences;
   taxSettings: ITaxSettings;
   backupSettings: IBackupSettings;
+  settings: ISettings; // Add this to fix the property access error
   loading: boolean;
   error: string | null;
 }
@@ -97,6 +99,7 @@ const initialState: ISettingsState = {
   userPreferences: loadUserPreferences(defaultUserPreferences),
   taxSettings: loadTaxSettings(defaultTaxSettings),
   backupSettings: loadBackupSettings(defaultBackupSettings),
+  settings: {} as ISettings, // Initialize with empty object to fix the property access error
   loading: false,
   error: null,
 };
@@ -149,11 +152,12 @@ const settingsSlice = createSlice({
       };
       saveBackupSettings(state.backupSettings); // Persist to storage
     },
-    resetSettings: (state) => {
+    resetSettings: (state, action: PayloadAction<ISettings>) => {
       state.clinicInfo = defaultClinicInfo;
       state.userPreferences = defaultUserPreferences;
       state.taxSettings = defaultTaxSettings;
       state.backupSettings = defaultBackupSettings;
+      state.settings = action.payload; // Set the settings property
       
       // Persist reset settings to storage
       saveClinicInfo(defaultClinicInfo);
