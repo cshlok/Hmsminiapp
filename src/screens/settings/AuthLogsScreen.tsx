@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   Box, 
   Card, 
@@ -13,10 +12,7 @@ import {
   ListItemText
 } from '@mui/material';
 import { 
-  Login as LoginIcon, 
-  Logout as LogoutIcon, 
   Error as ErrorIcon, 
-  AccountCircle as AccountIcon, 
   AccessTime as ClockIcon, 
   Dialpad as DialpadIcon, 
   Fingerprint as FingerprintIcon
@@ -38,8 +34,6 @@ const AuthLogsScreen: React.FC<AuthLogsScreenProps> = ({
   const getStatusColor = (success: boolean) => {
     return success ? 'primary' : 'error';
   };
-
-  // Removed unused getActionIcon function
 
   const renderAuthLog = (item: IAuthLog) => {
     const formattedDate = item.timestamp ? format(new Date(item.timestamp), 'MMM dd, yyyy HH:mm:ss') : 'Unknown';
