@@ -1,4 +1,4 @@
-# Service Management Module - Data Model and Schema
+// Service Management Module - Data Model and Schema
 
 import { ObjectSchema } from 'realm';
 
