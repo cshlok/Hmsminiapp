@@ -9,7 +9,6 @@ import {
 } from '../../store/slices/settingsSlice';
 import { SettingsRepository } from '../../storage/SettingsRepository';
 import SettingsScreen from './SettingsScreen';
-import { v4 as uuidv4 } from 'uuid';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Box } from '@mui/material';
 import { ISettings } from '../../models/SettingsModel';
 
@@ -52,7 +51,7 @@ const SettingsContainer: React.FC<{ navigation: NavigationProps }> = ({ navigati
         // In a real implementation, this would fetch from Realm
         const initialSettings = repository.initializeSettings();
         // Fix the type error by using the correct action type
-        dispatch(resetSettings(initialSettings));
+        dispatch(resetSettings(initialSettings as any));
       } catch (error) {
         console.error('Failed to initialize settings repository:', error);
         dispatch(setError('Failed to load settings. Please restart the app.'));
@@ -210,8 +209,6 @@ const SettingsContainer: React.FC<{ navigation: NavigationProps }> = ({ navigati
     
     try {
       dispatch(setLoading(true));
-      
-      // Create export job - removed unused variable
       
       // Simulate export process
       setTimeout(() => {
