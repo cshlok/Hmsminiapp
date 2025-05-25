@@ -1,6 +1,20 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, FlatList, ScrollView } from 'react-native';
-import { Text, Divider, FAB, useTheme, ActivityIndicator, Chip, Searchbar, SegmentedButtons } from 'react-native-paper';
+import React from 'react';
+import { 
+  Box, 
+  TextField, 
+  Divider, 
+  Fab, 
+  CircularProgress, 
+  Chip, 
+  Typography, 
+  ToggleButtonGroup, 
+  ToggleButton,
+  List,
+  Paper,
+  Stack
+} from '@mui/material';
+import { Add as AddIcon, LocalOffer as TagIcon } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 import ServiceCard from '../../components/service/ServiceCard';
 import { IService, IServiceCategory } from '../../models/ServiceModel';
 
@@ -98,161 +112,150 @@ const ServiceListScreen: React.FC<ServiceListScreenProps> = ({
   const filteredServices = getFilteredServices();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Searchbar
+    <Box sx={{ 
+      flex: 1, 
+      bgcolor: '#f5f5f5', 
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      <Box sx={{ p: 2 }}>
+        <TextField
+          fullWidth
           placeholder="Search services..."
-          onChangeText={onSearch}
+          onChange={(e) => onSearch(e.target.value)}
           value={searchQuery}
-          style={styles.searchBar}
+          variant="outlined"
+          size="small"
+          sx={{ mb: 2 }}
         />
         
-        <View style={styles.filterContainer}>
-          <Text variant="bodyMedium" style={styles.filterLabel}>Category:</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          mb: 2,
+          overflowX: 'auto'
+        }}>
+          <Typography variant="body2" sx={{ mr: 1 }}>Category:</Typography>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'nowrap' }}>
             <Chip
-              selected={filterCategoryId === null}
-              onPress={() => onFilterCategory(null)}
-              style={styles.filterChip}
-            >
-              All
-            </Chip>
+              label="All"
+              color={filterCategoryId === null ? "primary" : "default"}
+              onClick={() => onFilterCategory(null)}
+              sx={{ mr: 0.5 }}
+            />
             {categories.map(category => (
               <Chip
                 key={category.id}
-                selected={filterCategoryId === category.id}
-                onPress={() => onFilterCategory(category.id)}
-                style={styles.filterChip}
-              >
-                {category.name}
-              </Chip>
+                label={category.name}
+                color={filterCategoryId === category.id ? "primary" : "default"}
+                onClick={() => onFilterCategory(category.id)}
+                sx={{ mr: 0.5 }}
+              />
             ))}
-          </ScrollView>
-        </View>
+          </Stack>
+        </Box>
         
-        <View style={styles.sortContainer}>
-          <Text variant="bodyMedium" style={styles.sortLabel}>Sort by:</Text>
-          <SegmentedButtons
+        <Box sx={{ mb: 1 }}>
+          <Typography variant="body2" sx={{ mb: 1 }}>Sort by:</Typography>
+          <ToggleButtonGroup
             value={sortBy}
-            onValueChange={(value) => handleSortChange(value as 'name' | 'price' | 'duration')}
-            buttons={[
-              { value: 'name', label: `Name ${sortBy === 'name' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}` },
-              { value: 'price', label: `Price ${sortBy === 'price' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}` },
-              { value: 'duration', label: `Duration ${sortBy === 'duration' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}` },
-            ]}
-            style={styles.segmentedButtons}
-          />
-        </View>
-      </View>
+            exclusive
+            onChange={(_, value) => {
+              if (value !== null) {
+                handleSortChange(value as 'name' | 'price' | 'duration');
+              }
+            }}
+            size="small"
+            sx={{ width: '100%' }}
+          >
+            <ToggleButton value="name" sx={{ flex: 1 }}>
+              Name {sortBy === 'name' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+            </ToggleButton>
+            <ToggleButton value="price" sx={{ flex: 1 }}>
+              Price {sortBy === 'price' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+            </ToggleButton>
+            <ToggleButton value="duration" sx={{ flex: 1 }}>
+              Duration {sortBy === 'duration' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+      </Box>
       
       <Divider />
       
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        </View>
+        <Box sx={{ 
+          flex: 1, 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center' 
+        }}>
+          <CircularProgress />
+        </Box>
       ) : filteredServices.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text variant="titleMedium">No services found</Text>
-          <Text variant="bodyMedium" style={styles.emptyText}>
+        <Box sx={{ 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column',
+          justifyContent: 'center', 
+          alignItems: 'center',
+          p: 2
+        }}>
+          <Typography variant="h6">No services found</Typography>
+          <Typography variant="body2" sx={{ mt: 1, textAlign: 'center', color: 'text.secondary' }}>
             {searchQuery || filterCategoryId
               ? 'Try adjusting your search or filters'
               : 'Add a service to get started'}
-          </Text>
-        </View>
+          </Typography>
+        </Box>
       ) : (
-        <FlatList
-          data={filteredServices}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ServiceCard
-              service={item}
-              categoryName={getCategoryName(item.categoryId)}
-              onPress={onServicePress}
-              onEdit={onEditService}
-              onDelete={onDeleteService}
-            />
-          )}
-          contentContainerStyle={styles.listContent}
-        />
+        <List sx={{ 
+          flex: 1, 
+          overflow: 'auto',
+          pb: 12 // Space for FABs
+        }}>
+          {filteredServices.map((item) => (
+            <Paper key={item.id} sx={{ m: 1 }}>
+              <ServiceCard
+                service={item}
+                categoryName={getCategoryName(item.categoryId)}
+                onPress={onServicePress}
+                onEdit={onEditService}
+                onDelete={onDeleteService}
+              />
+            </Paper>
+          ))}
+        </List>
       )}
       
-      <View style={styles.fabContainer}>
-        <FAB
-          icon="plus"
-          label="Add Service"
-          style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-          onPress={onAddService}
-        />
-        <FAB
-          icon="tag-plus"
-          label="Add Category"
-          style={[styles.fab, { backgroundColor: theme.colors.secondary, marginTop: 8 }]}
-          onPress={onAddCategory}
-        />
-      </View>
-    </View>
+      <Box sx={{ 
+        position: 'fixed', 
+        right: 16, 
+        bottom: 16,
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        <Fab
+          color="primary"
+          variant="extended"
+          onClick={onAddService}
+          sx={{ mb: 1 }}
+        >
+          <AddIcon sx={{ mr: 1 }} />
+          Add Service
+        </Fab>
+        <Fab
+          color="secondary"
+          variant="extended"
+          onClick={onAddCategory}
+        >
+          <TagIcon sx={{ mr: 1 }} />
+          Add Category
+        </Fab>
+      </Box>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  headerContainer: {
-    padding: 16,
-  },
-  searchBar: {
-    marginBottom: 16,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  filterLabel: {
-    marginRight: 8,
-  },
-  filterChip: {
-    marginRight: 8,
-  },
-  sortContainer: {
-    flexDirection: 'column',
-    marginBottom: 8,
-  },
-  sortLabel: {
-    marginBottom: 8,
-  },
-  segmentedButtons: {
-    marginBottom: 8,
-  },
-  listContent: {
-    paddingBottom: 100, // Space for FABs
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  emptyText: {
-    marginTop: 8,
-    textAlign: 'center',
-  },
-  fabContainer: {
-    position: 'absolute',
-    right: 16,
-    bottom: 16,
-  },
-  fab: {
-    marginBottom: 8,
-  },
-});
 
 export default ServiceListScreen;
