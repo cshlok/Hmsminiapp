@@ -1,6 +1,25 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
-import { Text, Card, Divider, Button, List, Chip, useTheme, ActivityIndicator } from 'react-native-paper';
+import React from 'react';
+import { 
+  Box, 
+  Card, 
+  CardContent, 
+  Typography, 
+  Divider, 
+  Button, 
+  Chip, 
+  List, 
+  ListItem, 
+  ListItemIcon, 
+  ListItemText, 
+  CircularProgress
+} from '@mui/material';
+import { 
+  CalendarMonth as CalendarIcon, 
+  EventAvailable as CalendarCheckIcon, 
+  Error as AlertIcon, 
+  Share as ShareIcon, 
+  Delete as DeleteIcon
+} from '@mui/icons-material';
 import { IExportJob } from '../../models/SettingsModel';
 import { format } from 'date-fns';
 
@@ -17,212 +36,165 @@ const ExportJobsScreen: React.FC<ExportJobsScreenProps> = ({
   onDeleteJob,
   onShareExport,
 }) => {
-  const theme = useTheme();
-
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): 'primary' | 'secondary' | 'info' | 'error' | 'warning' | 'success' => {
     switch (status) {
       case 'completed':
-        return theme.colors.primary;
+        return 'success';
       case 'processing':
-        return theme.colors.secondary;
+        return 'info';
       case 'pending':
-        return theme.colors.tertiary;
+        return 'warning';
       case 'failed':
-        return theme.colors.error;
+        return 'error';
       default:
-        return theme.colors.backdrop;
+        return 'secondary';
     }
   };
 
-  const renderExportJob = ({ item }: { item: IExportJob }) => {
+  const renderExportJob = (item: IExportJob) => {
     const formattedDate = item.createdAt ? format(new Date(item.createdAt), 'MMM dd, yyyy HH:mm') : 'Unknown';
     const formattedCompletedDate = item.completedAt ? format(new Date(item.completedAt), 'MMM dd, yyyy HH:mm') : null;
     
     return (
-      <Card style={styles.card}>
-        <Card.Content>
-          <View style={styles.headerRow}>
-            <Text variant="titleMedium" style={styles.title}>
+      <Card sx={{ mb: 2 }} key={item.id}>
+        <CardContent>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               {item.type.charAt(0).toUpperCase() + item.type.slice(1)} Export
-            </Text>
+            </Typography>
             <Chip 
-              mode="flat" 
-              style={[styles.statusChip, { backgroundColor: getStatusColor(item.status) + '20' }]}
-              textStyle={{ color: getStatusColor(item.status) }}
-            >
-              {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-            </Chip>
-          </View>
-          
-          <Divider style={styles.divider} />
-          
-          <List.Item
-            title="Created"
-            description={formattedDate}
-            left={props => <List.Icon {...props} icon="calendar" />}
-            style={styles.listItem}
-          />
-          
-          {formattedCompletedDate && (
-            <List.Item
-              title="Completed"
-              description={formattedCompletedDate}
-              left={props => <List.Icon {...props} icon="calendar-check" />}
-              style={styles.listItem}
+              label={item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+              color={getStatusColor(item.status)}
+              size="small"
+              variant="outlined"
             />
-          )}
+          </Box>
+          
+          <Divider sx={{ my: 2 }} />
+          
+          <List disablePadding>
+            <ListItem disablePadding sx={{ pb: 1 }}>
+              <ListItemIcon>
+                <CalendarIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Created" 
+                secondary={formattedDate} 
+              />
+            </ListItem>
+            
+            {formattedCompletedDate && (
+              <ListItem disablePadding sx={{ pb: 1 }}>
+                <ListItemIcon>
+                  <CalendarCheckIcon />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Completed" 
+                  secondary={formattedCompletedDate} 
+                />
+              </ListItem>
+            )}
+          </List>
           
           {item.status === 'processing' && (
-            <View style={styles.processingContainer}>
-              <ActivityIndicator size="small" color={theme.colors.primary} />
-              <Text style={styles.processingText}>Processing export...</Text>
-            </View>
+            <Box sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
+              <CircularProgress size={20} />
+              <Typography sx={{ ml: 1 }}>Processing export...</Typography>
+            </Box>
           )}
           
           {item.status === 'failed' && item.error && (
-            <List.Item
-              title="Error"
-              description={item.error}
-              left={props => <List.Icon {...props} icon="alert-circle" color={theme.colors.error} />}
-              style={styles.listItem}
-            />
+            <ListItem disablePadding sx={{ pb: 1 }}>
+              <ListItemIcon>
+                <AlertIcon color="error" />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Error" 
+                secondary={item.error} 
+              />
+            </ListItem>
           )}
           
           {item.status === 'completed' && item.filePath && (
-            <View style={styles.buttonContainer}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
               <Button
-                mode="contained"
-                onPress={() => onShareExport(item.filePath)}
-                style={styles.button}
-                icon="share"
+                variant="contained"
+                onClick={() => onShareExport(item.filePath || '')}
+                startIcon={<ShareIcon />}
+                sx={{ mr: 1, flex: 1 }}
               >
                 Share
               </Button>
               
               <Button
-                mode="outlined"
-                onPress={() => onDeleteJob(item.id)}
-                style={styles.button}
-                icon="delete"
+                variant="outlined"
+                onClick={() => onDeleteJob(item.id)}
+                startIcon={<DeleteIcon />}
+                sx={{ ml: 1, flex: 1 }}
               >
                 Delete
               </Button>
-            </View>
+            </Box>
           )}
           
           {(item.status === 'failed' || item.status === 'pending') && (
-            <Button
-              mode="outlined"
-              onPress={() => onDeleteJob(item.id)}
-              style={styles.button}
-              icon="delete"
-            >
-              Delete
-            </Button>
+            <Box sx={{ mt: 2 }}>
+              <Button
+                variant="outlined"
+                onClick={() => onDeleteJob(item.id)}
+                startIcon={<DeleteIcon />}
+                fullWidth
+              >
+                Delete
+              </Button>
+            </Box>
           )}
-        </Card.Content>
+        </CardContent>
       </Card>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <Box sx={{ 
+      flex: 1, 
+      bgcolor: '#f5f5f5', 
+      minHeight: '100vh', 
+      p: 2 
+    }}>
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={styles.loadingText}>Loading export history...</Text>
-        </View>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '70vh' 
+        }}>
+          <CircularProgress size={40} />
+          <Typography sx={{ mt: 2 }}>Loading export history...</Typography>
+        </Box>
       ) : exportJobs.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No export jobs found.</Text>
-          <Text style={styles.emptySubtext}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '70vh', 
+          p: 3 
+        }}>
+          <Typography variant="h5" sx={{ mb: 1, fontWeight: 'bold' }}>
+            No export jobs found.
+          </Typography>
+          <Typography variant="body1" sx={{ textAlign: 'center', color: '#666' }}>
             When you export data from the Settings screen, your export history will appear here.
-          </Text>
-        </View>
+          </Typography>
+        </Box>
       ) : (
-        <FlatList
-          data={exportJobs}
-          renderItem={renderExportJob}
-          keyExtractor={item => item.id}
-          contentContainerStyle={styles.listContainer}
-        />
+        <Box>
+          {exportJobs.map(item => renderExportJob(item))}
+        </Box>
       )}
-    </View>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  emptySubtext: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#666',
-  },
-  listContainer: {
-    padding: 16,
-  },
-  card: {
-    marginBottom: 16,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontWeight: 'bold',
-  },
-  statusChip: {
-    height: 28,
-  },
-  divider: {
-    marginVertical: 16,
-  },
-  listItem: {
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
-  processingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  processingText: {
-    marginLeft: 8,
-    fontSize: 16,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 16,
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 4,
-  },
-});
 
 export default ExportJobsScreen;
