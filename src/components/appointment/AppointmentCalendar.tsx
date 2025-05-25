@@ -23,7 +23,15 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   
   // Prepare marked dates for the calendar
   const getMarkedDates = () => {
-    const markedDates: any = {};
+    interface MarkedDate {
+      selected?: boolean;
+      selectedColor?: string;
+      marked?: boolean;
+      dotColor?: string;
+      dots?: Array<{key: string, color: string}>;
+    }
+    
+    const markedDates: Record<string, MarkedDate> = {};
     
     // Mark the selected date
     markedDates[formattedSelectedDate] = {
