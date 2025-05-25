@@ -6,11 +6,10 @@ import {
   TextField, 
   Button, 
   Divider, 
-  useTheme, 
-  ToggleButtonGroup, 
-  ToggleButton,
   Box,
-  Container
+  Container,
+  ToggleButtonGroup, 
+  ToggleButton
 } from '@mui/material';
 import styled from '@emotion/styled';
 import { ISettings } from '../../models/SettingsModel';
@@ -42,7 +41,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onClearAuthLogs,
   onAbout,
 }) => {
-  const theme = useTheme();
+  // Removed unused theme variable
 
   return (
     <ScrollContainer>
