@@ -56,7 +56,7 @@ const BillForm: React.FC<BillFormProps> = ({
   );
 
   // Calculate totals based on items, discount, and tax
-  const calculateTotals = (items: any[], discountType: string, discountValue: number, taxPercentage: number) => {
+  const calculateTotals = (items: Array<Partial<IBillItem>>, discountType: string, discountValue: number, taxPercentage: number) => {
     // Calculate subtotal
     const subtotal = items.reduce((sum, item) => {
       const service = services.find(s => s.id === item.serviceId);
