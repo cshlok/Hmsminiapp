@@ -73,7 +73,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
     checkAvailability(values.date, formattedTime, format(endTime, 'HH:mm'), values.id, setFieldValue);
   };
 
-  const handleEndTimeConfirm = (time: Date, setFieldValue: any, values: any) => {
+  const handleEndTimeConfirm = (time: Date, setFieldValue: (field: string, value: any) => void, values: Partial<IAppointment>) => {
     const formattedTime = format(time, 'HH:mm');
     setFieldValue('endTime', formattedTime);
     
