@@ -121,7 +121,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
     }
   };
 
-  const checkAvailability = (date: Date, startTime: string, endTime: string, appointmentId: string | undefined, setFieldValue: any) => {
+  const checkAvailability = (date: Date, startTime: string, endTime: string, appointmentId: string | undefined, setFieldValue: (field: string, value: any) => void) => {
     const isAvailable = checkTimeSlotAvailability(date, startTime, endTime, appointmentId);
     
     if (!isAvailable) {
