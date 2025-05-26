@@ -47,7 +47,7 @@ const PatientForm: React.FC<PatientFormProps> = ({
   const theme = useTheme();
   const [selectedGender, setSelectedGender] = useState(initialValues.gender || '');
 
-  const handleGenderSelect = (gender: string, setFieldValue: any) => {
+  const handleGenderSelect = (gender: string, setFieldValue: (field: string, value: any) => void) => {
     setSelectedGender(gender);
     setFieldValue('gender', gender);
   };
