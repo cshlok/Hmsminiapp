@@ -8,7 +8,7 @@ import { IService, IServiceCategory } from '../../models/ServiceModel';
 interface ServiceFormProps {
   initialValues?: Partial<IService>;
   categories: IServiceCategory[];
-  onSubmit: (values: any) => void;
+  onSubmit: (values: Partial<IService>) => void;
   onCancel: () => void;
   isLoading?: boolean;
 }
