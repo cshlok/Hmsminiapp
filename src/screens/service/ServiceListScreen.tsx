@@ -2,12 +2,8 @@ import React from 'react';
 import { 
   Box, 
   Typography, 
-  Divider, 
-  Chip, 
-  IconButton, 
   CircularProgress
 } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { IService, IServiceCategory } from '../../models/ServiceModel';
 import ServiceCard from '../../components/service/ServiceCard';
 
@@ -41,7 +37,6 @@ const ServiceListScreen: React.FC<ServiceListScreenProps> = ({
   onSortChange,
   onFilterCategory,
   onServicePress,
-  onAddService,
   onEditService,
   onDeleteService,
   onAddCategory,
@@ -86,17 +81,6 @@ const ServiceListScreen: React.FC<ServiceListScreenProps> = ({
     });
     
     return filtered;
-  };
-  
-  // Handle sort change
-  const handleSortChange = (newSortBy: 'name' | 'price' | 'duration') => {
-    // If clicking the same sort option, toggle the order
-    if (newSortBy === sortBy) {
-      onSortChange(sortBy, sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      // If clicking a different sort option, use that with ascending order
-      onSortChange(newSortBy, 'asc');
-    }
   };
   
   // Get filtered services
