@@ -100,7 +100,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
     }
   };
 
-  const handleDurationChange = (duration: string, setFieldValue: any, values: any) => {
+  const handleDurationChange = (duration: string, setFieldValue: (field: string, value: any) => void, values: Partial<IAppointment>) => {
     const durationValue = parseInt(duration, 10);
     setFieldValue('duration', durationValue);
     
