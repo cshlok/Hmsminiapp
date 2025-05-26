@@ -7,7 +7,7 @@ import { IPatient } from '../../models/PatientModel';
 
 interface PatientFormProps {
   initialValues?: Partial<IPatient>;
-  onSubmit: (values: any) => void;
+  onSubmit: (values: Partial<IPatient>) => void;
   onCancel: () => void;
   isLoading?: boolean;
 }
