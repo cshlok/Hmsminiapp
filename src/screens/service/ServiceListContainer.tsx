@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { RootState } from '../../store';
@@ -14,7 +13,6 @@ import {
   setLoading,
   setError,
   setSelectedService,
-  setSelectedCategory,
   setSearchQuery,
   setSortBy,
   setSortOrder,
