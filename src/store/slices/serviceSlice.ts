@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { saveServices, saveCategories, loadServices, loadCategories } from '../../utils/storage';
 import { IServiceSlice as IService, ICategory } from '../../utils/modelConverters';
-import { IServiceCategory } from '../../models/ServiceModel';
 
 interface ServiceState {
   services: IService[];
