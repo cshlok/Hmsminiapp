@@ -33,13 +33,9 @@ const ServiceListScreen: React.FC<ServiceListScreenProps> = ({
   sortBy,
   sortOrder,
   filterCategoryId,
-  onSearch,
-  onSortChange,
-  onFilterCategory,
   onServicePress,
   onEditService,
   onDeleteService,
-  onAddCategory,
 }) => {
   // Get category name for a service
   const getCategoryName = (categoryId: string) => {
