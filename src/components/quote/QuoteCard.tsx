@@ -1,6 +1,15 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { Text, Card, Chip, useTheme, IconButton } from 'react-native-paper';
+import { 
+  Card, 
+  CardContent, 
+  Typography, 
+  Chip, 
+  IconButton, 
+  Box, 
+  Stack,
+  useTheme
+} from '@mui/material';
+import { Edit as EditIcon, Delete as DeleteIcon, NoteAlt as NoteAltIcon } from '@mui/icons-material';
 import { IQuote } from '../../models/QuoteModel';
 import { format } from 'date-fns';
 
@@ -27,15 +36,15 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'draft':
-        return theme.colors.primary + '40';
+        return theme.palette.primary.main + '40';
       case 'final':
-        return theme.colors.secondary + '40';
+        return theme.palette.secondary.main + '40';
       case 'converted':
-        return theme.colors.tertiary + '40';
+        return theme.palette.info.main + '40';
       case 'cancelled':
-        return theme.colors.error + '40';
+        return theme.palette.error.main + '40';
       default:
-        return theme.colors.primary + '40';
+        return theme.palette.primary.main + '40';
     }
   };
 
@@ -46,122 +55,116 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
 
   return (
     <Card 
-      style={styles.card}
-      onPress={() => onPress(quote)}
+      sx={{ 
+        my: 0.75, 
+        mx: 2, 
+        boxShadow: 2,
+        cursor: 'pointer'
+      }}
+      onClick={() => onPress(quote)}
     >
-      <Card.Content style={styles.cardContent}>
-        <View style={styles.mainContent}>
-          <View style={styles.headerRow}>
-            <Text variant="titleMedium" style={styles.title}>
+      <CardContent sx={{ 
+        display: 'flex', 
+        flexDirection: 'row',
+        p: 1.5
+      }}>
+        <Box sx={{ flex: 1 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            mb: 1
+          }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', flex: 1 }}>
               Quote #{quote.id.substring(0, 8)}
-            </Text>
+            </Typography>
             <Chip 
-              style={[styles.statusChip, { backgroundColor: getStatusColor(quote.status) }]}
-            >
-              {formatStatus(quote.status)}
-            </Chip>
-          </View>
+              label={formatStatus(quote.status)}
+              size="small"
+              sx={{ 
+                ml: 1,
+                backgroundColor: getStatusColor(quote.status)
+              }}
+            />
+          </Box>
           
-          <View style={styles.detailRow}>
-            <Text variant="bodyMedium" style={styles.label}>Patient:</Text>
-            <Text variant="bodyMedium" style={styles.value}>{patientName}</Text>
-          </View>
+          <Box sx={{ display: 'flex', mb: 0.5 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ width: 60, mr: 1 }}>
+              Patient:
+            </Typography>
+            <Typography variant="body2" sx={{ flex: 1 }}>
+              {patientName}
+            </Typography>
+          </Box>
           
-          <View style={styles.detailRow}>
-            <Text variant="bodyMedium" style={styles.label}>Date:</Text>
-            <Text variant="bodyMedium" style={styles.value}>
+          <Box sx={{ display: 'flex', mb: 0.5 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ width: 60, mr: 1 }}>
+              Date:
+            </Typography>
+            <Typography variant="body2" sx={{ flex: 1 }}>
               {format(new Date(quote.date), 'MMM dd, yyyy')}
-            </Text>
-          </View>
+            </Typography>
+          </Box>
           
-          <View style={styles.detailRow}>
-            <Text variant="bodyMedium" style={styles.label}>Items:</Text>
-            <Text variant="bodyMedium" style={styles.value}>{quote.items.length}</Text>
-          </View>
+          <Box sx={{ display: 'flex', mb: 0.5 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ width: 60, mr: 1 }}>
+              Items:
+            </Typography>
+            <Typography variant="body2" sx={{ flex: 1 }}>
+              {quote.items.length}
+            </Typography>
+          </Box>
           
-          <View style={styles.detailRow}>
-            <Text variant="titleMedium" style={[styles.total, { color: theme.colors.primary }]}>
+          <Box sx={{ mt: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
               Total: ${quote.total.toFixed(2)}
-            </Text>
-          </View>
-        </View>
+            </Typography>
+          </Box>
+        </Box>
         
-        <View style={styles.actions}>
+        <Stack direction="column">
           {quote.status !== 'converted' && quote.status !== 'cancelled' && (
             <>
               <IconButton
-                icon="pencil"
-                size={20}
-                onPress={() => onEdit(quote)}
-                iconColor={theme.colors.primary}
-              />
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(quote);
+                }}
+                color="primary"
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
+              
               {quote.status === 'final' && onConvert && (
                 <IconButton
-                  icon="file-document-edit"
-                  size={20}
-                  onPress={() => onConvert(quote)}
-                  iconColor={theme.colors.tertiary}
-                />
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onConvert(quote);
+                  }}
+                  color="info"
+                >
+                  <NoteAltIcon fontSize="small" />
+                </IconButton>
               )}
+              
               <IconButton
-                icon="delete"
-                size={20}
-                onPress={() => onDelete(quote.id)}
-                iconColor={theme.colors.error}
-              />
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(quote.id);
+                }}
+                color="error"
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
             </>
           )}
-        </View>
-      </Card.Content>
+        </Stack>
+      </CardContent>
     </Card>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    marginVertical: 6,
-    marginHorizontal: 16,
-    elevation: 2,
-  },
-  cardContent: {
-    flexDirection: 'row',
-    padding: 12,
-  },
-  mainContent: {
-    flex: 1,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  title: {
-    fontWeight: 'bold',
-    flex: 1,
-  },
-  statusChip: {
-    marginLeft: 8,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    marginBottom: 4,
-  },
-  label: {
-    color: '#666',
-    marginRight: 8,
-    width: 60,
-  },
-  value: {
-    flex: 1,
-  },
-  total: {
-    fontWeight: 'bold',
-    marginTop: 8,
-  },
-  actions: {
-    flexDirection: 'row',
-  },
-});
 
 export default QuoteCard;
