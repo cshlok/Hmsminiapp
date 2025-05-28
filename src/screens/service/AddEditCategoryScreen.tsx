@@ -22,7 +22,7 @@ const AddEditCategoryScreen: React.FC<AddEditCategoryScreenProps> = ({
   const { category } = route.params || {};
   const isEditing = !!category;
   
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: Partial<IServiceCategory>) => {
     // Create a new category object or update existing one
     const categoryData: IServiceCategory = {
       id: isEditing ? category.id : uuidv4(),
