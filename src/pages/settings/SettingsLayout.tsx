@@ -46,7 +46,7 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({
               {tabs.map((tab) => (
                 <li key={tab.id}>
                   <button
-                    onClick={() => onTabChange(tab.id as any)}
+                    onClick={() => onTabChange(tab.id as 'clinic' | 'preferences' | 'tax' | 'backup')}
                     className={`w-full flex items-center px-4 py-3 rounded-md transition-colors ${
                       activeTab === tab.id
                         ? 'bg-primary text-white'
