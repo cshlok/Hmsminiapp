@@ -6,8 +6,8 @@ import PatientForm from '../../components/patient/PatientForm';
 import { IPatient } from '../../models/PatientModel';
 
 interface AddEditPatientScreenProps {
-  navigation: any;
-  route: any;
+  navigation: {goBack: () => void};
+  route: {params?: {patient?: IPatient}};
   onSave: (patient: IPatient) => void;
   isLoading?: boolean;
 }
