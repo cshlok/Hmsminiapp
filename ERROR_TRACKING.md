@@ -33,11 +33,12 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 - ✅ Converted AddEditCategoryScreen.tsx from React Native to Material-UI and added type annotations
 - ✅ Converted CategoryForm component from React Native to Material-UI
 
-## Remaining Errors
-
 ### Quote Screens
-- ❌ Convert QuoteListScreen.tsx from React Native to Material-UI
-- ❌ Fix missing properties in IPatient interface (firstName, lastName)
+- ✅ Converted QuoteListScreen.tsx from React Native to Material-UI
+- ✅ Converted QuoteCard component from React Native to Material-UI
+- ✅ Fixed missing properties in IPatient interface (firstName, lastName)
+
+## Remaining Errors
 
 ### General Type Issues
 - ❌ Fix implicit 'any' type parameters throughout the codebase
@@ -45,19 +46,16 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 - ❌ Add explicit type annotations where needed
 
 ## Build Status
-- Current error count: 481 (as of last build attempt)
+- Current error count: ~350 (estimated after recent fixes)
 - Major error categories:
   - Type mismatches between interfaces and props
   - Implicit 'any' types
-  - Missing properties in interfaces (like IPatient)
-  - Remaining React Native dependencies in quote screens
 
 ## Next Steps
-1. Convert remaining React Native components in quote screens
-2. Fix missing properties in interfaces (IPatient)
-3. Add explicit type annotations where needed
-4. Reattempt production build and reassess errors
-5. Deploy permanently once all errors are resolved
+1. Add explicit type annotations where needed
+2. Fix remaining type mismatches between interfaces
+3. Reattempt production build and reassess errors
+4. Deploy permanently once all errors are resolved
 
 ## Notes
 This is a work in progress. The goal is to systematically fix all TypeScript errors to enable a successful production build and permanent deployment.
@@ -78,5 +76,8 @@ We've made significant progress by:
 12. Converting ServiceForm component from React Native to Material-UI
 13. Converting AddEditCategoryScreen.tsx from React Native to Material-UI
 14. Converting CategoryForm component from React Native to Material-UI
+15. Converting QuoteListScreen.tsx from React Native to Material-UI
+16. Converting QuoteCard component from React Native to Material-UI
+17. Fixing missing properties in IPatient interface
 
-The remaining work focuses on converting quote screens and addressing general type issues throughout the codebase.
+The remaining work focuses on addressing general type issues throughout the codebase.
