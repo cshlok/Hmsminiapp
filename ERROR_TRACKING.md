@@ -38,6 +38,7 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 - ✅ Fixed implicit 'any' types in AddEditPatientScreen.tsx (navigation, route props and handleSubmit parameter)
 - ✅ Fixed implicit 'any' type in PatientListScreen.tsx (navigation prop)
 - ✅ Fixed implicit 'any' types in AddEditQuoteScreen.tsx (navigation and route props)
+- ✅ Fixed implicit 'any' types in AddEditCategoryScreen.tsx (navigation, route props and handleSubmit parameter)
 
 ## Remaining Errors
 
