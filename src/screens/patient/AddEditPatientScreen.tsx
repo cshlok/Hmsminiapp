@@ -22,7 +22,7 @@ const AddEditPatientScreen: React.FC<AddEditPatientScreenProps> = ({
   const { patient } = route.params || {};
   const isEditing = !!patient;
   
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: Partial<IPatient>) => {
     // Create a new patient object or update existing one
     const patientData: IPatient = {
       id: isEditing ? patient.id : uuidv4(),
