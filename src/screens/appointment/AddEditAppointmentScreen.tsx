@@ -6,9 +6,9 @@ import AppointmentForm from '../../components/appointment/AppointmentForm';
 import { IAppointment } from '../../models/AppointmentModel';
 
 interface AddEditAppointmentScreenProps {
-  navigation: any;
-  route: any;
-  patients: any[];
+  navigation: {goBack: () => void};
+  route: {params?: {appointment?: IAppointment, selectedDate?: Date}};
+  patients: Array<{id: string, firstName: string, lastName: string}>;
   onSave: (appointment: IAppointment) => void;
   checkTimeSlotAvailability: (date: Date, startTime: string, endTime: string, appointmentId?: string) => boolean;
   isLoading?: boolean;
