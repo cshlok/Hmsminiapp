@@ -6,8 +6,8 @@ import CategoryForm from '../../components/service/CategoryForm';
 import { IServiceCategory } from '../../models/ServiceModel';
 
 interface AddEditCategoryScreenProps {
-  navigation: any;
-  route: any;
+  navigation: {goBack: () => void};
+  route: {params?: {category?: IServiceCategory}};
   onSave: (category: IServiceCategory) => void;
   isLoading?: boolean;
 }
