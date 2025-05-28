@@ -26,7 +26,7 @@ const AddEditAppointmentScreen: React.FC<AddEditAppointmentScreenProps> = ({
   const { appointment, selectedDate } = route.params || {};
   const isEditing = !!appointment;
   
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: Partial<IAppointment>) => {
     // Create a new appointment object or update existing one
     const appointmentData: IAppointment = {
       id: isEditing ? appointment.id : uuidv4(),
