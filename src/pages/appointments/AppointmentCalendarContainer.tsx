@@ -70,7 +70,7 @@ const AppointmentCalendarContainer: React.FC = () => {
   }, [dispatch, appointments.length]);
   
   // Handle event click
-  const handleEventClick = (event: any) => {
+  const handleEventClick = (event: {id: string}) => {
     navigate(`/appointments/${event.id}`);
   };
   
