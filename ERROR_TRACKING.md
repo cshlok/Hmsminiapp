@@ -23,6 +23,15 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 - ✅ Converted ServiceCard component from React Native to Material-UI
 - ✅ Fixed type mismatches in ServiceListContainer.tsx (ICategory[] vs IServiceCategory[])
 
+### General Type Issues
+- ✅ Fixed implicit 'any' type in AppointmentCalendar.tsx (MarkedDate interface)
+- ✅ Fixed implicit 'any' types in AppointmentForm.tsx (setFieldValue parameters)
+- ✅ Fixed implicit 'any' type in BillForm.tsx (calculateTotals items parameter)
+- ✅ Fixed implicit 'any' types in PatientForm.tsx (onSubmit and handleGenderSelect parameters)
+- ✅ Fixed implicit 'any' type in QuoteForm.tsx (calculateTotals items parameter)
+- ✅ Fixed implicit 'any' type in CategoryForm.tsx (onSubmit parameter)
+- ✅ Fixed implicit 'any' type in ServiceForm.tsx (onSubmit parameter)
+
 ## Remaining Errors
 
 ### Service Screens
@@ -30,16 +39,16 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 - ❌ Convert ServiceFormScreen.tsx from React Native to Material-UI (File not found in repository)
 
 ### General Type Issues
-- ❌ Fix implicit 'any' type parameters throughout the codebase
+- ❌ Fix remaining implicit 'any' type parameters throughout the codebase
 - ❌ Fix type mismatches between interfaces and props
 - ❌ Add explicit type annotations where needed
 
 ## Build Status
-- Current error count: 534 (as of last build attempt)
+- Current error count: Reduced from previous 534 (exact count to be determined on next build attempt)
 - Major error categories:
   - React Native dependencies that need to be replaced with Material-UI
-  - Type mismatches between interfaces and props
-  - Implicit 'any' types
+  - Remaining type mismatches between interfaces and props
+  - Remaining implicit 'any' types
 
 ## Next Steps
 1. Continue converting React Native components to Material-UI
@@ -60,5 +69,10 @@ We've made significant progress by:
 5. Converting service components to use Material-UI
 6. Fixing type mismatches in ServiceListContainer.tsx
 7. Removing all unused React imports in testing screens
+8. Fixing multiple implicit 'any' types across various components:
+   - Added explicit types for function parameters in AppointmentForm.tsx
+   - Added MarkedDate interface in AppointmentCalendar.tsx
+   - Added explicit Array types in BillForm.tsx and QuoteForm.tsx
+   - Fixed onSubmit parameter types in multiple form components
 
-The remaining work focuses on general type issues throughout the codebase. Note that some files mentioned in the original error list (ServiceDetailScreen.tsx and ServiceFormScreen.tsx) were not found in the repository and could not be fixed.
+The remaining work focuses on addressing the remaining general type issues throughout the codebase. Note that some files mentioned in the original error list (ServiceDetailScreen.tsx and ServiceFormScreen.tsx) were not found in the repository and could not be fixed.
