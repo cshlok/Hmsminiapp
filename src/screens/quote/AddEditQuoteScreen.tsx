@@ -10,8 +10,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 
 interface AddEditQuoteScreenProps {
-  navigation: any;
-  route: any;
+  navigation: {goBack: () => void};
+  route: {params?: {quote?: IQuote, onSave?: (quote: IQuote) => void}};
   onSave: (quote: IQuote) => void;
   isLoading?: boolean;
 }
