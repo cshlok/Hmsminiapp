@@ -8,7 +8,7 @@ import PatientCard from '../../components/patient/PatientCard';
 import { IPatient } from '../../models/PatientModel';
 
 interface PatientListScreenProps {
-  navigation: any;
+  navigation: {navigate: (screen: string, params?: any) => void};
   patients: IPatient[];
   loading: boolean;
   onPatientPress: (patient: IPatient) => void;
