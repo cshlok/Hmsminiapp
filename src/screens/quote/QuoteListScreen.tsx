@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, FlatList, ScrollView } from 'react-native';
-import { Text, Divider, FAB, useTheme, ActivityIndicator, Chip, Searchbar, SegmentedButtons } from 'react-native-paper';
+import { 
+  Box, 
+  Typography, 
+  Divider, 
+  Fab, 
+  CircularProgress, 
+  Chip, 
+  TextField, 
+  InputAdornment,
+  IconButton,
+  Paper,
+  Stack,
+  Grid
+} from '@mui/material';
+import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material';
 import QuoteCard from '../../components/quote/QuoteCard';
 import { IQuote } from '../../models/QuoteModel';
 import { IPatient } from '../../models/PatientModel';
@@ -38,8 +51,6 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({
   onDeleteQuote,
   onConvertQuote,
 }) => {
-  const theme = useTheme();
-  
   // Get patient name for a quote
   const getPatientName = (patientId: string) => {
     const patient = patients.find(p => p.id === patientId);
@@ -77,101 +88,124 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({
   const filteredQuotes = getFilteredQuotes();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Searchbar
+    <Box sx={{ 
+      flex: 1, 
+      bgcolor: '#f5f5f5',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      <Box sx={{ p: 2 }}>
+        <TextField
           placeholder="Search quotes..."
-          onChangeText={onSearch}
+          onChange={(e) => onSearch(e.target.value)}
           value={searchQuery}
-          style={styles.searchBar}
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ mb: 2 }}
         />
         
-        <View style={styles.filterContainer}>
-          <Text variant="bodyMedium" style={styles.filterLabel}>Status:</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body2" sx={{ mr: 1, display: 'inline-block' }}>Status:</Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             <Chip
-              selected={filterStatus === null}
-              onPress={() => onFilterStatus(null)}
-              style={styles.filterChip}
-            >
-              All
-            </Chip>
+              label="All"
+              color={filterStatus === null ? "primary" : "default"}
+              onClick={() => onFilterStatus(null)}
+              variant={filterStatus === null ? "filled" : "outlined"}
+            />
             <Chip
-              selected={filterStatus === 'draft'}
-              onPress={() => onFilterStatus('draft')}
-              style={styles.filterChip}
-            >
-              Draft
-            </Chip>
+              label="Draft"
+              color={filterStatus === 'draft' ? "primary" : "default"}
+              onClick={() => onFilterStatus('draft')}
+              variant={filterStatus === 'draft' ? "filled" : "outlined"}
+            />
             <Chip
-              selected={filterStatus === 'final'}
-              onPress={() => onFilterStatus('final')}
-              style={styles.filterChip}
-            >
-              Final
-            </Chip>
+              label="Final"
+              color={filterStatus === 'final' ? "primary" : "default"}
+              onClick={() => onFilterStatus('final')}
+              variant={filterStatus === 'final' ? "filled" : "outlined"}
+            />
             <Chip
-              selected={filterStatus === 'converted'}
-              onPress={() => onFilterStatus('converted')}
-              style={styles.filterChip}
-            >
-              Converted
-            </Chip>
+              label="Converted"
+              color={filterStatus === 'converted' ? "primary" : "default"}
+              onClick={() => onFilterStatus('converted')}
+              variant={filterStatus === 'converted' ? "filled" : "outlined"}
+            />
             <Chip
-              selected={filterStatus === 'cancelled'}
-              onPress={() => onFilterStatus('cancelled')}
-              style={styles.filterChip}
-            >
-              Cancelled
-            </Chip>
-          </ScrollView>
-        </View>
+              label="Cancelled"
+              color={filterStatus === 'cancelled' ? "primary" : "default"}
+              onClick={() => onFilterStatus('cancelled')}
+              variant={filterStatus === 'cancelled' ? "filled" : "outlined"}
+            />
+          </Box>
+        </Box>
         
-        <View style={styles.filterContainer}>
-          <Text variant="bodyMedium" style={styles.filterLabel}>Patient:</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body2" sx={{ mr: 1, display: 'inline-block' }}>Patient:</Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             <Chip
-              selected={filterPatientId === null}
-              onPress={() => onFilterPatient(null)}
-              style={styles.filterChip}
-            >
-              All Patients
-            </Chip>
+              label="All Patients"
+              color={filterPatientId === null ? "primary" : "default"}
+              onClick={() => onFilterPatient(null)}
+              variant={filterPatientId === null ? "filled" : "outlined"}
+            />
             {patients.map(patient => (
               <Chip
                 key={patient.id}
-                selected={filterPatientId === patient.id}
-                onPress={() => onFilterPatient(patient.id)}
-                style={styles.filterChip}
-              >
-                {patient.firstName} {patient.lastName}
-              </Chip>
+                label={`${patient.firstName} ${patient.lastName}`}
+                color={filterPatientId === patient.id ? "primary" : "default"}
+                onClick={() => onFilterPatient(patient.id)}
+                variant={filterPatientId === patient.id ? "filled" : "outlined"}
+              />
             ))}
-          </ScrollView>
-        </View>
-      </View>
+          </Box>
+        </Box>
+      </Box>
       
       <Divider />
       
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        </View>
+        <Box sx={{ 
+          flex: 1, 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center' 
+        }}>
+          <CircularProgress />
+        </Box>
       ) : filteredQuotes.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text variant="titleMedium">No quotes found</Text>
-          <Text variant="bodyMedium" style={styles.emptyText}>
+        <Box sx={{ 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column',
+          justifyContent: 'center', 
+          alignItems: 'center',
+          p: 2
+        }}>
+          <Typography variant="h6">No quotes found</Typography>
+          <Typography variant="body2" sx={{ mt: 1, textAlign: 'center', color: 'text.secondary' }}>
             {searchQuery || filterStatus || filterPatientId
               ? 'Try adjusting your search or filters'
               : 'Create a quote to get started'}
-          </Text>
-        </View>
+          </Typography>
+        </Box>
       ) : (
-        <FlatList
-          data={filteredQuotes}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
+        <Box sx={{ 
+          flex: 1, 
+          overflow: 'auto',
+          pb: 10 // Space for FAB
+        }}>
+          {filteredQuotes.map((item) => (
             <QuoteCard
+              key={item.id}
               quote={item}
               patientName={getPatientName(item.patientId)}
               onPress={onQuotePress}
@@ -179,66 +213,25 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({
               onDelete={onDeleteQuote}
               onConvert={onConvertQuote}
             />
-          )}
-          contentContainerStyle={styles.listContent}
-        />
+          ))}
+        </Box>
       )}
       
-      <FAB
-        icon="plus"
-        label="New Quote"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        onPress={onAddQuote}
-      />
-    </View>
+      <Fab
+        color="primary"
+        variant="extended"
+        sx={{
+          position: 'fixed',
+          right: 16,
+          bottom: 16,
+        }}
+        onClick={onAddQuote}
+      >
+        <AddIcon sx={{ mr: 1 }} />
+        New Quote
+      </Fab>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  headerContainer: {
-    padding: 16,
-  },
-  searchBar: {
-    marginBottom: 16,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  filterLabel: {
-    marginRight: 8,
-  },
-  filterChip: {
-    marginRight: 8,
-  },
-  listContent: {
-    paddingBottom: 80, // Space for FAB
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  emptyText: {
-    marginTop: 8,
-    textAlign: 'center',
-  },
-  fab: {
-    position: 'absolute',
-    right: 16,
-    bottom: 16,
-  },
-});
 
 export default QuoteListScreen;
