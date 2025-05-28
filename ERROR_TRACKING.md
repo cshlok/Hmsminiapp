@@ -31,6 +31,9 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 - ✅ Fixed implicit 'any' type in QuoteForm.tsx (calculateTotals items parameter)
 - ✅ Fixed implicit 'any' type in CategoryForm.tsx (onSubmit parameter)
 - ✅ Fixed implicit 'any' type in ServiceForm.tsx (onSubmit parameter)
+- ✅ Fixed implicit 'any' type in AppointmentCalendarContainer.tsx (handleEventClick parameter)
+- ✅ Fixed implicit 'any' type in SettingsLayout.tsx (tab.id cast)
+- ✅ Fixed implicit 'any' types in AddEditAppointmentScreen.tsx (navigation, route, patients props and handleSubmit parameter)
 
 ## Remaining Errors
 
