@@ -1,13 +1,30 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { Appbar, useTheme } from 'react-native-paper';
+import React from 'react';
+import { 
+  Box, 
+  AppBar, 
+  Toolbar, 
+  Typography, 
+  IconButton 
+} from '@mui/material';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
 import CategoryForm from '../../components/service/CategoryForm';
 import { IServiceCategory } from '../../models/ServiceModel';
 
+interface NavigationProps {
+  navigate: (screen: string, params?: any) => void;
+  goBack: () => void;
+}
+
+interface RouteProps {
+  params?: {
+    category?: IServiceCategory;
+  };
+}
+
 interface AddEditCategoryScreenProps {
-  navigation: any;
-  route: any;
+  navigation: NavigationProps;
+  route: RouteProps;
   onSave: (category: IServiceCategory) => void;
   isLoading?: boolean;
 }
@@ -18,7 +35,6 @@ const AddEditCategoryScreen: React.FC<AddEditCategoryScreenProps> = ({
   onSave,
   isLoading = false,
 }) => {
-  const theme = useTheme();
   const { category } = route.params || {};
   const isEditing = !!category;
   
@@ -50,11 +66,27 @@ const AddEditCategoryScreen: React.FC<AddEditCategoryScreenProps> = ({
   };
 
   return (
-    <View style={styles.container}>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title={isEditing ? 'Edit Category' : 'Add New Category'} />
-      </Appbar.Header>
+    <Box sx={{ 
+      flex: 1, 
+      bgcolor: '#fff',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={() => navigation.goBack()}
+            sx={{ mr: 2 }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6">
+            {isEditing ? 'Edit Category' : 'Add New Category'}
+          </Typography>
+        </Toolbar>
+      </AppBar>
       
       <CategoryForm
         initialValues={initialValues}
@@ -62,15 +94,8 @@ const AddEditCategoryScreen: React.FC<AddEditCategoryScreenProps> = ({
         onCancel={handleCancel}
         isLoading={isLoading}
       />
-    </View>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
 
 export default AddEditCategoryScreen;
