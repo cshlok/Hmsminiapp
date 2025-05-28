@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { TextInput, Button, Text, HelperText, useTheme } from 'react-native-paper';
-import { Formik } from 'formik';
+import React from 'react';
+import { 
+  Box, 
+  TextField, 
+  Button, 
+  Typography, 
+  FormHelperText,
+  Grid
+} from '@mui/material';
+import { Formik, Form, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { IServiceCategory } from '../../models/ServiceModel';
 
@@ -27,10 +33,13 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   onCancel,
   isLoading = false,
 }) => {
-  const theme = useTheme();
-
   return (
-    <ScrollView style={styles.container}>
+    <Box sx={{ 
+      flex: 1, 
+      bgcolor: '#fff', 
+      p: 2,
+      overflow: 'auto'
+    }}>
       <Formik
         initialValues={initialValues}
         validationSchema={CategorySchema}
@@ -43,80 +52,63 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           values,
           errors,
           touched,
-        }) => (
-          <View style={styles.formContainer}>
-            {/* Category Name */}
-            <TextInput
-              label="Category Name"
-              value={values.name}
-              onChangeText={handleChange('name')}
-              onBlur={handleBlur('name')}
-              style={styles.input}
-              mode="outlined"
-              error={touched.name && !!errors.name}
-            />
-            {touched.name && errors.name && (
-              <HelperText type="error">{errors.name}</HelperText>
-            )}
+        }: FormikProps<any>) => (
+          <Form>
+            <Box sx={{ p: 2 }}>
+              {/* Category Name */}
+              <TextField
+                label="Category Name"
+                value={values.name}
+                onChange={handleChange('name')}
+                onBlur={handleBlur('name')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                error={touched.name && !!errors.name}
+                helperText={touched.name && errors.name}
+              />
 
-            {/* Description */}
-            <TextInput
-              label="Description (Optional)"
-              value={values.description}
-              onChangeText={handleChange('description')}
-              onBlur={handleBlur('description')}
-              style={styles.input}
-              multiline
-              numberOfLines={3}
-              mode="outlined"
-            />
+              {/* Description */}
+              <TextField
+                label="Description (Optional)"
+                value={values.description}
+                onChange={handleChange('description')}
+                onBlur={handleBlur('description')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                multiline
+                rows={3}
+              />
 
-            <View style={styles.buttonContainer}>
-              <Button
-                mode="outlined"
-                onPress={onCancel}
-                style={styles.button}
-              >
-                Cancel
-              </Button>
-              <Button
-                mode="contained"
-                onPress={handleSubmit}
-                style={styles.button}
-                loading={isLoading}
-                disabled={isLoading}
-              >
-                Save
-              </Button>
-            </View>
-          </View>
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                mt: 4,
+                mb: 4
+              }}>
+                <Button
+                  variant="outlined"
+                  onClick={onCancel}
+                  sx={{ flex: 1, mx: 1 }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => handleSubmit()}
+                  sx={{ flex: 1, mx: 1 }}
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Saving...' : 'Save'}
+                </Button>
+              </Box>
+            </Box>
+          </Form>
         )}
       </Formik>
-    </ScrollView>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  formContainer: {
-    padding: 16,
-  },
-  input: {
-    marginBottom: 16,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 24,
-    marginBottom: 40,
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 8,
-  },
-});
 
 export default CategoryForm;
