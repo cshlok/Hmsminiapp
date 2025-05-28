@@ -2,6 +2,8 @@
 export interface IPatient {
   id: string;
   name: string;
+  firstName: string;
+  lastName: string;
   age: number;
   gender: string;
   contact: string;
@@ -22,6 +24,8 @@ export const PatientSchema = {
   properties: {
     id: 'string',
     name: 'string',
+    firstName: 'string',
+    lastName: 'string',
     age: 'int',
     gender: 'string',
     contact: 'string',
