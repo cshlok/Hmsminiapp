@@ -10,8 +10,8 @@ import { RootState } from '../../store';
 import BillForm from '../../components/billing/BillForm';
 
 interface AddEditBillScreenProps {
-  navigation: any;
-  route: any;
+  navigation: {goBack: () => void};
+  route: {params?: {bill?: IBill, onSave?: (bill: IBill) => void}};
   onSave: (bill: IBill) => void;
   isLoading?: boolean;
 }
