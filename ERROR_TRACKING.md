@@ -1,6 +1,6 @@
 # TypeScript Error Tracking
 
-This document tracks the TypeScript errors in the Hmsminiapp project, both fixed and remaining.
+This document tracks the TypeScript errors in the Hmsminiapp project, both fixed and remaining. The remaining work is divided between Agent 1 and Agent 2.
 
 ## Fixed Errors
 
@@ -40,47 +40,36 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 - ✅ Fixed implicit 'any' types in AddEditQuoteScreen.tsx (navigation and route props)
 - ✅ Fixed implicit 'any' types in AddEditCategoryScreen.tsx (navigation, route props and handleSubmit parameter)
 
-## Remaining Errors
+## Remaining Errors & Task Division
 
-### Service Screens
-- ❌ Convert ServiceDetailScreen.tsx from React Native to Material-UI (File not found in repository)
-- ❌ Convert ServiceFormScreen.tsx from React Native to Material-UI (File not found in repository)
+### Agent 1 Tasks:
+- ❌ **Fix Implicit 'any' Types (Components & Pages):** Systematically find and replace remaining implicit 'any' types in component props and function parameters within the `/src/components` and `/src/pages` directories.
+  - Example files (check for remaining 'any'):
+    - `/src/components/appointment/AppointmentForm.tsx`
+    - `/src/components/patient/PatientForm.tsx`
+    - `/src/pages/appointments/AppointmentForm.tsx`
 
-### General Type Issues
-- ❌ Fix remaining implicit 'any' type parameters throughout the codebase
-- ❌ Fix type mismatches between interfaces and props
-- ❌ Add explicit type annotations where needed
+### Agent 2 Tasks:
+- ❌ **Fix Type Mismatches & Add Annotations (Store, Utils, Screens):** Focus on fixing type mismatches between interfaces and props, and adding explicit type annotations (return types, complex state types, etc.) where needed, primarily within the `/src/store`, `/src/utils`, and `/src/screens` directories (excluding already fixed files).
+- ❌ **Investigate Missing Service Screens:** Attempt to locate or determine the status of `ServiceDetailScreen.tsx` and `ServiceFormScreen.tsx`. If found, convert them from React Native to Material-UI.
 
 ## Build Status
-- Current error count: Reduced from previous 534 (exact count to be determined on next build attempt)
-- Major error categories:
-  - React Native dependencies that need to be replaced with Material-UI
-  - Remaining type mismatches between interfaces and props
+- Current error count: Significantly reduced (exact count to be determined on next build attempt).
+- Major remaining error categories:
   - Remaining implicit 'any' types
+  - Type mismatches between interfaces and props
+  - Missing explicit type annotations
+  - Potentially missing files or React Native dependencies if `ServiceDetailScreen.tsx` / `ServiceFormScreen.tsx` are found.
 
-## Next Steps
-1. Continue converting React Native components to Material-UI
-2. Add explicit type annotations where needed
-3. Fix remaining type mismatches between interfaces and props
-4. Reattempt production build and reassess errors
-5. Deploy permanently once all errors are resolved
+## Next Steps (Overall)
+1. Agent 1 and Agent 2 work on their assigned tasks concurrently or sequentially.
+2. Commit changes after each logical fix.
+3. Update this tracking document as tasks are completed.
+4. Reattempt production build (`npm run build`) periodically to assess error reduction.
+5. Once all errors are resolved, perform final validation and prepare for deployment.
 
 ## Notes
-This is a work in progress. The goal is to systematically fix all TypeScript errors to enable a successful production build and permanent deployment.
+This division aims to parallelize the remaining type-checking work. Communication between agents will be crucial if dependencies or shared interfaces are involved.
 
 ## Progress Summary
-We've made significant progress by:
-1. Converting major screens from React Native to Material-UI
-2. Removing unused imports across multiple files
-3. Adding necessary dependencies
-4. Fixing type mismatches in Redux store and settings slice
-5. Converting service components to use Material-UI
-6. Fixing type mismatches in ServiceListContainer.tsx
-7. Removing all unused React imports in testing screens
-8. Fixing multiple implicit 'any' types across various components:
-   - Added explicit types for function parameters in AppointmentForm.tsx
-   - Added MarkedDate interface in AppointmentCalendar.tsx
-   - Added explicit Array types in BillForm.tsx and QuoteForm.tsx
-   - Fixed onSubmit parameter types in multiple form components
-
-The remaining work focuses on addressing the remaining general type issues throughout the codebase. Note that some files mentioned in the original error list (ServiceDetailScreen.tsx and ServiceFormScreen.tsx) were not found in the repository and could not be fixed.
+Significant progress has been made in converting components, removing unused imports, and fixing numerous implicit 'any' type errors across various parts of the application. The remaining work involves a final sweep for type safety and addressing the potentially missing service screens.
