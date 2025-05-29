@@ -1,31 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { saveQuotes, loadQuotes } from '../../utils/storage';
+// Import model definitions
+import { IQuote, IQuoteItem } from '../../models/QuoteModel';
 
-export interface IQuoteItem {
-  id: string;
-  serviceId: string;
-  description: string;
-  quantity: number;
-  unitPrice: number;
-  discount: number;
-  total: number;
-}
-
-export interface IQuote {
-  id: string;
-  patientId: string;
-  title: string;
-  status: 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired' | 'cancelled';
-  items: IQuoteItem[];
-  subtotal: number;
-  discount: number;
-  tax: number;
-  total: number;
-  validUntil: string;
-  notes?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+// Remove local interface definitions, use imported ones
 
 interface QuoteState {
   quotes: IQuote[];
@@ -45,7 +23,7 @@ interface QuoteState {
 
 // Initialize state with data from local storage
 const initialState: QuoteState = {
-  quotes: loadQuotes(),
+  quotes: loadQuotes(), // loadQuotes now returns IQuote[] from model
   selectedQuote: null,
   loading: false,
   error: null,
@@ -104,6 +82,8 @@ const quoteSlice = createSlice({
       state.filters.status = action.payload;
     },
     setFilterDateRange: (state, action: PayloadAction<{startDate: string | null, endDate: string | null}>) => {
+      // Convert string dates to Date objects if needed before storing
+      // For now, assuming strings are acceptable in state, but might need parsing
       state.filters.dateRange = action.payload;
     },
     clearFilters: (state) => {
