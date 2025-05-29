@@ -1,13 +1,33 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { Appbar, useTheme } from 'react-native-paper';
+import React from 'react';
+import { 
+  Box, 
+  AppBar, 
+  Toolbar, 
+  Typography, 
+  IconButton 
+} from '@mui/material';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
 import CategoryForm from '../../components/service/CategoryForm';
 import { IServiceCategory } from '../../models/ServiceModel';
 
+// Define navigation props interface
+interface NavigationProps {
+  // navigate: (screen: string, params?: any) => void; // Keep if needed elsewhere, but not used here
+  goBack: () => void;
+}
+
+// Define route props interface
+interface RouteProps {
+  params?: {
+    category?: IServiceCategory;
+  };
+}
+
+// Define screen props using the interfaces
 interface AddEditCategoryScreenProps {
-  navigation: {goBack: () => void};
-  route: {params?: {category?: IServiceCategory}};
+  navigation: NavigationProps;
+  route: RouteProps;
   onSave: (category: IServiceCategory) => void;
   isLoading?: boolean;
 }
@@ -18,21 +38,27 @@ const AddEditCategoryScreen: React.FC<AddEditCategoryScreenProps> = ({
   onSave,
   isLoading = false,
 }) => {
-  const theme = useTheme();
   const { category } = route.params || {};
   const isEditing = !!category;
   
   const handleSubmit = (values: Partial<IServiceCategory>) => {
     // Create a new category object or update existing one
     const categoryData: IServiceCategory = {
-      id: isEditing ? category.id : uuidv4(),
-      name: values.name,
+      id: isEditing ? category?.id : uuidv4(), // Use optional chaining for safety
+      name: values.name || '', // Ensure name is not undefined
       description: values.description || '',
-      createdAt: isEditing ? category.createdAt : new Date(),
+      createdAt: isEditing ? category?.createdAt : new Date(), // Use optional chaining
       updatedAt: new Date(),
     };
     
-    onSave(categoryData);
+    // Ensure onSave is called with a complete IServiceCategory object
+    // We might need to fetch the full category if editing, or ensure handleSubmit receives all necessary fields
+    // For now, assuming values contains name/description and we construct the rest
+    if (typeof onSave === 'function') { // Check if onSave is provided and is a function
+        onSave(categoryData);
+    } else {
+        console.warn("onSave prop is not a function or not provided to AddEditCategoryScreen");
+    }
     navigation.goBack();
   };
   
@@ -40,37 +66,51 @@ const AddEditCategoryScreen: React.FC<AddEditCategoryScreenProps> = ({
     navigation.goBack();
   };
 
-  // Prepare initial values
-  const initialValues = isEditing ? {
-    name: category.name,
-    description: category.description,
+  // Prepare initial values for the form
+  const initialValues: Partial<IServiceCategory> = isEditing ? {
+    name: category?.name,
+    description: category?.description,
   } : {
     name: '',
     description: '',
   };
 
   return (
-    <View style={styles.container}>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title={isEditing ? 'Edit Category' : 'Add New Category'} />
-      </Appbar.Header>
+    <Box sx={{ 
+      flex: 1, 
+      bgcolor: 'background.default', // Use theme background color
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={handleCancel} // Use handleCancel for back button
+            aria-label="back"
+            sx={{ mr: 2 }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            {isEditing ? 'Edit Category' : 'Add New Category'}
+          </Typography>
+        </Toolbar>
+      </AppBar>
       
-      <CategoryForm
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-        isLoading={isLoading}
-      />
-    </View>
+      {/* Render CategoryForm within a Box for padding/margin if needed */}
+      <Box sx={{ p: 3, overflowY: 'auto' }}>
+        <CategoryForm
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          isLoading={isLoading}
+        />
+      </Box>
+    </Box>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
-
 export default AddEditCategoryScreen;
+

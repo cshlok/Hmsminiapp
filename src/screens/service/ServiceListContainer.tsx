@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { RootState } from '../../store';
@@ -11,11 +10,9 @@ import {
   deleteService,
   addCategory,
   updateCategory,
-  deleteCategory,
   setLoading,
   setError,
   setSelectedService,
-  setSelectedCategory,
   setSearchQuery,
   setSortBy,
   setSortOrder,
@@ -25,13 +22,16 @@ import { ServiceRepository } from '../../storage/ServiceRepository';
 import { IService, IServiceCategory } from '../../models/ServiceModel';
 import ServiceListScreen from './ServiceListScreen';
 
-const ServiceListContainer = ({ navigation }) => {
+interface NavigationProps {
+  navigate: (screen: string, params?: any) => void;
+}
+
+const ServiceListContainer: React.FC<{ navigation: NavigationProps }> = ({ navigation }) => {
   const dispatch = useDispatch();
   const { 
     services, 
     categories, 
     loading, 
-    error, 
     searchQuery, 
     sortBy, 
     sortOrder, 
@@ -46,7 +46,7 @@ const ServiceListContainer = ({ navigation }) => {
         dispatch(setLoading(true));
         // Note: In a real implementation, we would initialize Realm here
         // For now, we'll create a mock repository
-        const repository = new ServiceRepository(null);
+        const repository = new ServiceRepository(null as any);
         setServiceRepo(repository);
         
         // Load all services and categories
@@ -67,7 +67,7 @@ const ServiceListContainer = ({ navigation }) => {
 
   // Handle service selection
   const handleServicePress = (service: IService) => {
-    dispatch(setSelectedService(service));
+    dispatch(setSelectedService(service as any));
     navigation.navigate('ServiceDetails', { 
       service,
       category: categories.find(c => c.id === service.categoryId) || null
@@ -77,17 +77,10 @@ const ServiceListContainer = ({ navigation }) => {
   // Navigate to add service screen
   const handleAddService = () => {
     if (categories.length === 0) {
-      Alert.alert(
-        'No Categories',
-        'You need to create at least one category before adding a service.',
-        [
-          { text: 'OK' },
-          { 
-            text: 'Add Category', 
-            onPress: () => handleAddCategory() 
-          }
-        ]
-      );
+      // Use browser confirm for web compatibility
+      if (confirm('You need to create at least one category before adding a service. Would you like to add a category now?')) {
+        handleAddCategory();
+      }
       return;
     }
     
@@ -119,7 +112,7 @@ const ServiceListContainer = ({ navigation }) => {
       if (existingService) {
         // Update existing service
         // In a real implementation, this would update in Realm
-        dispatch(updateService(serviceData));
+        dispatch(updateService(serviceData as any));
       } else {
         // Create new service
         // In a real implementation, this would create in Realm
@@ -127,7 +120,7 @@ const ServiceListContainer = ({ navigation }) => {
           ...serviceData,
           id: uuidv4(), // Ensure unique ID
         };
-        dispatch(addService(newService));
+        dispatch(addService(newService as any));
       }
     } catch (error) {
       console.error('Failed to save service:', error);
@@ -139,31 +132,21 @@ const ServiceListContainer = ({ navigation }) => {
 
   // Delete service with confirmation
   const handleDeleteService = (serviceId: string) => {
-    Alert.alert(
-      'Delete Service',
-      'Are you sure you want to delete this service? This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
-          style: 'destructive',
-          onPress: () => {
-            if (!serviceRepo) return;
-            
-            try {
-              dispatch(setLoading(true));
-              // In a real implementation, this would delete from Realm
-              dispatch(deleteService(serviceId));
-            } catch (error) {
-              console.error('Failed to delete service:', error);
-              dispatch(setError('Failed to delete service. Please try again.'));
-            } finally {
-              dispatch(setLoading(false));
-            }
-          }
-        },
-      ]
-    );
+    // Use browser confirm for web compatibility
+    if (confirm('Are you sure you want to delete this service? This action cannot be undone.')) {
+      if (!serviceRepo) return;
+      
+      try {
+        dispatch(setLoading(true));
+        // In a real implementation, this would delete from Realm
+        dispatch(deleteService(serviceId));
+      } catch (error) {
+        console.error('Failed to delete service:', error);
+        dispatch(setError('Failed to delete service. Please try again.'));
+      } finally {
+        dispatch(setLoading(false));
+      }
+    }
   };
 
   // Navigate to add category screen
@@ -186,7 +169,7 @@ const ServiceListContainer = ({ navigation }) => {
       if (existingCategory) {
         // Update existing category
         // In a real implementation, this would update in Realm
-        dispatch(updateCategory(categoryData));
+        dispatch(updateCategory(categoryData as any));
       } else {
         // Create new category
         // In a real implementation, this would create in Realm
@@ -194,7 +177,7 @@ const ServiceListContainer = ({ navigation }) => {
           ...categoryData,
           id: uuidv4(), // Ensure unique ID
         };
-        dispatch(addCategory(newCategory));
+        dispatch(addCategory(newCategory as any));
       }
     } catch (error) {
       console.error('Failed to save category:', error);
@@ -222,8 +205,8 @@ const ServiceListContainer = ({ navigation }) => {
 
   return (
     <ServiceListScreen
-      services={services}
-      categories={categories}
+      services={services as unknown as IService[]}
+      categories={categories as unknown as IServiceCategory[]}
       loading={loading}
       searchQuery={searchQuery}
       sortBy={sortBy}

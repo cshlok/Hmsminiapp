@@ -1,10 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { Box } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import ServiceDetailsScreen from './ServiceDetailsScreen';
 
-const ServiceDetailsContainer = ({ navigation, route }) => {
+interface NavigationProps {
+  navigate: (screen: string, params?: any) => void;
+  goBack: () => void;
+}
+
+interface RouteProps {
+  params: {
+    service?: any;
+  };
+}
+
+const ServiceDetailsContainer: React.FC<{ navigation: NavigationProps, route: RouteProps }> = ({ navigation, route }) => {
   const { service } = route.params;
   const { categories } = useSelector((state: RootState) => state.service);
   const { selectedService } = useSelector((state: RootState) => state.service);
@@ -23,7 +34,7 @@ const ServiceDetailsContainer = ({ navigation, route }) => {
   }, [serviceData, navigation]);
   
   if (!serviceData) {
-    return <View style={styles.container} />;
+    return <Box sx={{ flex: 1, bgcolor: '#f5f5f5' }} />;
   }
   
   return (
@@ -33,12 +44,5 @@ const ServiceDetailsContainer = ({ navigation, route }) => {
     />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-});
 
 export default ServiceDetailsContainer;

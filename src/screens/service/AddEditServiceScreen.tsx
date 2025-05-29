@@ -1,13 +1,30 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { Appbar, useTheme } from 'react-native-paper';
+import { 
+  Box, 
+  AppBar, 
+  Toolbar, 
+  Typography, 
+  IconButton 
+} from '@mui/material';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
 import ServiceForm from '../../components/service/ServiceForm';
 import { IService, IServiceCategory } from '../../models/ServiceModel';
 
+interface NavigationProps {
+  navigate: (screen: string, params?: any) => void;
+  goBack: () => void;
+}
+
+interface RouteProps {
+  params?: {
+    service?: IService;
+  };
+}
+
 interface AddEditServiceScreenProps {
-  navigation: any;
-  route: any;
+  navigation: NavigationProps;
+  route: RouteProps;
   categories: IServiceCategory[];
   onSave: (service: IService) => void;
   isLoading?: boolean;
@@ -20,7 +37,6 @@ const AddEditServiceScreen: React.FC<AddEditServiceScreenProps> = ({
   onSave,
   isLoading = false,
 }) => {
-  const theme = useTheme();
   const { service } = route.params || {};
   const isEditing = !!service;
   
@@ -61,11 +77,27 @@ const AddEditServiceScreen: React.FC<AddEditServiceScreenProps> = ({
   };
 
   return (
-    <View style={styles.container}>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title={isEditing ? 'Edit Service' : 'Add New Service'} />
-      </Appbar.Header>
+    <Box sx={{ 
+      flex: 1, 
+      bgcolor: '#fff',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={() => navigation.goBack()}
+            sx={{ mr: 2 }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6">
+            {isEditing ? 'Edit Service' : 'Add New Service'}
+          </Typography>
+        </Toolbar>
+      </AppBar>
       
       <ServiceForm
         initialValues={initialValues}
@@ -74,15 +106,8 @@ const AddEditServiceScreen: React.FC<AddEditServiceScreenProps> = ({
         onCancel={handleCancel}
         isLoading={isLoading}
       />
-    </View>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
 
 export default AddEditServiceScreen;

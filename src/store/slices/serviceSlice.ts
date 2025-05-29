@@ -14,6 +14,11 @@ interface ServiceState {
     categoryId: string | null;
     active: boolean | null;
   };
+  // Add missing properties that are used in ServiceListContainer
+  searchQuery: string;
+  sortBy: 'name' | 'price' | 'duration';
+  sortOrder: 'asc' | 'desc';
+  filterCategoryId: string | null;
 }
 
 // Initialize state with data from local storage
@@ -29,6 +34,11 @@ const initialState: ServiceState = {
     categoryId: null,
     active: null,
   },
+  // Initialize missing properties
+  searchQuery: '',
+  sortBy: 'name',
+  sortOrder: 'asc',
+  filterCategoryId: null
 };
 
 const serviceSlice = createSlice({
@@ -94,9 +104,11 @@ const serviceSlice = createSlice({
     // Filter actions
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.filters.searchQuery = action.payload;
+      state.searchQuery = action.payload; // Update both locations
     },
     setFilterCategoryId: (state, action: PayloadAction<string | null>) => {
       state.filters.categoryId = action.payload;
+      state.filterCategoryId = action.payload; // Update both locations
     },
     setFilterActive: (state, action: PayloadAction<boolean | null>) => {
       state.filters.active = action.payload;
@@ -107,6 +119,15 @@ const serviceSlice = createSlice({
         categoryId: null,
         active: null,
       };
+      state.searchQuery = '';
+      state.filterCategoryId = null;
+    },
+    // Add missing reducers
+    setSortBy: (state, action: PayloadAction<'name' | 'price' | 'duration'>) => {
+      state.sortBy = action.payload;
+    },
+    setSortOrder: (state, action: PayloadAction<'asc' | 'desc'>) => {
+      state.sortOrder = action.payload;
     },
   },
 });
@@ -128,6 +149,8 @@ export const {
   setFilterCategoryId,
   setFilterActive,
   clearFilters,
+  setSortBy,
+  setSortOrder,
 } = serviceSlice.actions;
 
 export default serviceSlice.reducer;

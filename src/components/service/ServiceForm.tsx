@@ -1,7 +1,17 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { TextInput, Button, Text, HelperText, useTheme, Chip, SegmentedButtons } from 'react-native-paper';
-import { Formik } from 'formik';
+import React from 'react';
+import { 
+  Box, 
+  TextField, 
+  Button, 
+  Typography, 
+  FormHelperText, 
+  Chip, 
+  Stack,
+  Grid,
+  InputAdornment,
+  Paper
+} from '@mui/material';
+import { Formik, Form, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { IService, IServiceCategory } from '../../models/ServiceModel';
 
@@ -42,10 +52,13 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
   onCancel,
   isLoading = false,
 }) => {
-  const theme = useTheme();
-
   return (
-    <ScrollView style={styles.container}>
+    <Box sx={{ 
+      flex: 1, 
+      bgcolor: '#fff', 
+      p: 2,
+      overflow: 'auto'
+    }}>
       <Formik
         initialValues={initialValues}
         validationSchema={ServiceSchema}
@@ -59,151 +72,127 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           values,
           errors,
           touched,
-        }) => (
-          <View style={styles.formContainer}>
-            {/* Category Selection */}
-            <Text style={styles.label}>Category</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-              {categories.map((category) => (
-                <Chip
-                  key={category.id}
-                  selected={values.categoryId === category.id}
-                  onPress={() => setFieldValue('categoryId', category.id)}
-                  style={styles.categoryChip}
-                  mode={values.categoryId === category.id ? 'flat' : 'outlined'}
+        }: FormikProps<any>) => (
+          <Form>
+            <Box sx={{ p: 2 }}>
+              {/* Category Selection */}
+              <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                Category
+              </Typography>
+              <Box sx={{ 
+                display: 'flex', 
+                flexWrap: 'wrap', 
+                gap: 1,
+                mb: 2 
+              }}>
+                {categories.map((category) => (
+                  <Chip
+                    key={category.id}
+                    label={category.name}
+                    onClick={() => setFieldValue('categoryId', category.id)}
+                    color={values.categoryId === category.id ? 'primary' : 'default'}
+                    variant={values.categoryId === category.id ? 'filled' : 'outlined'}
+                  />
+                ))}
+              </Box>
+              {touched.categoryId && errors.categoryId && (
+                <FormHelperText error>{errors.categoryId}</FormHelperText>
+              )}
+
+              {/* Service Name */}
+              <TextField
+                label="Service Name"
+                value={values.name}
+                onChange={handleChange('name')}
+                onBlur={handleBlur('name')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                error={touched.name && !!errors.name}
+                helperText={touched.name && errors.name}
+              />
+
+              {/* Description */}
+              <TextField
+                label="Description (Optional)"
+                value={values.description}
+                onChange={handleChange('description')}
+                onBlur={handleBlur('description')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                multiline
+                rows={3}
+              />
+
+              {/* Price */}
+              <TextField
+                label="Price"
+                value={String(values.price)}
+                onChange={(e) => {
+                  // Allow only numbers and decimal point
+                  const sanitizedText = e.target.value.replace(/[^0-9.]/g, '');
+                  setFieldValue('price', sanitizedText);
+                }}
+                onBlur={handleBlur('price')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                error={touched.price && !!errors.price}
+                helperText={touched.price && errors.price}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                }}
+              />
+
+              {/* Duration */}
+              <TextField
+                label="Duration (minutes)"
+                value={String(values.duration)}
+                onChange={(e) => {
+                  // Allow only numbers
+                  const sanitizedText = e.target.value.replace(/[^0-9]/g, '');
+                  setFieldValue('duration', sanitizedText);
+                }}
+                onBlur={handleBlur('duration')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                error={touched.duration && !!errors.duration}
+                helperText={touched.duration && errors.duration}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">min</InputAdornment>,
+                }}
+              />
+
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                mt: 4,
+                mb: 4
+              }}>
+                <Button
+                  variant="outlined"
+                  onClick={onCancel}
+                  sx={{ flex: 1, mx: 1 }}
                 >
-                  {category.name}
-                </Chip>
-              ))}
-            </ScrollView>
-            {touched.categoryId && errors.categoryId && (
-              <HelperText type="error">{errors.categoryId}</HelperText>
-            )}
-
-            {/* Service Name */}
-            <TextInput
-              label="Service Name"
-              value={values.name}
-              onChangeText={handleChange('name')}
-              onBlur={handleBlur('name')}
-              style={styles.input}
-              mode="outlined"
-              error={touched.name && !!errors.name}
-            />
-            {touched.name && errors.name && (
-              <HelperText type="error">{errors.name}</HelperText>
-            )}
-
-            {/* Description */}
-            <TextInput
-              label="Description (Optional)"
-              value={values.description}
-              onChangeText={handleChange('description')}
-              onBlur={handleBlur('description')}
-              style={styles.input}
-              multiline
-              numberOfLines={3}
-              mode="outlined"
-            />
-
-            {/* Price */}
-            <TextInput
-              label="Price ($)"
-              value={String(values.price)}
-              onChangeText={(text) => {
-                // Allow only numbers and decimal point
-                const sanitizedText = text.replace(/[^0-9.]/g, '');
-                setFieldValue('price', sanitizedText);
-              }}
-              onBlur={handleBlur('price')}
-              keyboardType="numeric"
-              style={styles.input}
-              mode="outlined"
-              error={touched.price && !!errors.price}
-              left={<TextInput.Affix text="$" />}
-            />
-            {touched.price && errors.price && (
-              <HelperText type="error">{errors.price}</HelperText>
-            )}
-
-            {/* Duration */}
-            <TextInput
-              label="Duration (minutes)"
-              value={String(values.duration)}
-              onChangeText={(text) => {
-                // Allow only numbers
-                const sanitizedText = text.replace(/[^0-9]/g, '');
-                setFieldValue('duration', sanitizedText);
-              }}
-              onBlur={handleBlur('duration')}
-              keyboardType="numeric"
-              style={styles.input}
-              mode="outlined"
-              error={touched.duration && !!errors.duration}
-              right={<TextInput.Affix text="min" />}
-            />
-            {touched.duration && errors.duration && (
-              <HelperText type="error">{errors.duration}</HelperText>
-            )}
-
-            <View style={styles.buttonContainer}>
-              <Button
-                mode="outlined"
-                onPress={onCancel}
-                style={styles.button}
-              >
-                Cancel
-              </Button>
-              <Button
-                mode="contained"
-                onPress={handleSubmit}
-                style={styles.button}
-                loading={isLoading}
-                disabled={isLoading}
-              >
-                Save
-              </Button>
-            </View>
-          </View>
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => handleSubmit()}
+                  sx={{ flex: 1, mx: 1 }}
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Saving...' : 'Save'}
+                </Button>
+              </Box>
+            </Box>
+          </Form>
         )}
       </Formik>
-    </ScrollView>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  formContainer: {
-    padding: 16,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    marginTop: 8,
-  },
-  input: {
-    marginBottom: 16,
-  },
-  categoryScroll: {
-    marginBottom: 16,
-  },
-  categoryChip: {
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 24,
-    marginBottom: 40,
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 8,
-  },
-});
 
 export default ServiceForm;
