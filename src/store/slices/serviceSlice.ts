@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { saveServices, saveCategories, loadServices, loadCategories } from '../../utils/storage';
-import { IServiceSlice as IService, ICategory } from '../../utils/modelConverters';
+// Correct the import to use IServiceCategory from the model definition
+import { IService, IServiceCategory } from '../../models/ServiceModel';
 
 interface ServiceState {
   services: IService[];
-  categories: ICategory[];
+  categories: IServiceCategory[]; // Use IServiceCategory
   selectedService: IService | null;
-  selectedCategory: ICategory | null;
+  selectedCategory: IServiceCategory | null; // Use IServiceCategory
   loading: boolean;
   error: string | null;
   filters: {
@@ -78,15 +79,15 @@ const serviceSlice = createSlice({
     },
     
     // Category actions
-    setCategories: (state, action: PayloadAction<ICategory[]>) => {
+    setCategories: (state, action: PayloadAction<IServiceCategory[]>) => { // Use IServiceCategory
       state.categories = action.payload;
       saveCategories(action.payload); // Persist to storage
     },
-    addCategory: (state, action: PayloadAction<ICategory>) => {
+    addCategory: (state, action: PayloadAction<IServiceCategory>) => { // Use IServiceCategory
       state.categories.push(action.payload);
       saveCategories(state.categories); // Persist to storage
     },
-    updateCategory: (state, action: PayloadAction<ICategory>) => {
+    updateCategory: (state, action: PayloadAction<IServiceCategory>) => { // Use IServiceCategory
       const index = state.categories.findIndex(c => c.id === action.payload.id);
       if (index !== -1) {
         state.categories[index] = action.payload;
@@ -97,7 +98,7 @@ const serviceSlice = createSlice({
       state.categories = state.categories.filter(c => c.id !== action.payload);
       saveCategories(state.categories); // Persist to storage
     },
-    setSelectedCategory: (state, action: PayloadAction<ICategory | null>) => {
+    setSelectedCategory: (state, action: PayloadAction<IServiceCategory | null>) => { // Use IServiceCategory
       state.selectedCategory = action.payload;
     },
     
