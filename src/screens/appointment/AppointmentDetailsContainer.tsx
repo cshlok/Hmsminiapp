@@ -1,10 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack'; // Assuming Stack Navigator
 import { RootState } from '../../store';
 import AppointmentDetailsScreen from './AppointmentDetailsScreen';
+import { IAppointment } from '../../store/slices/appointmentSlice'; // Use slice definition
 
-const AppointmentDetailsContainer = ({ navigation, route }) => {
+// Define ParamList for navigation
+type RootStackParamList = {
+  AppointmentDetails: { appointment?: IAppointment };
+  // Add other screen definitions here if needed
+};
+
+// Define Props for the container
+interface AppointmentDetailsContainerProps {
+  navigation: StackNavigationProp<RootStackParamList, 'AppointmentDetails'>;
+  route: RouteProp<RootStackParamList, 'AppointmentDetails'>;
+}
+
+const AppointmentDetailsContainer: React.FC<AppointmentDetailsContainerProps> = ({ navigation, route }) => {
   const { appointment } = route.params;
   const { patients } = useSelector((state: RootState) => state.patient);
   const { selectedAppointment } = useSelector((state: RootState) => state.appointment);
