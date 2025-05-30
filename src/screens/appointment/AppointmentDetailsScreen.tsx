@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { Text, Divider, Card, useTheme, Chip } from 'react-native-paper';
-import { IAppointment } from '../../models/AppointmentModel';
-import { IPatient } from '../../models/PatientModel';
-import { format } from 'date-fns';
+import { IAppointment } from '../../store/slices/appointmentSlice'; // Use slice definition
+import { IPatient } from '../../store/slices/patientSlice'; // Use slice definition
+import { format, differenceInYears } from 'date-fns';
 
 interface AppointmentDetailsScreenProps {
   appointment: IAppointment;
@@ -17,26 +17,36 @@ const AppointmentDetailsScreen: React.FC<AppointmentDetailsScreenProps> = ({
   const theme = useTheme();
 
   // Format the appointment date
-  const formattedDate = format(appointment.date, 'EEEE, MMMM dd, yyyy');
+  const formattedDate = format(new Date(appointment.date), 'EEEE, MMMM dd, yyyy');
   
+  // Calculate age
+  const calculateAge = (dob: string): number | null => {
+    try {
+      return differenceInYears(new Date(), new Date(dob));
+    } catch (e) {
+      return null;
+    }
+  };
+  const patientAge = patient?.dateOfBirth ? calculateAge(patient.dateOfBirth) : null;
+
   // Get status color
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): string => {
     switch (status) {
       case 'scheduled':
         return theme.colors.primary;
       case 'completed':
-        return theme.colors.success;
+        return theme.colors.success; // Assuming theme has success color
       case 'cancelled':
         return theme.colors.error;
       case 'no-show':
-        return theme.colors.warning;
+        return theme.colors.warning; // Assuming theme has warning color
       default:
         return theme.colors.primary;
     }
   };
   
   // Get status label
-  const getStatusLabel = (status: string) => {
+  const getStatusLabel = (status: string): string => {
     switch (status) {
       case 'scheduled':
         return 'Scheduled';
@@ -55,7 +65,7 @@ const AppointmentDetailsScreen: React.FC<AppointmentDetailsScreenProps> = ({
     <ScrollView style={styles.container}>
       <Card style={styles.card}>
         <Card.Content>
-          <Text variant="headlineSmall" style={styles.title}>Appointment Details</Text>
+          <Text variant="headlineSmall" style={styles.title}>{appointment.title || 'Appointment Details'}</Text>
           
           <Chip 
             style={[styles.statusChip, { backgroundColor: getStatusColor(appointment.status) }]}
@@ -79,10 +89,11 @@ const AppointmentDetailsScreen: React.FC<AppointmentDetailsScreenProps> = ({
               <Text variant="bodyLarge">{appointment.endTime}</Text>
             </View>
             
-            <View style={styles.timeItem}>
+            {/* Duration is not directly in slice IAppointment, maybe calculate? */}
+            {/* <View style={styles.timeItem}>
               <Text variant="labelMedium" style={styles.label}>Duration</Text>
               <Text variant="bodyLarge">{appointment.duration} minutes</Text>
-            </View>
+            </View> */}
           </View>
         </Card.Content>
       </Card>
@@ -96,17 +107,19 @@ const AppointmentDetailsScreen: React.FC<AppointmentDetailsScreenProps> = ({
             <>
               <View style={styles.detailItem}>
                 <Text variant="labelMedium" style={styles.label}>Name</Text>
-                <Text variant="bodyLarge">{patient.name}</Text>
+                <Text variant="bodyLarge">{`${patient.firstName} ${patient.lastName}`}</Text>
               </View>
               
               <View style={styles.detailItem}>
                 <Text variant="labelMedium" style={styles.label}>Age & Gender</Text>
-                <Text variant="bodyLarge">{patient.age} years • {patient.gender}</Text>
+                <Text variant="bodyLarge">
+                  {patientAge !== null ? `${patientAge} years` : 'N/A'} • {patient.gender}
+                </Text>
               </View>
               
               <View style={styles.detailItem}>
-                <Text variant="labelMedium" style={styles.label}>Contact</Text>
-                <Text variant="bodyLarge">{patient.contact}</Text>
+                <Text variant="labelMedium" style={styles.label}>Phone</Text>
+                <Text variant="bodyLarge">{patient.phone}</Text>
               </View>
               
               {patient.email && (
