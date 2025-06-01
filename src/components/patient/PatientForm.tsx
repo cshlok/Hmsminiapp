@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { TextInput, Button, Text, HelperText, useTheme } from 'react-native-paper';
-import { Formik } from 'formik';
+import { 
+  Box, 
+  TextField, 
+  Button, 
+  Typography, 
+  FormHelperText,
+  Grid,
+  ToggleButtonGroup,
+  ToggleButton,
+  Paper
+} from '@mui/material';
+import { Formik, Form, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { IPatient } from '../../models/PatientModel';
 
@@ -31,7 +40,7 @@ const PatientSchema = Yup.object().shape({
 const PatientForm: React.FC<PatientFormProps> = ({
   initialValues = {
     name: '',
-    age: '',
+    age: 0,
     gender: '',
     contact: '',
     email: '',
@@ -44,16 +53,20 @@ const PatientForm: React.FC<PatientFormProps> = ({
   onCancel,
   isLoading = false,
 }) => {
-  const theme = useTheme();
   const [selectedGender, setSelectedGender] = useState(initialValues.gender || '');
 
-  const handleGenderSelect = (gender: string, setFieldValue: (field: string, value: any) => void) => {
+  const handleGenderSelect = (gender: string, setFieldValue: (field: string, value: string) => void) => {
     setSelectedGender(gender);
     setFieldValue('gender', gender);
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <Box sx={{ 
+      flex: 1, 
+      bgcolor: '#fff', 
+      p: 2,
+      overflow: 'auto'
+    }}>
       <Formik
         initialValues={initialValues}
         validationSchema={PatientSchema}
@@ -67,203 +80,154 @@ const PatientForm: React.FC<PatientFormProps> = ({
           values,
           errors,
           touched,
-        }) => (
-          <View style={styles.formContainer}>
-            <TextInput
-              label="Full Name"
-              value={values.name}
-              onChangeText={handleChange('name')}
-              onBlur={handleBlur('name')}
-              style={styles.input}
-              error={touched.name && !!errors.name}
-              mode="outlined"
-            />
-            {touched.name && errors.name && (
-              <HelperText type="error">{errors.name}</HelperText>
-            )}
+        }: FormikProps<Partial<IPatient>>) => (
+          <Form>
+            <Box sx={{ p: 2 }}>
+              <TextField
+                label="Full Name"
+                value={values.name}
+                onChange={handleChange('name')}
+                onBlur={handleBlur('name')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                error={touched.name && !!errors.name}
+                helperText={touched.name && errors.name as string}
+              />
 
-            <TextInput
-              label="Age"
-              value={String(values.age)}
-              onChangeText={handleChange('age')}
-              onBlur={handleBlur('age')}
-              style={styles.input}
-              error={touched.age && !!errors.age}
-              keyboardType="numeric"
-              mode="outlined"
-            />
-            {touched.age && errors.age && (
-              <HelperText type="error">{errors.age}</HelperText>
-            )}
+              <TextField
+                label="Age"
+                value={String(values.age)}
+                onChange={handleChange('age')}
+                onBlur={handleBlur('age')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                error={touched.age && !!errors.age}
+                helperText={touched.age && errors.age as string}
+                type="number"
+              />
 
-            <Text style={styles.label}>Gender</Text>
-            <View style={styles.genderContainer}>
-              <Button
-                mode={selectedGender === 'Male' ? 'contained' : 'outlined'}
-                onPress={() => handleGenderSelect('Male', setFieldValue)}
-                style={[
-                  styles.genderButton,
-                  selectedGender === 'Male' && { backgroundColor: theme.colors.primary },
-                ]}
+              <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }}>
+                Gender
+              </Typography>
+              <ToggleButtonGroup
+                value={values.gender}
+                exclusive
+                onChange={(e, value) => value && handleGenderSelect(value, setFieldValue)}
+                aria-label="gender selection"
+                fullWidth
+                sx={{ mb: 2 }}
               >
-                Male
-              </Button>
-              <Button
-                mode={selectedGender === 'Female' ? 'contained' : 'outlined'}
-                onPress={() => handleGenderSelect('Female', setFieldValue)}
-                style={[
-                  styles.genderButton,
-                  selectedGender === 'Female' && { backgroundColor: theme.colors.primary },
-                ]}
-              >
-                Female
-              </Button>
-              <Button
-                mode={selectedGender === 'Other' ? 'contained' : 'outlined'}
-                onPress={() => handleGenderSelect('Other', setFieldValue)}
-                style={[
-                  styles.genderButton,
-                  selectedGender === 'Other' && { backgroundColor: theme.colors.primary },
-                ]}
-              >
-                Other
-              </Button>
-            </View>
-            {touched.gender && errors.gender && (
-              <HelperText type="error">{errors.gender}</HelperText>
-            )}
+                <ToggleButton value="Male">Male</ToggleButton>
+                <ToggleButton value="Female">Female</ToggleButton>
+                <ToggleButton value="Other">Other</ToggleButton>
+              </ToggleButtonGroup>
+              {touched.gender && errors.gender && (
+                <FormHelperText error>{errors.gender as string}</FormHelperText>
+              )}
 
-            <TextInput
-              label="Contact Number"
-              value={values.contact}
-              onChangeText={handleChange('contact')}
-              onBlur={handleBlur('contact')}
-              style={styles.input}
-              error={touched.contact && !!errors.contact}
-              keyboardType="phone-pad"
-              mode="outlined"
-            />
-            {touched.contact && errors.contact && (
-              <HelperText type="error">{errors.contact}</HelperText>
-            )}
+              <TextField
+                label="Contact Number"
+                value={values.contact}
+                onChange={handleChange('contact')}
+                onBlur={handleBlur('contact')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                error={touched.contact && !!errors.contact}
+                helperText={touched.contact && errors.contact as string}
+              />
 
-            <TextInput
-              label="Email (Optional)"
-              value={values.email}
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              style={styles.input}
-              error={touched.email && !!errors.email}
-              keyboardType="email-address"
-              mode="outlined"
-            />
-            {touched.email && errors.email && (
-              <HelperText type="error">{errors.email}</HelperText>
-            )}
+              <TextField
+                label="Email (Optional)"
+                value={values.email}
+                onChange={handleChange('email')}
+                onBlur={handleBlur('email')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                error={touched.email && !!errors.email}
+                helperText={touched.email && errors.email as string}
+                type="email"
+              />
 
-            <TextInput
-              label="Address (Optional)"
-              value={values.address}
-              onChangeText={handleChange('address')}
-              onBlur={handleBlur('address')}
-              style={styles.input}
-              multiline
-              numberOfLines={3}
-              mode="outlined"
-            />
+              <TextField
+                label="Address (Optional)"
+                value={values.address}
+                onChange={handleChange('address')}
+                onBlur={handleBlur('address')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                multiline
+                rows={3}
+              />
 
-            <TextInput
-              label="Medical History (Optional)"
-              value={values.medicalHistory}
-              onChangeText={handleChange('medicalHistory')}
-              onBlur={handleBlur('medicalHistory')}
-              style={styles.input}
-              multiline
-              numberOfLines={4}
-              mode="outlined"
-            />
+              <TextField
+                label="Medical History (Optional)"
+                value={values.medicalHistory}
+                onChange={handleChange('medicalHistory')}
+                onBlur={handleBlur('medicalHistory')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                multiline
+                rows={4}
+              />
 
-            <TextInput
-              label="Allergies (Optional)"
-              value={values.allergies}
-              onChangeText={handleChange('allergies')}
-              onBlur={handleBlur('allergies')}
-              style={styles.input}
-              multiline
-              numberOfLines={2}
-              mode="outlined"
-            />
+              <TextField
+                label="Allergies (Optional)"
+                value={values.allergies}
+                onChange={handleChange('allergies')}
+                onBlur={handleBlur('allergies')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                multiline
+                rows={2}
+              />
 
-            <TextInput
-              label="Medications (Optional)"
-              value={values.medications}
-              onChangeText={handleChange('medications')}
-              onBlur={handleBlur('medications')}
-              style={styles.input}
-              multiline
-              numberOfLines={3}
-              mode="outlined"
-            />
+              <TextField
+                label="Medications (Optional)"
+                value={values.medications}
+                onChange={handleChange('medications')}
+                onBlur={handleBlur('medications')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                multiline
+                rows={3}
+              />
 
-            <View style={styles.buttonContainer}>
-              <Button
-                mode="outlined"
-                onPress={onCancel}
-                style={styles.button}
-              >
-                Cancel
-              </Button>
-              <Button
-                mode="contained"
-                onPress={handleSubmit}
-                style={styles.button}
-                loading={isLoading}
-                disabled={isLoading}
-              >
-                Save
-              </Button>
-            </View>
-          </View>
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                mt: 4,
+                mb: 4
+              }}>
+                <Button
+                  variant="outlined"
+                  onClick={onCancel}
+                  sx={{ flex: 1, mx: 1 }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => handleSubmit()}
+                  sx={{ flex: 1, mx: 1 }}
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Saving...' : 'Save'}
+                </Button>
+              </Box>
+            </Box>
+          </Form>
         )}
       </Formik>
-    </ScrollView>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  formContainer: {
-    padding: 16,
-  },
-  input: {
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    marginTop: 8,
-  },
-  genderContainer: {
-    flexDirection: 'row',
-    marginBottom: 16,
-  },
-  genderButton: {
-    flex: 1,
-    marginRight: 8,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 24,
-    marginBottom: 40,
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 8,
-  },
-});
 
 export default PatientForm;
