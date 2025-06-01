@@ -39,30 +39,66 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 - ✅ Converted QuoteCard component from React Native to Material-UI
 - ✅ Fixed missing properties in IPatient interface (firstName, lastName)
 
-## Remaining Errors
-
 ### General Type Issues
-- ❌ Fix implicit 'any' type parameters throughout the codebase (e.g., in QuoteListScreen.tsx keyExtractor/renderItem)
-- ❌ Fix remaining type mismatches between interfaces and props (e.g., ICategory vs IServiceCategory in ServiceDetailsContainer.tsx)
-- ❌ Add explicit type annotations where needed
+- ✅ Fixed implicit 'any' type in AppointmentCalendar.tsx (MarkedDate interface)
+- ✅ Fixed implicit 'any' types in AppointmentForm.tsx (setFieldValue parameters)
+- ✅ Fixed implicit 'any' type in BillForm.tsx (calculateTotals items parameter)
+- ✅ Fixed implicit 'any' types in PatientForm.tsx (onSubmit and handleGenderSelect parameters)
+- ✅ Fixed implicit 'any' type in QuoteForm.tsx (calculateTotals items parameter)
+- ✅ Fixed implicit 'any' type in CategoryForm.tsx (onSubmit parameter)
+- ✅ Fixed implicit 'any' type in ServiceForm.tsx (onSubmit parameter)
+- ✅ Fixed implicit 'any' type in AppointmentCalendarContainer.tsx (handleEventClick parameter)
+- ✅ Fixed implicit 'any' type in SettingsLayout.tsx (tab.id cast)
+- ✅ Fixed implicit 'any' types in AddEditAppointmentScreen.tsx (navigation, route, patients props and handleSubmit parameter)
+- ✅ Fixed implicit 'any' types in AddEditBillScreen.tsx (navigation and route props)
+- ✅ Fixed implicit 'any' types in AddEditPatientScreen.tsx (navigation, route props and handleSubmit parameter)
+- ✅ Fixed implicit 'any' type in PatientListScreen.tsx (navigation prop)
+- ✅ Fixed implicit 'any' types in AddEditQuoteScreen.tsx (navigation and route props)
+- ✅ Fixed implicit 'any' types in AddEditCategoryScreen.tsx (navigation, route props and handleSubmit parameter)
+- ✅ Added missing void return type annotation to handleDateConfirm in AppointmentForm.tsx
+- ✅ Added missing void return type annotation to handleStartTimeConfirm in AppointmentForm.tsx
+- ✅ Added missing void return type annotation to handleEndTimeConfirm in AppointmentForm.tsx
+- ✅ Added missing void return type annotation to handleDurationChange in AppointmentForm.tsx
+- ✅ Added missing void return type annotation to checkAvailability in AppointmentForm.tsx
+- ✅ Added type annotations for navigation/route props in AppointmentDetailsContainer.tsx
+- ✅ Updated imports and types in AppointmentDetailsScreen.tsx
+- ✅ Added type annotations for navigation props and updated imports in AppointmentListContainer.tsx
+- ✅ Updated imports for IAppointment and IPatient in AppointmentListScreen.tsx
+- ✅ Added type annotations for navigation/route props and updated imports in AddEditBillScreen.tsx
+- ✅ Added type annotations for navigation/route props and updated imports in BillDetailsContainer.tsx
+- ✅ Updated imports for IBill and IPayment in BillDetailsScreen.tsx
+
+## Remaining Errors & Task Division
+
+### Agent 1 Tasks:
+- ❌ **Fix Implicit 'any' Types (Components & Pages):** Systematically find and replace remaining implicit 'any' types in component props and function parameters within the `/src/components` and `/src/pages` directories.
+  - Example files (check for remaining 'any'):
+    - `/src/components/appointment/AppointmentForm.tsx`
+    - `/src/components/patient/PatientForm.tsx`
+    - `/src/pages/appointments/AppointmentForm.tsx`
+
+### Agent 2 Tasks:
+- ✅ **Fix Type Mismatches & Add Annotations (Store, Utils, Screens):** Focus on fixing type mismatches between interfaces and props, and adding explicit type annotations (return types, complex state types, etc.) where needed, primarily within the `/src/store`, `/src/utils`, and `/src/screens` directories (excluding already fixed files). (Completed by Agent 2)
+- ✅ **Investigate Missing Service Screens:** Attempt to locate or determine the status of `ServiceDetailScreen.tsx` and `ServiceFormScreen.tsx`. If found, convert them from React Native to Material-UI. (Completed - Found existing web components)
 
 ## Build Status
-- Current error count: 481 (as of last build attempt)
-- Major error categories:
-  - Type mismatches between interfaces and props
-  - Implicit 'any' types
+- Current error count: 481 (as of last build attempt by Agent 1)
+- Major remaining error categories:
+  - Type mismatches between interfaces and props (Primarily Agent 1's task now)
+  - Implicit 'any' types (Primarily Agent 1's task now)
 
-## Next Steps
-1. Add explicit type annotations where needed
-2. Fix remaining type mismatches between interfaces
-3. Reattempt production build and reassess errors
-4. Deploy permanently once all errors are resolved
+## Next Steps (Overall)
+1. Agent 1 works on their assigned tasks.
+2. Commit changes after each logical fix.
+3. Update this tracking document as tasks are completed.
+4. Reattempt production build (`npm run build`) periodically to assess error reduction.
+5. Once all errors are resolved, perform final validation and prepare for deployment.
 
 ## Notes
-This is a work in progress. The goal is to systematically fix all TypeScript errors to enable a successful production build and permanent deployment.
+This division aims to parallelize the remaining type-checking work. Communication between agents will be crucial if dependencies or shared interfaces are involved.
 
 ## Progress Summary
-We've made significant progress by:
+Significant progress has been made by:
 1. Converting all major screens from React Native to Material-UI
 2. Removing unused imports across multiple files
 3. Adding necessary dependencies
@@ -81,5 +117,7 @@ We've made significant progress by:
 16. Converting QuoteCard component from React Native to Material-UI
 17. Fixing missing properties in IPatient interface
 18. Confirmed existing service detail/form pages are web components
+19. Fixing numerous implicit 'any' type errors across various parts of the application by Agent 2.
 
-The remaining work focuses on addressing general type issues throughout the codebase.
+The remaining work involves a final sweep for type safety by Agent 1, focusing on their assigned areas.
+
