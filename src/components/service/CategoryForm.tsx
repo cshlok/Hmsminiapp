@@ -52,7 +52,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           values,
           errors,
           touched,
-        }: FormikProps<any>) => (
+        }: FormikProps<Partial<IServiceCategory>>) => (
           <Form>
             <Box sx={{ p: 2 }}>
               {/* Category Name */}
