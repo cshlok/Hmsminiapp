@@ -72,7 +72,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           values,
           errors,
           touched,
-        }: FormikProps<any>) => (
+        }: FormikProps<Partial<IService>>) => (
           <Form>
             <Box sx={{ p: 2 }}>
               {/* Category Selection */}
