@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { TextInput, Button, Text, HelperText, useTheme, Chip, SegmentedButtons } from 'react-native-paper';
-import { Formik } from 'formik';
+import { 
+  Box, 
+  TextField, 
+  Button, 
+  Typography, 
+  FormHelperText,
+  Grid,
+  Chip,
+  Stack,
+  Paper,
+  ToggleButtonGroup,
+  ToggleButton,
+  ScrollView
+} from '@mui/material';
+import { Formik, Form, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { IAppointment } from '../../models/AppointmentModel';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { format } from 'date-fns';
 
 interface AppointmentFormProps {
@@ -47,56 +60,53 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   checkTimeSlotAvailability,
   isLoading = false,
 }) => {
-  const theme = useTheme();
-  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
-  const [isStartTimePickerVisible, setStartTimePickerVisible] = useState(false);
-  const [isEndTimePickerVisible, setEndTimePickerVisible] = useState(false);
   const [timeSlotError, setTimeSlotError] = useState('');
 
-  const handleDateConfirm = (date: Date, setFieldValue: (field: string, value: any) => void) => {
-    setFieldValue('date', date);
-    setDatePickerVisible(false);
-  };
-
-  const handleStartTimeConfirm = (time: Date, setFieldValue: (field: string, value: any) => void, values: Partial<IAppointment>) => {
-    const formattedTime = format(time, 'HH:mm');
-    setFieldValue('startTime', formattedTime);
-    
-    // Calculate end time based on duration
-    const endTime = new Date(time);
-    endTime.setMinutes(endTime.getMinutes() + values.duration);
-    setFieldValue('endTime', format(endTime, 'HH:mm'));
-    
-    setStartTimePickerVisible(false);
-    
-    // Check time slot availability
-    checkAvailability(values.date, formattedTime, format(endTime, 'HH:mm'), values.id, setFieldValue);
-  };
-
-  const handleEndTimeConfirm = (time: Date, setFieldValue: (field: string, value: any) => void, values: Partial<IAppointment>) => {
-    const formattedTime = format(time, 'HH:mm');
-    setFieldValue('endTime', formattedTime);
-    
-    // Calculate duration based on start and end time
-    if (values.startTime) {
-      const startParts = values.startTime.split(':');
-      const endParts = formattedTime.split(':');
-      
-      const startDate = new Date();
-      startDate.setHours(parseInt(startParts[0], 10), parseInt(startParts[1], 10), 0);
-      
-      const endDate = new Date();
-      endDate.setHours(parseInt(endParts[0], 10), parseInt(endParts[1], 10), 0);
-      
-      const durationMinutes = Math.round((endDate.getTime() - startDate.getTime()) / 60000);
-      setFieldValue('duration', durationMinutes > 0 ? durationMinutes : 0);
+  const handleDateChange = (date: Date | null, setFieldValue: (field: string, value: any) => void) => {
+    if (date) {
+      setFieldValue('date', date);
     }
-    
-    setEndTimePickerVisible(false);
-    
-    // Check time slot availability
-    if (values.startTime) {
-      checkAvailability(values.date, values.startTime, formattedTime, values.id, setFieldValue);
+  };
+
+  const handleStartTimeChange = (time: Date | null, setFieldValue: (field: string, value: any) => void, values: Partial<IAppointment>) => {
+    if (time) {
+      const formattedTime = format(time, 'HH:mm');
+      setFieldValue('startTime', formattedTime);
+      
+      // Calculate end time based on duration
+      const endTime = new Date(time);
+      endTime.setMinutes(endTime.getMinutes() + (values.duration || 0));
+      setFieldValue('endTime', format(endTime, 'HH:mm'));
+      
+      // Check time slot availability
+      checkAvailability(values.date as Date, formattedTime, format(endTime, 'HH:mm'), values.id, setFieldValue);
+    }
+  };
+
+  const handleEndTimeChange = (time: Date | null, setFieldValue: (field: string, value: any) => void, values: Partial<IAppointment>) => {
+    if (time) {
+      const formattedTime = format(time, 'HH:mm');
+      setFieldValue('endTime', formattedTime);
+      
+      // Calculate duration based on start and end time
+      if (values.startTime) {
+        const startParts = values.startTime.split(':');
+        const endParts = formattedTime.split(':');
+        
+        const startDate = new Date();
+        startDate.setHours(parseInt(startParts[0], 10), parseInt(startParts[1], 10), 0);
+        
+        const endDate = new Date();
+        endDate.setHours(parseInt(endParts[0], 10), parseInt(endParts[1], 10), 0);
+        
+        const durationMinutes = Math.round((endDate.getTime() - startDate.getTime()) / 60000);
+        setFieldValue('duration', durationMinutes > 0 ? durationMinutes : 0);
+      }
+      
+      // Check time slot availability
+      if (values.startTime) {
+        checkAvailability(values.date as Date, values.startTime, formattedTime, values.id, setFieldValue);
+      }
     }
   };
 
@@ -117,7 +127,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
       setFieldValue('endTime', newEndTime);
       
       // Check time slot availability
-      checkAvailability(values.date, values.startTime, newEndTime, values.id, setFieldValue);
+      checkAvailability(values.date as Date, values.startTime, newEndTime, values.id, setFieldValue);
     }
   };
 
@@ -132,7 +142,12 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <Box sx={{ 
+      flex: 1, 
+      bgcolor: '#fff', 
+      p: 2,
+      overflow: 'auto'
+    }}>
       <Formik
         initialValues={initialValues}
         validationSchema={AppointmentSchema}
@@ -146,216 +161,188 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
           values,
           errors,
           touched,
-        }) => (
-          <View style={styles.formContainer}>
-            {/* Patient Selection */}
-            <Text style={styles.label}>Patient</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.patientScroll}>
-              {patients.map((patient) => (
-                <Chip
-                  key={patient.id}
-                  selected={values.patientId === patient.id}
-                  onPress={() => setFieldValue('patientId', patient.id)}
-                  style={styles.patientChip}
-                  mode={values.patientId === patient.id ? 'flat' : 'outlined'}
-                >
-                  {patient.name}
-                </Chip>
-              ))}
-            </ScrollView>
-            {touched.patientId && errors.patientId && (
-              <HelperText type="error">{errors.patientId}</HelperText>
-            )}
+        }: FormikProps<Partial<IAppointment>>) => (
+          <Form>
+            <Box sx={{ p: 2 }}>
+              {/* Patient Selection */}
+              <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                Patient
+              </Typography>
+              <Box sx={{ 
+                display: 'flex', 
+                flexWrap: 'wrap', 
+                gap: 1,
+                mb: 2 
+              }}>
+                {patients.map((patient) => (
+                  <Chip
+                    key={patient.id}
+                    label={patient.name}
+                    onClick={() => setFieldValue('patientId', patient.id)}
+                    color={values.patientId === patient.id ? 'primary' : 'default'}
+                    variant={values.patientId === patient.id ? 'filled' : 'outlined'}
+                  />
+                ))}
+              </Box>
+              {touched.patientId && errors.patientId && (
+                <FormHelperText error>{errors.patientId as string}</FormHelperText>
+              )}
 
-            {/* Date Picker */}
-            <Text style={styles.label}>Date</Text>
-            <Button
-              mode="outlined"
-              onPress={() => setDatePickerVisible(true)}
-              style={styles.dateButton}
-            >
-              {values.date ? format(values.date, 'EEEE, MMMM dd, yyyy') : 'Select Date'}
-            </Button>
-            <DateTimePickerModal
-              isVisible={isDatePickerVisible}
-              mode="date"
-              onConfirm={(date) => handleDateConfirm(date, setFieldValue)}
-              onCancel={() => setDatePickerVisible(false)}
-              date={values.date || new Date()}
-            />
-            {touched.date && errors.date && (
-              <HelperText type="error">{errors.date}</HelperText>
-            )}
-
-            {/* Time Pickers */}
-            <View style={styles.timeContainer}>
-              <View style={styles.timeField}>
-                <Text style={styles.label}>Start Time</Text>
-                <Button
-                  mode="outlined"
-                  onPress={() => setStartTimePickerVisible(true)}
-                  style={styles.timeButton}
-                >
-                  {values.startTime || 'Select Time'}
-                </Button>
-                <DateTimePickerModal
-                  isVisible={isStartTimePickerVisible}
-                  mode="time"
-                  onConfirm={(time) => handleStartTimeConfirm(time, setFieldValue, values)}
-                  onCancel={() => setStartTimePickerVisible(false)}
+              {/* Date Picker */}
+              <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }}>
+                Date
+              </Typography>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  value={values.date}
+                  onChange={(date) => handleDateChange(date, setFieldValue)}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      margin: "normal",
+                      variant: "outlined",
+                      error: touched.date && !!errors.date,
+                      helperText: touched.date && errors.date as string
+                    }
+                  }}
                 />
-                {touched.startTime && errors.startTime && (
-                  <HelperText type="error">{errors.startTime}</HelperText>
-                )}
-              </View>
+              </LocalizationProvider>
 
-              <View style={styles.timeField}>
-                <Text style={styles.label}>End Time</Text>
+              {/* Time Pickers */}
+              <Grid container spacing={2} sx={{ mt: 1 }}>
+                <Grid item xs={6}>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    Start Time
+                  </Typography>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <TimePicker
+                      value={values.startTime ? parseTimeString(values.startTime) : null}
+                      onChange={(time) => handleStartTimeChange(time, setFieldValue, values)}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          margin: "normal",
+                          variant: "outlined",
+                          error: touched.startTime && !!errors.startTime,
+                          helperText: touched.startTime && errors.startTime as string
+                        }
+                      }}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    End Time
+                  </Typography>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <TimePicker
+                      value={values.endTime ? parseTimeString(values.endTime) : null}
+                      onChange={(time) => handleEndTimeChange(time, setFieldValue, values)}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          margin: "normal",
+                          variant: "outlined",
+                          error: touched.endTime && !!errors.endTime,
+                          helperText: touched.endTime && errors.endTime as string
+                        }
+                      }}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+              </Grid>
+
+              {/* Time Slot Error */}
+              {timeSlotError && (
+                <FormHelperText error>{timeSlotError}</FormHelperText>
+              )}
+
+              {/* Duration */}
+              <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }}>
+                Duration (minutes)
+              </Typography>
+              <TextField
+                value={String(values.duration)}
+                onChange={(e) => handleDurationChange(e.target.value, setFieldValue, values)}
+                type="number"
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                error={touched.duration && !!errors.duration}
+                helperText={touched.duration && errors.duration as string}
+              />
+
+              {/* Status */}
+              <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }}>
+                Status
+              </Typography>
+              <ToggleButtonGroup
+                value={values.status}
+                exclusive
+                onChange={(e, value) => value && setFieldValue('status', value)}
+                aria-label="appointment status"
+                fullWidth
+                sx={{ mb: 2 }}
+              >
+                <ToggleButton value="scheduled">Scheduled</ToggleButton>
+                <ToggleButton value="completed">Completed</ToggleButton>
+                <ToggleButton value="cancelled">Cancelled</ToggleButton>
+                <ToggleButton value="no-show">No Show</ToggleButton>
+              </ToggleButtonGroup>
+              {touched.status && errors.status && (
+                <FormHelperText error>{errors.status as string}</FormHelperText>
+              )}
+
+              {/* Notes */}
+              <TextField
+                label="Notes (Optional)"
+                value={values.notes}
+                onChange={handleChange('notes')}
+                onBlur={handleBlur('notes')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                multiline
+                rows={3}
+              />
+
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                mt: 4,
+                mb: 4
+              }}>
                 <Button
-                  mode="outlined"
-                  onPress={() => setEndTimePickerVisible(true)}
-                  style={styles.timeButton}
+                  variant="outlined"
+                  onClick={onCancel}
+                  sx={{ flex: 1, mx: 1 }}
                 >
-                  {values.endTime || 'Select Time'}
+                  Cancel
                 </Button>
-                <DateTimePickerModal
-                  isVisible={isEndTimePickerVisible}
-                  mode="time"
-                  onConfirm={(time) => handleEndTimeConfirm(time, setFieldValue, values)}
-                  onCancel={() => setEndTimePickerVisible(false)}
-                />
-                {touched.endTime && errors.endTime && (
-                  <HelperText type="error">{errors.endTime}</HelperText>
-                )}
-              </View>
-            </View>
-
-            {/* Time Slot Error */}
-            {timeSlotError ? (
-              <HelperText type="error">{timeSlotError}</HelperText>
-            ) : null}
-
-            {/* Duration */}
-            <Text style={styles.label}>Duration (minutes)</Text>
-            <TextInput
-              value={String(values.duration)}
-              onChangeText={(text) => handleDurationChange(text, setFieldValue, values)}
-              keyboardType="numeric"
-              style={styles.input}
-              mode="outlined"
-            />
-            {touched.duration && errors.duration && (
-              <HelperText type="error">{errors.duration}</HelperText>
-            )}
-
-            {/* Status */}
-            <Text style={styles.label}>Status</Text>
-            <SegmentedButtons
-              value={values.status}
-              onValueChange={(value) => setFieldValue('status', value)}
-              buttons={[
-                { value: 'scheduled', label: 'Scheduled' },
-                { value: 'completed', label: 'Completed' },
-                { value: 'cancelled', label: 'Cancelled' },
-                { value: 'no-show', label: 'No Show' },
-              ]}
-              style={styles.segmentedButtons}
-            />
-            {touched.status && errors.status && (
-              <HelperText type="error">{errors.status}</HelperText>
-            )}
-
-            {/* Notes */}
-            <TextInput
-              label="Notes (Optional)"
-              value={values.notes}
-              onChangeText={handleChange('notes')}
-              onBlur={handleBlur('notes')}
-              style={styles.input}
-              multiline
-              numberOfLines={3}
-              mode="outlined"
-            />
-
-            <View style={styles.buttonContainer}>
-              <Button
-                mode="outlined"
-                onPress={onCancel}
-                style={styles.button}
-              >
-                Cancel
-              </Button>
-              <Button
-                mode="contained"
-                onPress={handleSubmit}
-                style={styles.button}
-                loading={isLoading}
-                disabled={isLoading || !!timeSlotError}
-              >
-                Save
-              </Button>
-            </View>
-          </View>
+                <Button
+                  variant="contained"
+                  onClick={() => handleSubmit()}
+                  sx={{ flex: 1, mx: 1 }}
+                  disabled={isLoading || !!timeSlotError}
+                >
+                  {isLoading ? 'Saving...' : 'Save'}
+                </Button>
+              </Box>
+            </Box>
+          </Form>
         )}
       </Formik>
-    </ScrollView>
+    </Box>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  formContainer: {
-    padding: 16,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    marginTop: 8,
-  },
-  input: {
-    marginBottom: 16,
-  },
-  patientScroll: {
-    marginBottom: 16,
-  },
-  patientChip: {
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  dateButton: {
-    marginBottom: 16,
-    justifyContent: 'flex-start',
-    height: 50,
-  },
-  timeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  timeField: {
-    flex: 1,
-    marginRight: 8,
-  },
-  timeButton: {
-    justifyContent: 'flex-start',
-    height: 50,
-  },
-  segmentedButtons: {
-    marginBottom: 16,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 24,
-    marginBottom: 40,
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 8,
-  },
-});
+// Helper function to parse time string to Date object
+const parseTimeString = (timeString: string): Date => {
+  const [hours, minutes] = timeString.split(':').map(Number);
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  return date;
+};
 
 export default AppointmentForm;
