@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { TextInput, Button, Text, HelperText, useTheme, Chip, SegmentedButtons } from 'react-native-paper';
-import { Formik } from 'formik';
+import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
-import { IAppointment } from '../../models/AppointmentModel';
+import { IAppointment } from '../../store/slices/appointmentSlice';
+import { FormikErrors } from 'formik'; // Import FormikErrors
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { format } from 'date-fns';
 
@@ -146,7 +147,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
           values,
           errors,
           touched,
-        }) => (
+        }: FormikProps<Partial<IAppointment>>) => (
           <View style={styles.formContainer}>
             {/* Patient Selection */}
             <Text style={styles.label}>Patient</Text>
