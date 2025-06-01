@@ -67,6 +67,7 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 - ✅ Added type annotations for navigation/route props and updated imports in AddEditBillScreen.tsx
 - ✅ Added type annotations for navigation/route props and updated imports in BillDetailsContainer.tsx
 - ✅ Updated imports for IBill and IPayment in BillDetailsScreen.tsx
+- ✅ Updated imports and added FormikProps type in AppointmentForm.tsx
 
 ## Remaining Errors & Task Division
 
