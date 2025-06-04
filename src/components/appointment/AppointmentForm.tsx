@@ -11,11 +11,12 @@ import {
   Paper,
   ToggleButtonGroup,
   ToggleButton,
-  ScrollView
+  ScrollView // Keep ScrollView import if needed for layout, otherwise remove
 } from '@mui/material';
 import { Formik, Form, FormikProps } from 'formik';
 import * as Yup from 'yup';
-import { IAppointment } from '../../models/AppointmentModel';
+// Use the model definition, not the slice definition here
+import { IAppointment } from '../../models/AppointmentModel'; 
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { format } from 'date-fns';
@@ -62,76 +63,81 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 }) => {
   const [timeSlotError, setTimeSlotError] = useState('');
 
+  // Keep the Material-UI version of handlers
   const handleDateChange = (date: Date | null, setFieldValue: (field: string, value: any) => void) => {
     if (date) {
       setFieldValue('date', date);
+      // Re-check availability if start/end times exist
+      if (values.startTime && values.endTime) {
+        checkAvailability(date, values.startTime, values.endTime, values.id, setFieldValue);
+      }
     }
   };
 
   const handleStartTimeChange = (time: Date | null, setFieldValue: (field: string, value: any) => void, values: Partial<IAppointment>) => {
-    if (time) {
+    if (time && values.date) { // Ensure date is selected
       const formattedTime = format(time, 'HH:mm');
       setFieldValue('startTime', formattedTime);
       
       // Calculate end time based on duration
       const endTime = new Date(time);
       endTime.setMinutes(endTime.getMinutes() + (values.duration || 0));
-      setFieldValue('endTime', format(endTime, 'HH:mm'));
+      const formattedEndTime = format(endTime, 'HH:mm');
+      setFieldValue('endTime', formattedEndTime);
       
       // Check time slot availability
-      checkAvailability(values.date as Date, formattedTime, format(endTime, 'HH:mm'), values.id, setFieldValue);
+      checkAvailability(values.date, formattedTime, formattedEndTime, values.id, setFieldValue);
     }
   };
 
   const handleEndTimeChange = (time: Date | null, setFieldValue: (field: string, value: any) => void, values: Partial<IAppointment>) => {
-    if (time) {
+    if (time && values.date && values.startTime) { // Ensure date and start time exist
       const formattedTime = format(time, 'HH:mm');
       setFieldValue('endTime', formattedTime);
       
       // Calculate duration based on start and end time
-      if (values.startTime) {
-        const startParts = values.startTime.split(':');
-        const endParts = formattedTime.split(':');
-        
-        const startDate = new Date();
-        startDate.setHours(parseInt(startParts[0], 10), parseInt(startParts[1], 10), 0);
-        
-        const endDate = new Date();
-        endDate.setHours(parseInt(endParts[0], 10), parseInt(endParts[1], 10), 0);
-        
-        const durationMinutes = Math.round((endDate.getTime() - startDate.getTime()) / 60000);
-        setFieldValue('duration', durationMinutes > 0 ? durationMinutes : 0);
-      }
+      const startParts = values.startTime.split(':');
+      const endParts = formattedTime.split(':');
+      
+      const startDate = new Date(values.date);
+      startDate.setHours(parseInt(startParts[0], 10), parseInt(startParts[1], 10), 0);
+      
+      const endDate = new Date(values.date);
+      endDate.setHours(parseInt(endParts[0], 10), parseInt(endParts[1], 10), 0);
+      
+      const durationMinutes = Math.round((endDate.getTime() - startDate.getTime()) / 60000);
+      setFieldValue('duration', durationMinutes > 0 ? durationMinutes : 0);
       
       // Check time slot availability
-      if (values.startTime) {
-        checkAvailability(values.date as Date, values.startTime, formattedTime, values.id, setFieldValue);
-      }
+      checkAvailability(values.date, values.startTime, formattedTime, values.id, setFieldValue);
     }
   };
 
   const handleDurationChange = (duration: string, setFieldValue: (field: string, value: any) => void, values: Partial<IAppointment>) => {
     const durationValue = parseInt(duration, 10);
-    setFieldValue('duration', durationValue);
-    
-    // Update end time based on new duration
-    if (values.startTime) {
-      const startParts = values.startTime.split(':');
-      const startDate = new Date();
-      startDate.setHours(parseInt(startParts[0], 10), parseInt(startParts[1], 10), 0);
-      
-      const endDate = new Date(startDate);
-      endDate.setMinutes(endDate.getMinutes() + durationValue);
-      
-      const newEndTime = format(endDate, 'HH:mm');
-      setFieldValue('endTime', newEndTime);
-      
-      // Check time slot availability
-      checkAvailability(values.date as Date, values.startTime, newEndTime, values.id, setFieldValue);
+    if (!isNaN(durationValue) && durationValue >= 0) { // Basic validation
+        setFieldValue('duration', durationValue);
+        
+        // Update end time based on new duration
+        if (values.startTime && values.date) {
+            const startParts = values.startTime.split(':');
+            const startDate = new Date(values.date);
+            startDate.setHours(parseInt(startParts[0], 10), parseInt(startParts[1], 10), 0);
+            
+            const endDate = new Date(startDate);
+            endDate.setMinutes(endDate.getMinutes() + durationValue);
+            
+            const newEndTime = format(endDate, 'HH:mm');
+            setFieldValue('endTime', newEndTime);
+            
+            // Check time slot availability
+            checkAvailability(values.date, values.startTime, newEndTime, values.id, setFieldValue);
+        }
     }
   };
 
-  const checkAvailability = (date: Date, startTime: string, endTime: string, appointmentId: string | undefined, setFieldValue: (field: string, value: any) => void) => {
+  // Explicitly type setFieldValue parameter
+  const checkAvailability = (date: Date, startTime: string, endTime: string, appointmentId: string | undefined, setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => Promise<void> | Promise<FormikErrors<Partial<IAppointment>>>) => {
     const isAvailable = checkTimeSlotAvailability(date, startTime, endTime, appointmentId);
     
     if (!isAvailable) {
@@ -146,22 +152,26 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
       flex: 1, 
       bgcolor: '#fff', 
       p: 2,
-      overflow: 'auto'
+      // Use overflow: 'auto' for scrolling within the Box if needed
+      overflow: 'auto' 
     }}>
       <Formik
         initialValues={initialValues}
         validationSchema={AppointmentSchema}
         onSubmit={onSubmit}
+        // Enable reinitialization if initialValues change (e.g., when editing)
+        enableReinitialize 
       >
         {({
           handleChange,
           handleBlur,
           handleSubmit,
           setFieldValue,
-          values,
+          values, // Add values here to use in handlers
           errors,
           touched,
         }: FormikProps<Partial<IAppointment>>) => (
+          // Keep the Material-UI Form structure
           <Form>
             <Box sx={{ p: 2 }}>
               {/* Patient Selection */}
@@ -255,7 +265,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
               {/* Time Slot Error */}
               {timeSlotError && (
-                <FormHelperText error>{timeSlotError}</FormHelperText>
+                <FormHelperText error sx={{ mt: 1 }}>{timeSlotError}</FormHelperText>
               )}
 
               {/* Duration */}
@@ -271,6 +281,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                 variant="outlined"
                 error={touched.duration && !!errors.duration}
                 helperText={touched.duration && errors.duration as string}
+                InputProps={{ inputProps: { min: 0 } }} // Ensure non-negative duration
               />
 
               {/* Status */}
@@ -322,6 +333,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                 </Button>
                 <Button
                   variant="contained"
+                  // Use handleSubmit from Formik props
                   onClick={() => handleSubmit()}
                   sx={{ flex: 1, mx: 1 }}
                   disabled={isLoading || !!timeSlotError}
@@ -338,7 +350,8 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 };
 
 // Helper function to parse time string to Date object
-const parseTimeString = (timeString: string): Date => {
+const parseTimeString = (timeString: string): Date | null => {
+  if (!timeString || !/^[0-2][0-9]:[0-5][0-9]$/.test(timeString)) return null; // Basic validation
   const [hours, minutes] = timeString.split(':').map(Number);
   const date = new Date();
   date.setHours(hours, minutes, 0, 0);
@@ -346,3 +359,4 @@ const parseTimeString = (timeString: string): Date => {
 };
 
 export default AppointmentForm;
+

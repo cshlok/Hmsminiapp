@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+import { RouteProp } from '@react-navigation/native'; // Import RouteProp
+import { StackNavigationProp } from '@react-navigation/stack'; // Assuming Stack Navigator
 import { RootState } from '../../store';
 import { 
   setAppointments, 
@@ -11,13 +13,34 @@ import {
   setLoading, 
   setError,
   setSelectedAppointment,
-  setFilterStatus
+  setFilterStatus,
+  IAppointment // Import IAppointment from slice
 } from '../../store/slices/appointmentSlice';
-import { AppointmentRepository } from '../../storage/AppointmentRepository';
-import { IAppointment } from '../../models/AppointmentModel';
+import { AppointmentRepository } from '../../storage/AppointmentRepository'; // Keep for now, might be placeholder
+// import { IAppointment } from '../../models/AppointmentModel'; // Remove this import
 import AppointmentListScreen from './AppointmentListScreen';
 
-const AppointmentListContainer = ({ navigation }) => {
+// Define ParamList for navigation
+type RootStackParamList = {
+  AppointmentList: undefined; // No params expected for this screen itself
+  AppointmentDetails: { appointment: IAppointment, patient: any }; // Define params for target screen
+  AddEditAppointment: { 
+    appointment?: IAppointment, 
+    selectedDate?: Date, 
+    patients: any[], 
+    onSave: (appointment: IAppointment) => void, 
+    checkTimeSlotAvailability: (date: Date, startTime: string, endTime: string, appointmentId?: string) => boolean 
+  };
+  // Add other screen definitions here if needed
+};
+
+// Define Props for the container
+interface AppointmentListContainerProps {
+  navigation: StackNavigationProp<RootStackParamList, 'AppointmentList'>;
+  // route: RouteProp<RootStackParamList, 'AppointmentList'>; // Add if route params are needed
+}
+
+const AppointmentListContainer: React.FC<AppointmentListContainerProps> = ({ navigation }) => {
   const dispatch = useDispatch();
   const { appointments, loading, error, filterStatus } = useSelector((state: RootState) => state.appointment);
   const { patients } = useSelector((state: RootState) => state.patient);

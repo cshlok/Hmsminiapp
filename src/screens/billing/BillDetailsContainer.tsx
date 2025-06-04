@@ -1,11 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Alert, Share } from 'react-native';
 import { useSelector } from 'react-redux';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { RootState } from '../../store';
 import BillDetailsScreen from './BillDetailsScreen';
-import { IBill, IPayment } from '../../models/BillingModel';
+import { IBill, IPayment } from '../../store/slices/billingSlice'; // Use slice definition
+import { IPatient } from '../../store/slices/patientSlice'; // Use slice definition
 
-const BillDetailsContainer = ({ navigation, route }) => {
+// Define ParamList for navigation
+type RootStackParamList = {
+  BillDetails: { bill?: IBill };
+  AddEditBill: { 
+    bill?: IBill, 
+    patients: IPatient[], 
+    onSave: (updatedBill: IBill) => void 
+  };
+  // Add other screen definitions here if needed
+};
+
+// Define Props for the container
+interface BillDetailsContainerProps {
+  navigation: StackNavigationProp<RootStackParamList, 'BillDetails'>;
+  route: RouteProp<RootStackParamList, 'BillDetails'>;
+}
+
+const BillDetailsContainer: React.FC<BillDetailsContainerProps> = ({ navigation, route }) => {
   const { bill } = route.params;
   const { patients } = useSelector((state: RootState) => state.patient);
   const { selectedBill } = useSelector((state: RootState) => state.billing);

@@ -4,8 +4,8 @@ import { Text, Divider, FAB, useTheme, ActivityIndicator, Chip, Searchbar } from
 import { format } from 'date-fns';
 import AppointmentCalendar from '../../components/appointment/AppointmentCalendar';
 import AppointmentCard from '../../components/appointment/AppointmentCard';
-import { IAppointment } from '../../models/AppointmentModel';
-import { IPatient } from '../../models/PatientModel';
+import { IAppointment } from '../../store/slices/appointmentSlice'; // Use slice definition
+import { IPatient } from '../../store/slices/patientSlice'; // Use slice definition
 
 interface AppointmentListScreenProps {
   appointments: IAppointment[];

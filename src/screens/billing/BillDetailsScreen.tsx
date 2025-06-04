@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { Text, Divider, Card, useTheme, Button, List, Chip, Modal, Portal, TextInput } from 'react-native-paper';
-import { IBill, IPayment } from '../../models/BillingModel';
+import { IBill, IPayment } from '../../store/slices/billingSlice'; // Use slice definition
 import { format } from 'date-fns';
 
 interface BillDetailsScreenProps {

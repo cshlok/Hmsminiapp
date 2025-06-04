@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { Appbar, useTheme } from 'react-native-paper';
-import { v4 as uuidv4 } from 'uuid';
-import { IBill } from '../../models/BillingModel';
-import { IPatient } from '../../models/PatientModel';
-import { IService } from '../../models/ServiceModel';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import { IBill } from '../../store/slices/billingSlice'; // Use slice definition
+import { IPatient } from '../../store/slices/patientSlice'; // Use slice definition
+import { IServiceSlice as IService } from '../../utils/modelConverters'; // Use slice definition via converter
 import BillForm from '../../components/billing/BillForm';
 
+// Define ParamList for navigation
+type RootStackParamList = {
+  AddEditBill: { bill?: IBill, onSave?: (bill: IBill) => void };
+  // Add other screen definitions here if needed
+};
+
+// Define Props for the screen
 interface AddEditBillScreenProps {
-  navigation: {goBack: () => void};
-  route: {params?: {bill?: IBill, onSave?: (bill: IBill) => void}};
-  onSave: (bill: IBill) => void;
+  navigation: StackNavigationProp<RootStackParamList, 'AddEditBill'>;
+  route: RouteProp<RootStackParamList, 'AddEditBill'>;
+  // onSave prop seems redundant if passed via route.params, consider refactoring later
+  // onSave: (bill: IBill) => void; 
   isLoading?: boolean;
 }
 
