@@ -39,27 +39,40 @@ This document tracks the TypeScript errors in the Hmsminiapp project, both fixed
 - ✅ Converted QuoteCard component from React Native to Material-UI
 - ✅ Fixed missing properties in IPatient interface (firstName, lastName)
 
+### Components & Pages (Implicit 'any' Fixes)
+- ✅ Replaced implicit `any` with explicit `Partial<IServiceCategory>` in `/src/components/service/CategoryForm.tsx`
+- ✅ Replaced implicit `any` with explicit `Partial<IService>` in `/src/components/service/ServiceForm.tsx`
+- ✅ Converted `/src/components/appointment/AppointmentForm.tsx` from React Native to Material-UI and replaced implicit `any` with explicit `Partial<IAppointment>`
+- ✅ Converted `/src/components/patient/PatientForm.tsx` from React Native to Material-UI and replaced implicit `any` with explicit `Partial<IPatient>`
+- ✅ Replaced implicit `any` in `setErrors` call within `/src/pages/appointments/AppointmentForm.tsx`
+
 ## Remaining Errors
 
 ### General Type Issues
-- ❌ Fix implicit 'any' type parameters throughout the codebase (e.g., in QuoteListScreen.tsx keyExtractor/renderItem)
-- ❌ Fix remaining type mismatches between interfaces and props (e.g., ICategory vs IServiceCategory in ServiceDetailsContainer.tsx)
-- ❌ Add explicit type annotations where needed
+- ❌ Fix remaining type mismatches between interfaces and props (e.g., `IPatient` definitions in models vs. slices, `IQuote` missing `validUntil`)
+- ❌ Resolve module import/export errors (e.g., `SettingsModel` members in `storage.ts`)
+- ❌ Address type incompatibility issues (e.g., `Date` vs `string` for `startTime` in `storage.ts`)
+- ❌ Fix unused variable errors (e.g., `IQuoteItem` in `quoteSlice.ts`)
 
 ## Build Status
-- Current error count: 481 (as of last build attempt)
+- Current error count: 485 (as of last build attempt)
 - Major error categories:
-  - Type mismatches between interfaces and props
-  - Implicit 'any' types
+  - Type mismatches between interface definitions (models vs. slices)
+  - Missing properties in interfaces
+  - Module import/export errors
+  - Type incompatibilities (e.g., Date vs string)
 
 ## Next Steps
-1. Add explicit type annotations where needed
-2. Fix remaining type mismatches between interfaces
-3. Reattempt production build and reassess errors
-4. Deploy permanently once all errors are resolved
+1. Fix type mismatches between interfaces (e.g., `IPatient` in `patientSlice.ts`).
+2. Resolve module import/export errors in `storage.ts`.
+3. Address type incompatibilities in `storage.ts`.
+4. Remove unused variables like `IQuoteItem`.
+5. Reattempt production build and reassess errors.
+6. Commit and push all accumulated changes before credits expire.
+7. Deploy permanently once all errors are resolved.
 
 ## Notes
-This is a work in progress. The goal is to systematically fix all TypeScript errors to enable a successful production build and permanent deployment.
+This is a work in progress. The goal is to systematically fix all TypeScript errors to enable a successful production build and permanent deployment. Commits are currently deferred until closer to the credit limit, per user instruction.
 
 ## Progress Summary
 We've made significant progress by:
@@ -81,5 +94,8 @@ We've made significant progress by:
 16. Converting QuoteCard component from React Native to Material-UI
 17. Fixing missing properties in IPatient interface
 18. Confirmed existing service detail/form pages are web components
+19. Fixed implicit `any` types in `CategoryForm.tsx`, `ServiceForm.tsx`, `AppointmentForm.tsx` (component), `PatientForm.tsx` (component), and `AppointmentForm.tsx` (page).
+20. Converted `AppointmentForm.tsx` (component) and `PatientForm.tsx` (component) from React Native to Material-UI.
 
-The remaining work focuses on addressing general type issues throughout the codebase.
+The remaining work focuses on addressing type mismatches, import/export errors, and type incompatibilities throughout the codebase.
+

@@ -36,10 +36,10 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
     
     // Clear error for this field if it exists
     if (errors[name]) {
-      setErrors({
-        ...errors,
+      setErrors((prevErrors: Record<string, string>) => ({
+        ...prevErrors,
         [name]: '',
-      });
+      }));
     }
   };
   
