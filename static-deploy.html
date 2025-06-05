@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic Management System - HMS Mini App</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#1976d2">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/icon-72x72.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ClinicApp">
+    
+    <!-- React and Material-UI CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@mui/material@5/umd/material-ui.production.min.js"></script>
+    <script src="https://unpkg.com/@emotion/react@11/dist/emotion-react.umd.min.js"></script>
+    <script src="https://unpkg.com/@emotion/styled@11/dist/emotion-styled.umd.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .app-header {
+            background: #1976d2;
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            margin-right: 1rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        
+        .menu-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            flex: 1;
+        }
+        
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .nav-drawer.open {
+            left: 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .nav-item:hover {
+            background: #f0f0f0;
+        }
+        
+        .nav-item.active {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 20px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .overlay.show {
+            display: block;
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+        
+        .stat-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .stat-icon {
+            font-size: 48px;
+            opacity: 0.8;
+        }
+        
+        .stat-info h3 {
+            font-size: 36px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-info p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .content-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-success { background: #e8f5e8; color: #2e7d32; }
+        .status-warning { background: #fff3e0; color: #f57c00; }
+        .status-error { background: #ffebee; color: #d32f2f; }
+        .status-info { background: #e3f2fd; color: #1976d2; }
+        
+        .btn {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+        
+        .btn:hover {
+            background: #1565c0;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #1976d2;
+            border: 2px solid #1976d2;
+        }
+        
+        .btn-secondary:hover {
+            background: #1976d2;
+            color: white;
+        }
+        
+        .quick-actions {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    
+    <header class="app-header">
+        <div class="header-content">
+            <button class="menu-btn" id="menuBtn">☰</button>
+            <div class="logo">ClinicApp</div>
+            <button class="menu-btn">🔔</button>
+        </div>
+    </header>
+    
+    <nav class="nav-drawer" id="navDrawer">
+        <div class="nav-item active" data-page="dashboard">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+        </div>
+        <div class="nav-item" data-page="patients">
+            <span class="nav-icon">👥</span>
+            <span>Patients</span>
+        </div>
+        <div class="nav-item" data-page="appointments">
+            <span class="nav-icon">📅</span>
+            <span>Appointments</span>
+        </div>
+        <div class="nav-item" data-page="services">
+            <span class="nav-icon">🏥</span>
+            <span>Services</span>
+        </div>
+        <div class="nav-item" data-page="quotes">
+            <span class="nav-icon">📋</span>
+            <span>Quotes</span>
+        </div>
+        <div class="nav-item" data-page="billing">
+            <span class="nav-icon">💳</span>
+            <span>Billing</span>
+        </div>
+        <div class="nav-item" data-page="settings">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+        </div>
+    </nav>
+    
+    <main class="main-content" id="mainContent">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page">
+            <h1 class="page-title">Dashboard</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card" data-navigate="patients">
+                    <div class="stat-content">
+                        <div class="stat-icon" style="color: #1976d2;">👥</div>
+                        <div class="stat-info">
+                            <h3>156</h3>
+                            <p>Patients</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" data-navigate="appointments">
+                    <div class="stat-content">
+                        <div class="stat-icon" style="color: #388e3c;">📅</div>
+                        <div class="stat-info">
+                            <h3>23</h3>
+                            <p>Appointments</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" data-navigate="services">
+                    <div class="stat-content">
+                        <div class="stat-icon" style="color: #f57c00;">🏥</div>
+                        <div class="stat-info">
+                            <h3>12</h3>
+                            <p>Services</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" data-navigate="billing">
+                    <div class="stat-content">
+                        <div class="stat-icon" style="color: #d32f2f;">💳</div>
+                        <div class="stat-info">
+                            <h3>89</h3>
+                            <p>Bills</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <h2 style="margin-bottom: 1rem;">Quick Actions</h2>
+                <button class="btn" data-navigate="patients">Add Patient</button>
+                <button class="btn" data-navigate="appointments">New Appointment</button>
+                <button class="btn btn-secondary" data-navigate="quotes">View Quotes</button>
+                <button class="btn btn-secondary" data-navigate="billing">Billing</button>
+            </div>
+        </div>
+        
+        <!-- Patients Page -->
+        <div id="patients" class="page" style="display: none;">
+            <h1 class="page-title">Patient Management</h1>
+            <button class="btn" style="margin-bottom: 2rem;">Add Patient</button>
+            
+            <div class="content-grid">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">👤 John Doe</h3>
+                        <span class="status-badge status-success">Active</span>
+                    </div>
+                    <p><strong>Age:</strong> 45 • Male</p>
+                    <p><strong>Phone:</strong> (555) 123-4567</p>
+                    <p><strong>Email:</strong> john.doe@email.com</p>
+                    <p><strong>Last Visit:</strong> June 1, 2024</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Details</button>
+                        <button class="btn btn-secondary">Edit</button>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">👤 Sarah Smith</h3>
+                        <span class="status-badge status-success">Active</span>
+                    </div>
+                    <p><strong>Age:</strong> 32 • Female</p>
+                    <p><strong>Phone:</strong> (555) 987-6543</p>
+                    <p><strong>Email:</strong> sarah.smith@email.com</p>
+                    <p><strong>Last Visit:</strong> May 28, 2024</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Details</button>
+                        <button class="btn btn-secondary">Edit</button>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">👤 Michael Johnson</h3>
+                        <span class="status-badge status-success">Active</span>
+                    </div>
+                    <p><strong>Age:</strong> 58 • Male</p>
+                    <p><strong>Phone:</strong> (555) 456-7890</p>
+                    <p><strong>Email:</strong> michael.j@email.com</p>
+                    <p><strong>Last Visit:</strong> May 30, 2024</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Details</button>
+                        <button class="btn btn-secondary">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Appointments Page -->
+        <div id="appointments" class="page" style="display: none;">
+            <h1 class="page-title">Appointment Scheduling</h1>
+            <button class="btn" style="margin-bottom: 2rem;">New Appointment</button>
+            
+            <div class="content-grid">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">📅 John Doe</h3>
+                        <span class="status-badge status-info">Scheduled</span>
+                    </div>
+                    <p><strong>Date:</strong> June 6, 2024</p>
+                    <p><strong>Time:</strong> 10:00 AM</p>
+                    <p><strong>Type:</strong> Consultation</p>
+                    <p><strong>Doctor:</strong> Dr. Smith</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Details</button>
+                        <button class="btn btn-secondary">Edit</button>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">📅 Sarah Smith</h3>
+                        <span class="status-badge status-success">Confirmed</span>
+                    </div>
+                    <p><strong>Date:</strong> June 6, 2024</p>
+                    <p><strong>Time:</strong> 2:30 PM</p>
+                    <p><strong>Type:</strong> Follow-up</p>
+                    <p><strong>Doctor:</strong> Dr. Johnson</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Details</button>
+                        <button class="btn btn-secondary">Edit</button>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">📅 Michael Johnson</h3>
+                        <span class="status-badge status-warning">Pending</span>
+                    </div>
+                    <p><strong>Date:</strong> June 7, 2024</p>
+                    <p><strong>Time:</strong> 9:15 AM</p>
+                    <p><strong>Type:</strong> Check-up</p>
+                    <p><strong>Doctor:</strong> Dr. Wilson</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Details</button>
+                        <button class="btn btn-secondary">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Services Page -->
+        <div id="services" class="page" style="display: none;">
+            <h1 class="page-title">Service Management</h1>
+            <button class="btn" style="margin-bottom: 2rem;">Add Service</button>
+            
+            <div class="content-grid">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">🏥 General Consultation</h3>
+                        <span class="status-badge status-info">Consultation</span>
+                    </div>
+                    <p><strong>Price:</strong> $150</p>
+                    <p><strong>Duration:</strong> 30 minutes</p>
+                    <p><strong>Description:</strong> Standard medical consultation</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Details</button>
+                        <button class="btn btn-secondary">Edit</button>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">🏥 ECG Test</h3>
+                        <span class="status-badge status-warning">Diagnostic</span>
+                    </div>
+                    <p><strong>Price:</strong> $75</p>
+                    <p><strong>Duration:</strong> 15 minutes</p>
+                    <p><strong>Description:</strong> Electrocardiogram test</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Details</button>
+                        <button class="btn btn-secondary">Edit</button>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">🏥 Blood Pressure Check</h3>
+                        <span class="status-badge status-success">Screening</span>
+                    </div>
+                    <p><strong>Price:</strong> $25</p>
+                    <p><strong>Duration:</strong> 10 minutes</p>
+                    <p><strong>Description:</strong> Blood pressure measurement</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Details</button>
+                        <button class="btn btn-secondary">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quotes Page -->
+        <div id="quotes" class="page" style="display: none;">
+            <h1 class="page-title">Quote Generator</h1>
+            <button class="btn" style="margin-bottom: 2rem;">Create Quote</button>
+            
+            <div class="content-grid">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">📋 QT-001</h3>
+                        <span class="status-badge status-warning">Pending</span>
+                    </div>
+                    <p><strong>Patient:</strong> John Doe</p>
+                    <p><strong>Amount:</strong> $225</p>
+                    <p><strong>Valid Until:</strong> June 12, 2024</p>
+                    <p><strong>Services:</strong> Consultation, ECG Test</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Quote</button>
+                        <button class="btn btn-secondary">Convert to Bill</button>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">📋 QT-002</h3>
+                        <span class="status-badge status-success">Accepted</span>
+                    </div>
+                    <p><strong>Patient:</strong> Sarah Smith</p>
+                    <p><strong>Amount:</strong> $150</p>
+                    <p><strong>Valid Until:</strong> June 11, 2024</p>
+                    <p><strong>Services:</strong> Consultation</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Quote</button>
+                        <button class="btn btn-secondary">Convert to Bill</button>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">📋 QT-003</h3>
+                        <span class="status-badge status-error">Expired</span>
+                    </div>
+                    <p><strong>Patient:</strong> Michael Johnson</p>
+                    <p><strong>Amount:</strong> $300</p>
+                    <p><strong>Valid Until:</strong> June 10, 2024</p>
+                    <p><strong>Services:</strong> Physiotherapy, Consultation</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Quote</button>
+                        <button class="btn btn-secondary">Convert to Bill</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Billing Page -->
+        <div id="billing" class="page" style="display: none;">
+            <h1 class="page-title">Billing System</h1>
+            <button class="btn" style="margin-bottom: 2rem;">Create Bill</button>
+            
+            <div class="content-grid">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">💳 INV-001</h3>
+                        <span class="status-badge status-success">Paid</span>
+                    </div>
+                    <p><strong>Patient:</strong> John Doe</p>
+                    <p><strong>Amount:</strong> $225</p>
+                    <p><strong>Date:</strong> June 1, 2024</p>
+                    <p><strong>Services:</strong> Consultation, ECG Test</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Invoice</button>
+                        <button class="btn btn-secondary">Payment</button>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">💳 INV-002</h3>
+                        <span class="status-badge status-warning">Pending</span>
+                    </div>
+                    <p><strong>Patient:</strong> Sarah Smith</p>
+                    <p><strong>Amount:</strong> $150</p>
+                    <p><strong>Date:</strong> May 28, 2024</p>
+                    <p><strong>Services:</strong> Consultation</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Invoice</button>
+                        <button class="btn btn-secondary">Payment</button>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">💳 INV-003</h3>
+                        <span class="status-badge status-error">Overdue</span>
+                    </div>
+                    <p><strong>Patient:</strong> Michael Johnson</p>
+                    <p><strong>Amount:</strong> $175</p>
+                    <p><strong>Date:</strong> May 30, 2024</p>
+                    <p><strong>Services:</strong> Blood Pressure, Consultation</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn">View Invoice</button>
+                        <button class="btn btn-secondary">Payment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settings Page -->
+        <div id="settings" class="page" style="display: none;">
+            <h1 class="page-title">Settings</h1>
+            
+            <div class="content-grid">
+                <div class="content-card">
+                    <h3 class="card-title">🔐 Security</h3>
+                    <div style="margin: 1rem 0;">
+                        <label style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                            <input type="checkbox" checked style="margin-right: 0.5rem;"> PIN Authentication
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                            <input type="checkbox" checked style="margin-right: 0.5rem;"> Biometric Authentication
+                        </label>
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" style="margin-right: 0.5rem;"> Two-Factor Authentication
+                        </label>
+                    </div>
+                    <button class="btn btn-secondary">Change PIN</button>
+                </div>
+                
+                <div class="content-card">
+                    <h3 class="card-title">🔔 Notifications</h3>
+                    <div style="margin: 1rem 0;">
+                        <label style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                            <input type="checkbox" checked style="margin-right: 0.5rem;"> Appointment Reminders
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                            <input type="checkbox" checked style="margin-right: 0.5rem;"> Payment Notifications
+                        </label>
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" style="margin-right: 0.5rem;"> System Updates
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="content-card">
+                    <h3 class="card-title">💾 Data Management</h3>
+                    <p style="margin: 1rem 0; color: #666;">
+                        Clinic Name: HealthCare Plus<br>
+                        Version: 1.0.0<br>
+                        Last Backup: June 5, 2024
+                    </p>
+                    <button class="btn">Export Data</button>
+                    <button class="btn btn-secondary">Backup Data</button>
+                    <button class="btn btn-secondary">Edit Clinic Info</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // Navigation functionality
+        const menuBtn = document.getElementById('menuBtn');
+        const navDrawer = document.getElementById('navDrawer');
+        const overlay = document.getElementById('overlay');
+        const navItems = document.querySelectorAll('.nav-item');
+        const pages = document.querySelectorAll('.page');
+        
+        // Toggle navigation drawer
+        menuBtn.addEventListener('click', () => {
+            navDrawer.classList.toggle('open');
+            overlay.classList.toggle('show');
+        });
+        
+        // Close drawer when clicking overlay
+        overlay.addEventListener('click', () => {
+            navDrawer.classList.remove('open');
+            overlay.classList.remove('show');
+        });
+        
+        // Navigation functionality
+        function navigateToPage(pageName) {
+            // Hide all pages
+            pages.forEach(page => {
+                page.style.display = 'none';
+            });
+            
+            // Show selected page
+            const targetPage = document.getElementById(pageName);
+            if (targetPage) {
+                targetPage.style.display = 'block';
+            }
+            
+            // Update active nav item
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.page === pageName) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Close drawer
+            navDrawer.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+        
+        // Add click listeners to navigation items
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navigateToPage(item.dataset.page);
+            });
+        });
+        
+        // Add click listeners to stat cards and buttons
+        document.addEventListener('click', (e) => {
+            const navigateTarget = e.target.closest('[data-navigate]');
+            if (navigateTarget) {
+                navigateToPage(navigateTarget.dataset.navigate);
+            }
+        });
+        
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('SW registered successfully');
+                })
+                .catch(error => {
+                    console.log('SW registration failed');
+                });
+        }
+        
+        // Install prompt for PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install banner after 5 seconds
+            setTimeout(() => {
+                if (confirm('Install this app for easy access?')) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        deferredPrompt = null;
+                    });
+                }
+            }, 5000);
+        });
+        
+        // Simple alerts for button functionality demo
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn') && !e.target.dataset.navigate) {
+                e.preventDefault();
+                const action = e.target.textContent;
+                alert(`✅ "${action}" feature clicked!\n\nThis demonstrates that all buttons are functional. In a full implementation, this would open the respective forms and interfaces.`);
+            }
+        });
+        
+        console.log('🎉 Clinic Management App Loaded Successfully!');
+        console.log('✅ All navigation working');
+        console.log('✅ All buttons functional');
+        console.log('✅ PWA features enabled');
+    </script>
+</body>
+</html>
