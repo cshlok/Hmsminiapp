@@ -45,6 +45,7 @@
     "@radix-ui/react-tooltip": "^1.1.6",
     "@reduxjs/toolkit": "^2.8.2",
     "@types/file-saver": "^2.0.7",
+    "@types/serviceworker": "^0.0.139",
     "@types/uuid": "^10.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

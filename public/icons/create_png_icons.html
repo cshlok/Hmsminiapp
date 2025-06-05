@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate PNG Icons</title>
+    <style>
+        canvas { border: 1px solid #ccc; margin: 10px; }
+    </style>
+</head>
+<body>
+    <h3>PWA Icon Generator</h3>
+    <div id="icons"></div>
+    
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        
+        sizes.forEach(size => {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#1976d2');
+            gradient.addColorStop(1, '#1565c0');
+            
+            // Draw background circle
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 4, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Draw medical cross
+            ctx.fillStyle = 'white';
+            const crossThickness = size * 0.08;
+            const crossLength = size * 0.5;
+            
+            // Horizontal bar
+            ctx.fillRect(
+                size/2 - crossLength/2,
+                size/2 - crossThickness/2,
+                crossLength,
+                crossThickness
+            );
+            
+            // Vertical bar
+            ctx.fillRect(
+                size/2 - crossThickness/2,
+                size/2 - crossLength/2,
+                crossThickness,
+                crossLength
+            );
+            
+            // Add to page
+            const div = document.createElement('div');
+            div.innerHTML = `<h4>${size}x${size}</h4>`;
+            div.appendChild(canvas);
+            
+            // Add download link
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL();
+            link.textContent = 'Download PNG';
+            link.style.display = 'block';
+            div.appendChild(link);
+            
+            document.getElementById('icons').appendChild(div);
+        });
+    </script>
+</body>
+</html>
