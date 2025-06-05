@@ -4,7 +4,7 @@
 [![PWA](https://img.shields.io/badge/PWA-enabled-blue.svg)](https://web.dev/progressive-web-apps/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue.svg)](https://www.typescriptlang.org/)
 
-A comprehensive clinic management system built as a Progressive Web App (PWA) with modern web technologies for healthcare providers.
+A comprehensive clinic management system built as a Progressive Web App (PWA) with modern web technologies for healthcare providers. Updated for deployment verification.
 
 ## 🌐 Live Demo
 
