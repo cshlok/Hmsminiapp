@@ -11,7 +11,7 @@ A comprehensive clinic management system built as a Progressive Web App (PWA) wi
 **Primary Demo**: [https://cshlok.github.io/Hmsminiapp/](https://cshlok.github.io/Hmsminiapp/)  
 **Documentation**: [https://cshlok.github.io/Hmsminiapp/docs/](https://cshlok.github.io/Hmsminiapp/docs/)
 
-> **Note**: The app is fully functional and installable on any device. If deployment links are not accessible, please run locally using the instructions below.
+> **✅ LIVE NOW**: The PWA is fully functional and accessible! Test all features including offline mode, native app installation, and biometric authentication on supported devices.
 
 ## ✨ Progressive Web App Features
 

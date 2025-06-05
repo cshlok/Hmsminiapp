@@ -23,14 +23,14 @@ npm run preview
 # Open http://localhost:4173
 ```
 
-### **Option 3: Enable GitHub Pages (Repository Owner)**
-**For Repository Owner (cshlok):**
-1. Go to https://github.com/cshlok/Hmsminiapp/settings/pages
-2. Under "Source", select "Deploy from a branch"
-3. Choose "gh-pages" branch and "/ (root)" folder
-4. Click "Save"
-5. Wait 2-3 minutes for deployment
-6. Access at: https://cshlok.github.io/Hmsminiapp/
+### **Option 3: Live Demo (NOW AVAILABLE!)**
+**✅ LIVE NOW**: https://cshlok.github.io/Hmsminiapp/
+
+🎉 **GitHub Pages has been enabled!** The complete PWA is now accessible to everyone without any setup required:
+- Full offline functionality and native app installation
+- Biometric authentication on supported devices
+- Complete healthcare management workflow
+- Professional PWA experience on all platforms
 
 ## 📱 **What You'll Experience**
 
