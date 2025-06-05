@@ -4,12 +4,14 @@ import { defineConfig } from "vite"
 
 export default defineConfig({
   plugins: [react()],
+  base: process.env.NODE_ENV === 'production' ? '/Hmsminiapp/' : '/',
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
   server: {
-    allowedHosts: ["5173-i706hpon8ln6ltybgr5uu-69bf3f4c.manusvm.computer"]
+    host: true,
+    port: 5173,
   },
 })
