@@ -14,13 +14,16 @@ import {
   LocalHospital, 
   Receipt 
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
+  
   const cards = [
-    { title: 'Patients', count: '156', icon: <People fontSize="large" />, color: '#1976d2' },
-    { title: 'Appointments', count: '23', icon: <CalendarToday fontSize="large" />, color: '#388e3c' },
-    { title: 'Services', count: '12', icon: <LocalHospital fontSize="large" />, color: '#f57c00' },
-    { title: 'Bills', count: '89', icon: <Receipt fontSize="large" />, color: '#d32f2f' },
+    { title: 'Patients', count: '156', icon: <People fontSize="large" />, color: '#1976d2', path: '/patients' },
+    { title: 'Appointments', count: '23', icon: <CalendarToday fontSize="large" />, color: '#388e3c', path: '/appointments' },
+    { title: 'Services', count: '12', icon: <LocalHospital fontSize="large" />, color: '#f57c00', path: '/services' },
+    { title: 'Bills', count: '89', icon: <Receipt fontSize="large" />, color: '#d32f2f', path: '/billing' },
   ];
 
   return (
@@ -31,8 +34,18 @@ const Dashboard: React.FC = () => {
       
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {cards.map((card, index) => (
-          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <Card 
+              sx={{ 
+                cursor: 'pointer',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 4
+                }
+              }}
+              onClick={() => navigate(card.path)}
+            >
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Box sx={{ color: card.color }}>
@@ -58,17 +71,31 @@ const Dashboard: React.FC = () => {
           Quick Actions
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <Button variant="contained" color="primary">
+          <Button 
+            variant="contained" 
+            color="primary"
+            onClick={() => navigate('/patients')}
+          >
             Add Patient
           </Button>
-          <Button variant="contained" color="secondary">
+          <Button 
+            variant="contained" 
+            color="secondary"
+            onClick={() => navigate('/appointments')}
+          >
             New Appointment
           </Button>
-          <Button variant="outlined">
-            View Reports
+          <Button 
+            variant="outlined"
+            onClick={() => navigate('/quotes')}
+          >
+            View Quotes
           </Button>
-          <Button variant="outlined">
-            Settings
+          <Button 
+            variant="outlined"
+            onClick={() => navigate('/billing')}
+          >
+            Billing
           </Button>
         </Box>
       </Paper>

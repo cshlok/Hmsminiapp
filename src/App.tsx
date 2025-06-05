@@ -10,15 +10,35 @@ import {
   Toolbar, 
   IconButton,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemButton
 } from '@mui/material';
 import { 
   Menu as MenuIcon,
   GetApp as InstallIcon,
-  Notifications as NotificationsIcon
+  Notifications as NotificationsIcon,
+  Dashboard as DashboardIcon,
+  People as PeopleIcon,
+  CalendarToday as CalendarIcon,
+  LocalHospital as ServicesIcon,
+  Receipt as BillingIcon,
+  Description as QuotesIcon,
+  Settings as SettingsIcon
 } from '@mui/icons-material';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
+import Settings from './pages/Settings';
+import PatientList from './pages/patients/PatientList';
+import AppointmentList from './pages/appointments/AppointmentList';
+import ServiceList from './pages/services/ServiceList';
+import BillList from './pages/billing/BillList';
+import QuoteList from './pages/quotes/QuoteList';
 import { InstallPrompt } from './components/pwa/InstallPrompt';
 import { BiometricAuth } from './components/pwa/BiometricAuth';
 import { ConnectionStatus } from './components/pwa/OfflineIndicator';
@@ -112,12 +132,25 @@ theme = responsiveFontSizes(theme);
 function AppContent() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
+  const location = useLocation();
   const { canInstall, promptInstall } = useInstallPrompt();
   const { deviceType } = useDeviceCapabilities();
   const { requestPermission } = useNotifications();
   
   const [showInstallDialog, setShowInstallDialog] = React.useState(false);
   const [showBiometricAuth, setShowBiometricAuth] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const navigationItems = [
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
+    { text: 'Patients', icon: <PeopleIcon />, path: '/patients' },
+    { text: 'Appointments', icon: <CalendarIcon />, path: '/appointments' },
+    { text: 'Services', icon: <ServicesIcon />, path: '/services' },
+    { text: 'Quotes', icon: <QuotesIcon />, path: '/quotes' },
+    { text: 'Billing', icon: <BillingIcon />, path: '/billing' },
+    { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
+  ];
 
   // Auto-show install prompt after 30 seconds on mobile
   React.useEffect(() => {
@@ -160,6 +193,7 @@ function AppContent() {
             edge="start"
             color="inherit"
             aria-label="menu"
+            onClick={() => setDrawerOpen(true)}
             sx={{ mr: 2 }}
           >
             <MenuIcon />
@@ -196,6 +230,44 @@ function AppContent() {
         </Toolbar>
       </AppBar>
 
+      {/* Navigation Drawer */}
+      <Drawer
+        anchor="left"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <Box
+          sx={{ width: 250 }}
+          role="presentation"
+          onClick={() => setDrawerOpen(false)}
+          onKeyDown={() => setDrawerOpen(false)}
+        >
+          <List>
+            {navigationItems.map((item) => (
+              <ListItem key={item.text} disablePadding>
+                <ListItemButton
+                  selected={location.pathname === item.path}
+                  onClick={() => navigate(item.path)}
+                  sx={{
+                    '&.Mui-selected': {
+                      backgroundColor: theme.palette.primary.main + '20',
+                      '&:hover': {
+                        backgroundColor: theme.palette.primary.main + '30',
+                      },
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+
       {/* Main Content */}
       <Container 
         maxWidth="lg" 
@@ -208,12 +280,12 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/patients" element={<Dashboard />} />
-          <Route path="/appointments" element={<Dashboard />} />
-          <Route path="/services" element={<Dashboard />} />
-          <Route path="/billing" element={<Dashboard />} />
-          <Route path="/quotes" element={<Dashboard />} />
-          <Route path="/settings" element={<Dashboard />} />
+          <Route path="/patients" element={<PatientList />} />
+          <Route path="/appointments" element={<AppointmentList />} />
+          <Route path="/services" element={<ServiceList />} />
+          <Route path="/billing" element={<BillList />} />
+          <Route path="/quotes" element={<QuoteList />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>
