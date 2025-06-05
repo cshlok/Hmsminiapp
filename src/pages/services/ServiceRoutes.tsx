@@ -1,21 +1,12 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import ServiceListContainer from './ServiceListContainer';
-import ServiceDetailsContainer from './ServiceDetailsContainer';
-import AddServiceContainer from './AddServiceContainer';
-import EditServiceContainer from './EditServiceContainer';
-import CategoryListContainer from './CategoryListContainer';
+import { Box, Typography } from '@mui/material';
 
-const ServiceRoutes: React.FC = () => {
+const Component: React.FC = () => {
   return (
-    <Routes>
-      <Route index element={<ServiceListContainer />} />
-      <Route path=":id" element={<ServiceDetailsContainer />} />
-      <Route path="new" element={<AddServiceContainer />} />
-      <Route path=":id/edit" element={<EditServiceContainer />} />
-      <Route path="categories" element={<CategoryListContainer />} />
-    </Routes>
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h6">Component Placeholder</Typography>
+    </Box>
   );
 };
 
-export default ServiceRoutes;
+export default Component;

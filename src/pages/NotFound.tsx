@@ -1,27 +1,37 @@
 import React from 'react';
-import { useRouteError } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Box, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const NotFound: React.FC = () => {
-  const error = useRouteError();
-  console.error(error);
+  const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
-        <h1 className="text-4xl font-bold text-red-500 mb-4">404</h1>
-        <h2 className="text-2xl font-semibold mb-4">Page Not Found</h2>
-        <p className="text-gray-600 mb-6">
-          The page you are looking for doesn't exist or has been moved.
-        </p>
-        <Link
-          to="/"
-          className="inline-block bg-primary text-white px-6 py-2 rounded-md hover:bg-primary/90 transition-colors"
-        >
-          Go to Dashboard
-        </Link>
-      </div>
-    </div>
+    <Box 
+      sx={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        minHeight: '50vh',
+        textAlign: 'center'
+      }}
+    >
+      <Typography variant="h1" component="h1" gutterBottom>
+        404
+      </Typography>
+      <Typography variant="h5" component="h2" gutterBottom>
+        Page Not Found
+      </Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        The page you are looking for doesn't exist.
+      </Typography>
+      <Button 
+        variant="contained" 
+        onClick={() => navigate('/')}
+      >
+        Go Home
+      </Button>
+    </Box>
   );
 };
 

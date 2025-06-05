@@ -1,21 +1,12 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import BillListContainer from './BillListContainer';
-import BillDetailsContainer from './BillDetailsContainer';
-import AddBillContainer from './AddBillContainer';
-import EditBillContainer from './EditBillContainer';
-import AddPaymentContainer from './AddPaymentContainer';
+import { Box, Typography } from '@mui/material';
 
-const BillingRoutes: React.FC = () => {
+const Component: React.FC = () => {
   return (
-    <Routes>
-      <Route index element={<BillListContainer />} />
-      <Route path=":id" element={<BillDetailsContainer />} />
-      <Route path="new" element={<AddBillContainer />} />
-      <Route path=":id/edit" element={<EditBillContainer />} />
-      <Route path=":id/payment" element={<AddPaymentContainer />} />
-    </Routes>
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h6">Component Placeholder</Typography>
+    </Box>
   );
 };
 
-export default BillingRoutes;
+export default Component;

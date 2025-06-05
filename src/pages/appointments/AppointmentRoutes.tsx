@@ -1,21 +1,12 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import AppointmentListContainer from './AppointmentListContainer';
-import AppointmentDetailsContainer from './AppointmentDetailsContainer';
-import AddAppointmentContainer from './AddAppointmentContainer';
-import EditAppointmentContainer from './EditAppointmentContainer';
-import AppointmentCalendarContainer from './AppointmentCalendarContainer';
+import { Box, Typography } from '@mui/material';
 
-const AppointmentRoutes: React.FC = () => {
+const Component: React.FC = () => {
   return (
-    <Routes>
-      <Route index element={<AppointmentListContainer />} />
-      <Route path=":id" element={<AppointmentDetailsContainer />} />
-      <Route path="new" element={<AddAppointmentContainer />} />
-      <Route path=":id/edit" element={<EditAppointmentContainer />} />
-      <Route path="calendar" element={<AppointmentCalendarContainer />} />
-    </Routes>
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h6">Component Placeholder</Typography>
+    </Box>
   );
 };
 
-export default AppointmentRoutes;
+export default Component;

@@ -1,19 +1,12 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import QuoteListContainer from './QuoteListContainer';
-import QuoteDetailsContainer from './QuoteDetailsContainer';
-import AddQuoteContainer from './AddQuoteContainer';
-import EditQuoteContainer from './EditQuoteContainer';
+import { Box, Typography } from '@mui/material';
 
-const QuoteRoutes: React.FC = () => {
+const Component: React.FC = () => {
   return (
-    <Routes>
-      <Route index element={<QuoteListContainer />} />
-      <Route path=":id" element={<QuoteDetailsContainer />} />
-      <Route path="new" element={<AddQuoteContainer />} />
-      <Route path=":id/edit" element={<EditQuoteContainer />} />
-    </Routes>
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h6">Component Placeholder</Typography>
+    </Box>
   );
 };
 
-export default QuoteRoutes;
+export default Component;

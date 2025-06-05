@@ -1,13 +1,12 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import SettingsContainer from './SettingsContainer';
+import { Box, Typography } from '@mui/material';
 
-const SettingsRoutes: React.FC = () => {
+const Component: React.FC = () => {
   return (
-    <Routes>
-      <Route index element={<SettingsContainer />} />
-    </Routes>
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h6">Component Placeholder</Typography>
+    </Box>
   );
 };
 
-export default SettingsRoutes;
+export default Component;

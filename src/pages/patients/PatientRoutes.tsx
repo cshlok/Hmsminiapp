@@ -1,23 +1,12 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import NotFound from './NotFound';
-import PatientListContainer from './PatientListContainer';
-import PatientDetailsContainer from './PatientDetailsContainer';
-import AddPatientContainer from './AddPatientContainer';
-import EditPatientContainer from './EditPatientContainer';
-import DeletePatientContainer from './DeletePatientContainer';
+import { Box, Typography } from '@mui/material';
 
-const PatientRoutes: React.FC = () => {
+const Component: React.FC = () => {
   return (
-    <Routes>
-      <Route index element={<PatientListContainer />} />
-      <Route path="new" element={<AddPatientContainer />} />
-      <Route path=":id" element={<PatientDetailsContainer />} />
-      <Route path=":id/edit" element={<EditPatientContainer />} />
-      <Route path=":id/delete" element={<DeletePatientContainer />} />
-      <Route path="*" element={<Navigate to="/patients" replace />} />
-    </Routes>
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h6">Component Placeholder</Typography>
+    </Box>
   );
 };
 
-export default PatientRoutes;
+export default Component;

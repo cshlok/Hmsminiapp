@@ -1,37 +1,12 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import PatientDetailsScreen from './PatientDetailsScreen';
+import React from 'react';
+import { Box, Typography } from '@mui/material';
 
-const PatientDetailsContainer = ({ navigation, route }) => {
-  const { patient } = route.params;
-  const { selectedPatient } = useSelector((state: RootState) => state.patient);
-  
-  // Use the patient from route params or from Redux state
-  const patientData = patient || selectedPatient;
-  
-  // If no patient data is available, go back to the list
-  useEffect(() => {
-    if (!patientData) {
-      navigation.goBack();
-    }
-  }, [patientData, navigation]);
-  
-  if (!patientData) {
-    return <View style={styles.container} />;
-  }
-  
+const Screen: React.FC = () => {
   return (
-    <PatientDetailsScreen patient={patientData} />
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h6">Screen Placeholder</Typography>
+    </Box>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-});
-
-export default PatientDetailsContainer;
+export default Screen;
