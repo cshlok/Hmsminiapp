@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic Management PWA - Healthcare Technology</title>
+    <meta name="description" content="Progressive Web App for comprehensive clinic management with offline functionality, biometric authentication, and mobile-optimized experience">
+    <meta name="keywords" content="clinic management, PWA, healthcare, progressive web app, medical software">
+    <meta http-equiv="refresh" content="3; url=./dist/index.html">
+    <link rel="canonical" href="https://cshlok.github.io/Hmsminiapp/">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="Clinic Management PWA">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Clinic PWA">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1976d2">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Clinic Management Progressive Web App">
+    <meta property="og:description" content="Modern healthcare management system with PWA capabilities">
+    <meta property="og:image" content="https://cshlok.github.io/Hmsminiapp/icons/icon-512x512.png">
+    <meta property="og:url" content="https://cshlok.github.io/Hmsminiapp/">
+    <meta property="og:type" content="website">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+            background: linear-gradient(135deg, #1976d2 0%, #42a5f5 50%, #64b5f6 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            padding: 2rem;
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin: 2rem 0;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        
+        .feature {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .manual-link {
+            color: #bbdefb;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .manual-link:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        .tech-stack {
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            h1 { font-size: 2rem; }
+            .logo { font-size: 3rem; }
+            .features { grid-template-columns: 1fr; }
+            .badges { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🏥</div>
+        <h1>Clinic Management PWA</h1>
+        <p class="subtitle">Progressive Web App for Modern Healthcare</p>
+        
+        <div class="loading"></div>
+        <p><strong>Loading the application...</strong></p>
+        <p>If you're not redirected automatically, <a href="./dist/index.html" class="manual-link">click here to access the app</a>.</p>
+        
+        <div class="badges">
+            <span class="badge">✅ PWA Ready</span>
+            <span class="badge">📱 Mobile Optimized</span>
+            <span class="badge">🔐 Secure Auth</span>
+            <span class="badge">🌐 Offline Support</span>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">👥</div>
+                <h3>Patient Management</h3>
+                <p>Comprehensive patient records with medical history and appointment tracking</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📅</div>
+                <h3>Smart Scheduling</h3>
+                <p>Advanced appointment calendar with conflict detection and reminders</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💰</div>
+                <h3>Billing System</h3>
+                <p>Invoice generation, payment tracking, and financial reporting</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>Biometric Auth</h3>
+                <p>Secure fingerprint and face ID authentication via WebAuthn</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>PWA Features</h3>
+                <p>Install on any device, works offline, push notifications</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Fast & Modern</h3>
+                <p>Built with React, TypeScript, and Material-UI for optimal performance</p>
+            </div>
+        </div>
+        
+        <div class="tech-stack">
+            <p><strong>Built with:</strong> React 18 • TypeScript • Material-UI • Vite • PWA Technologies</p>
+            <p><strong>GitHub:</strong> <a href="https://github.com/cshlok/Hmsminiapp" class="manual-link">cshlok/Hmsminiapp</a></p>
+        </div>
+    </div>
+    
+    <script>
+        // Fallback redirect in case meta refresh doesn't work
+        setTimeout(function() {
+            window.location.href = './dist/index.html';
+        }, 4000);
+        
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            const features = document.querySelectorAll('.feature');
+            features.forEach((feature, index) => {
+                feature.style.animationDelay = `${index * 0.1}s`;
+                feature.style.animation = 'fadeIn 0.6s ease-in forwards';
+            });
+        });
+    </script>
+</body>
+</html>
